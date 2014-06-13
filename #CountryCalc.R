@@ -1,7 +1,7 @@
 ## COUNTRY SPECIFIC 
 # Calculates country specific values and rates, and assigns parameters where they vary by country
 # hello world
-# Helllllo
+# Helllllo again
 
 ## ********* TRANSMISSION
 probt <- 0.1
