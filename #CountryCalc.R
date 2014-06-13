@@ -1,6 +1,7 @@
 ## COUNTRY SPECIFIC 
 # Calculates country specific values and rates, and assigns parameters where they vary by country
 # hello world
+# Helllllo
 
 ## ********* TRANSMISSION
 probt <- 0.1
@@ -34,7 +35,7 @@ colnames(mort)<-c('year',seq(1,85,1))
 ## ********* New births per year
 bb <- births[,cntry]
 
-## ********* Detection and treatment
+## ********* Detection and treatment 
 cdr<-cdrm[cntry,];cdrH<-cdr;suctt<-suctm[cntry,];sucttH<-suctt;
 #cdr<-matrix(0.42,1,42);cdrH<-cdr;suctt<-matrix(0.84,1,42);sucttH<-suctt;
 ## *********** INITIAL population structure 
