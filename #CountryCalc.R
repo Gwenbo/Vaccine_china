@@ -5,6 +5,7 @@
 ## ********* TRANSMISSION
 probt <- 0.1
 neta <- sing[1,cntry]
+### Git try
 
 ## ********* AGE specific mortality ** SHOULD PROBABLY BE DONE IN DATA
 mm<-mortm[mortm$Country==cntry,]
