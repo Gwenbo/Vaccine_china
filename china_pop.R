@@ -121,9 +121,9 @@ print(poptotals)
 barplot(poptotals, main="plot of China population", xlab="year", ylab="Population(thousands)")
 
 ##import 2050 estimates
-population2050<- read.csv("2050popest.csv", header=TRUE)
+population2050<- read.csv("2050popest.csv")
 pop2050<-matrix(0,2,5)
-colnames(poptotals)<-poplist
+colnames(pop2050)<-poplist
 pop2050[1,]<-population2050[1,]
 pop2050[2,]<-poptotals[41,]
 barplot(pop2050, main="2050 plot of China population", xlab="year", ylab="Population(thousands)")
