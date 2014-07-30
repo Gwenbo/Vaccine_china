@@ -1,10 +1,13 @@
 ### Life expectancy check ####
 
+
 setwd("/Users/Rebecca/Documents/PhD/Model Materials/CEmodel_Rebecca/China Model")
+#setwd("/Users/Karen/My Documents/LSHTM/China_pop")
 
 ## reads in data
 cpop<- read.csv("chinapop.csv", header=TRUE)
 initialpop<- read.csv("Chinapop2010.csv", header=TRUE)
+pop_med_fert<- read.csv("china_med_fert.csv", header=FALSE)
 #print (cpop)
 
 #read in yr as vector from cpop
@@ -14,9 +17,10 @@ year<- cpop[,1]
 #for now doing it with birth number, but could do rate*popsize if desired using Brate<- cpop[,3]
 B<- cpop[,2]
 
-
+#Life expectancy
+LE<-cpop[,6]
 #read in death rate/yr
-u<- cpop[,5]
+u<-1/LE
 
 #put maxage in file higher than 100??
 maxage<-length(initialpop[,1])
@@ -34,8 +38,6 @@ poptotals<- matrix(0,length(year),5)
 rownames(poptotals)<-year
 poplist<- as.list(c("totpop","pop014","pop1554","pop5564","pop65plus"))
 colnames(poptotals)<-poplist
-
-
 
 
 #loop through years
@@ -63,7 +65,7 @@ for (k in 1:length(year))
        {
         if (j==1) 
         {
-          A[k,j]<-B[k]
+          A[k,j]<-B[k]/5
         }
         else
         {
@@ -113,17 +115,26 @@ for (k in 1:length(year))
       #end of year K loop next line
     }
     
-print(A) 
-print(poptotals)
+#print(A) 
+#print(poptotals)
 
 ### plots
 
-barplot(poptotals, main="plot of China population", xlab="year", ylab="Population(thousands)")
+#barplot(poptotals, main="plot of China population", xlab="year", ylab="Population(thousands)")
 
-##import 2050 estimates
-population2050<- read.csv("2050popest.csv")
+##import 2050 estimates and plot against model for age groups
+population2050<- c(1384976,204187,623982,225492,331315)
 pop2050<-matrix(0,2,5)
 colnames(pop2050)<-poplist
-pop2050[1,]<-population2050[1,]
+pop2050[1,]<-population2050
 pop2050[2,]<-poptotals[41,]
-barplot(pop2050, main="2050 plot of China population", xlab="year", ylab="Population(thousands)")
+h<-barplot(pop2050[2,], main="2050 plot of China population", xlab="popgrp", ylab="Population(thousands)",ylim=c(0,max(pop2050)))
+points(h,pop2050[1,],col="red")
+
+# Import total population over time (medium fertility estimates) and plot against model
+plot(poptotals[,1],ylim=c(0,1500000)) # Model
+points(pop_med_fert[,2],col="red")    # Estimate
+
+# Check births are per 5 year period - plot birth rate*pop against number births/5
+plot(cpop[,3]*pop_med_fert[,2]/1000)
+points(cpop[,2]/5,col="red")
