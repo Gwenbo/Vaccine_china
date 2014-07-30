@@ -78,7 +78,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     if (k == year1){ ind <- 1 } else { ind <- ( (1/dt) * (k - year1) ) }
     # Population size in each of the groups (15-49yos, same but HIV+)
     psize1549<-sum(S[ind,15:49],L[ind,15:49],R[ind,15:49],I[ind,15:49],NI[ind,15:49],Sv[ind,15:49],Lv[ind,15:49],Rv[ind,15:49])
-    psizeH1549<-sum(SH[ind,15:49],LH[ind,15:49],RH[ind,15:49],IH[ind,15:49],NIH[ind,15:49],SvH[ind,15:49],LvH[ind,15:49],RvH[ind,15:49])
+  
     #print(c(psize1549,psizeH1549,psize1549))
     # Proportion who become HIV+ is then weighted to only be in the 15-49yo pop that is hiv-
     hiv<-hivI/(100*(psize1549/(psizeH1549+psize1549)))
@@ -133,6 +133,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       
       ####•••••••••••••••••• TB model ••••••••••••••••••
       # Age 1, first time step of the year, all births occur
+      
       j = 1; S[i,j]<-B     
       
       S[i,2:14] = S[i-1,1:13] - (u[1:13]+lambda[i-1])*S[i-1,1:13]*dt 
@@ -215,15 +216,26 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       ####•••••••••••••••••• Economic Output ••••••••••••••••••
       #### Output for cost-effectiveness 
       ## POPULATION SIZE
-      psize[i]<-sum(S[i,],L[i,],R[i,],I[i,],NI[i,],SH[i,],LH[i,],RH[i,],IH[i,],NIH[i,],Sv[i,],Lv[i,],Rv[i,],SvH[i,],LvH[i,],RvH[i,])
+      psize[i]<-sum(S[i,],L[i,],R[i,],I[i,],NI[i,],Sv[i,],Lv[i,],Rv[i,])
       #print(c("PSIZE",i,psize[i]))
-      psize1549<-sum(S[ind,15:49],L[ind,15:49],R[ind,15:49],I[ind,15:49],NI[ind,15:49],Sv[ind,15:49],Lv[ind,15:49],Rv[ind,15:49])
-      psizeH1549<-sum(SH[ind,15:49],LH[ind,15:49],RH[ind,15:49],IH[ind,15:49],NIH[ind,15:49],SvH[ind,15:49],LvH[ind,15:49],RvH[ind,15:49])
-      pp1549<-psize1549+psizeH1549
+      #what is ind??? also, was written as 15-49 for 15-49, but isnt age 0 j=1, so should be 16:50 for age 15-49???
+      #ages needed to fit to incidence and population size
+      psize014[i]<-sum(S[ind,1:15],L[ind,1:15],R[ind,1:15],I[ind,1:15],NI[ind,1:15],Sv[ind,1:15],Lv[ind,1:15],Rv[ind,1:15])
+      psize1554[i]<-sum(S[ind,16:55],L[ind,16:55],R[ind,16:55],I[ind,16:55],NI[ind,16:55],Sv[ind,16:55],Lv[ind,16:55],Rv[ind,16:55])
+      psize5564[i]<-sum(S[ind,56:65],L[ind,56:65],R[ind,56:65],I[ind,56:65],NI[ind,56:65],Sv[ind,56:65],Lv[ind,56:65],Rv[ind,56:65])
+      psize65plus[i]<-sum(S[ind,66:Mnage],L[ind,66:Mnage],R[ind,66:Mnage],I[ind,66:Mnage],NI[ind,66:Mnage],Sv[ind,66:Mnage],Lv[ind,66:Mnage],Rv[ind,66:Mnage])
+      #ages needed to fit to mort  and prevalence as have different groupings
+      psize1559[i]<-sum(S[ind,16:60],L[ind,16:60],R[ind,16:60],I[ind,16:60],NI[ind,16:60],Sv[ind,16:60],Lv[ind,16:60],Rv[ind,16:60])
+      psize1529[i]<-sum(S[ind,16:30],L[ind,16:30],R[ind,16:30],I[ind,16:30],NI[ind,16:30],Sv[ind,16:30],Lv[ind,16:30],Rv[ind,16:30])
+      psize3044[i]<-sum(S[ind,31:45],L[ind,31:45],R[ind,31:45],I[ind,31:45],NI[ind,31:45],Sv[ind,31:45],Lv[ind,31:45],Rv[ind,31:45])
+      psize4459[i]<-sum(S[ind,45:60],L[ind,45:60],R[ind,45:60],I[ind,45:60],NI[ind,45:60],Sv[ind,45:60],Lv[ind,45:60],Rv[ind,45:60])
+      psize60plus[i]<-sum(S[ind,61:Mnage],L[ind,61:Mnage],R[ind,61:Mnage],I[ind,61:Mnage],NI[ind,61:Mnage],Sv[ind,61:Mnage],Lv[ind,61:Mnage],Rv[ind,61:Mnage])
       
-      ## HIV prevalence
-      prevHIV[i]<-100*sum(SH[i,],LH[i,],RH[i,],IH[i,],NIH[i,],SvH[i,],LvH[i,],RvH[i,])/psize[i]  
-      prevHIV1549[i]<-100*psizeH1549/(psize1549+psizeH1549)
+      ## number vaccinated
+      #need to set up matrix for psizevacc to be recorded in to**  not needed as in econout???
+      #psizevacc[i]<-sum(Sv[i,],Lv[i,],Rv[i,])
+      #nmbvacc<-psizevacc[i]-psizevacc[i-1]
+    
     
       ## Death markers
       # Number of TB deaths in HIV-, in HIV+, all form HIV deaths
@@ -246,8 +258,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       
       if (i==length(seq(year1,yearend,dt))){ # LAST TIME STEP
         # First is for whole population, second for HIV positives only... 
-        Out<-cbind(Deaths,TBRx,psize,rowSums(S),rowSums(L),rowSums(R),rowSums(I),rowSums(NI),rowSums(SH),rowSums(LH),rowSums(RH),rowSums(IH),rowSums(NIH),rowSums(Sv),rowSums(Lv),rowSums(Rv),rowSums(SvH),rowSums(LvH),rowSums(RvH),rowSums(theta),rowSums(thetaH),rowSums(d),VX)
-        nms<-c("Deaths","DAge","DeathsHIV","DHAge","AllDAge","Rx","SucT","RxH","SucTH","Psz","S","L","R","I","NI","SH","LH","RH","IH","NIH","Sv","Lv","Rv","SvH","LvH","RvH","theta","thetaH","d","VaccDTP3","Vacc10","VaccMass")
+        Out<-cbind(Deaths,TBRx,psize,rowSums(S),rowSums(L),rowSums(R),rowSums(I),rowSums(NI),rowSums(Sv),rowSums(Lv),rowSums(Rv),rowSums(SvH),rowSums(LvH),rowSums(RvH),rowSums(theta),rowSums(thetaH),rowSums(d),VX)
+        nms<-c("Deaths","DAge","DeathsHIV","DHAge","AllDAge","Rx","SucT","RxH","SucTH","Psz","S","L","R","I","NI","Sv","Lv","Rv","SvH","LvH","RvH","theta","thetaH","d","VaccDTP3","Vacc10","VaccMass")
         Out<-as.data.frame(Out);colnames(Out)<-nms
         
         #### FOR CE OUTPUT
@@ -263,7 +275,9 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
         hbcOut<-as.data.frame(hbcOut); colnames(hbcOut)<-nns2
         
         # Calculate that years average
+        
         for (i in 1:(length(yrcount)-1)){
+          #gives first and last timestep of a year??? no as first timestep of year runs. so why need???
           i1<-yrcount[i]; i2<-yrcount[i+1]-1
           EconOut[i,"AvAgeD"]=sum(colSums(ADeathsH[i1:i2,]+ADeaths[i1:i2,])*seq(1:Mnage))/sum(ADeathsH[i1:i2,]+ADeaths[i1:i2,])
           EconOut[i,"TBDeaths"]=sum(TBDeaths[i1:i2,]+TBDeathsH[i1:i2,])
@@ -368,55 +382,113 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
         
         ####•••••••••••••••••• Economic Output ••••••••••••••••••
         #### Output for cost-effectiveness 
-        ## POPULATION SIZE
-        psize[i]<-sum(S[i,],L[i,],R[i,],I[i,],NI[i,],SH[i,],LH[i,],RH[i,],IH[i,],NIH[i,],Sv[i,],Lv[i,],Rv[i,],SvH[i,],LvH[i,],RvH[i,])
+        ## POPULATION SIZE 
+        #are vectors set up for psize elsewhere???
+        psize[i]<-sum(S[i,],L[i,],R[i,],I[i,],NI[i,],Sv[i,],Lv[i,],Rv[i,])
         #print(c("PSIZE",i,psize[i]))
-        psize1549<-sum(S[ind,15:49],L[ind,15:49],R[ind,15:49],I[ind,15:49],NI[ind,15:49],Sv[ind,15:49],Lv[ind,15:49],Rv[ind,15:49])
-        psizeH1549<-sum(SH[ind,15:49],LH[ind,15:49],RH[ind,15:49],IH[ind,15:49],NIH[ind,15:49],SvH[ind,15:49],LvH[ind,15:49],RvH[ind,15:49])
-        pp1549<-psize1549+psizeH1549
+        #see earlier query on ages???
+        #ages needed to fit to incidence and population size
+        psize014[i]<-sum(S[ind,1:15],L[ind,1:15],R[ind,1:15],I[ind,1:15],NI[ind,1:15],Sv[ind,1:15],Lv[ind,1:15],Rv[ind,1:15])
+        psize1554[i]<-sum(S[ind,16:55],L[ind,16:55],R[ind,16:55],I[ind,16:55],NI[ind,16:55],Sv[ind,16:55],Lv[ind,16:55],Rv[ind,16:55])
+        psize5564[i]<-sum(S[ind,56:65],L[ind,56:65],R[ind,56:65],I[ind,56:65],NI[ind,56:65],Sv[ind,56:65],Lv[ind,56:65],Rv[ind,56:65])
+        psize65plus[i]<-sum(S[ind,66:Mnage],L[ind,66:Mnage],R[ind,66:Mnage],I[ind,66:Mnage],NI[ind,66:Mnage],Sv[ind,66:Mnage],Lv[ind,66:Mnage],Rv[ind,66:Mnage])
+        #ages needed to fit to mort  and prevalence as have different groupings
+        psize1559[i]<-sum(S[ind,16:60],L[ind,16:60],R[ind,16:60],I[ind,16:60],NI[ind,16:60],Sv[ind,16:60],Lv[ind,16:60],Rv[ind,16:60])
+        psize1529[i]<-sum(S[ind,16:30],L[ind,16:30],R[ind,16:30],I[ind,16:30],NI[ind,16:30],Sv[ind,16:30],Lv[ind,16:30],Rv[ind,16:30])
+        psize3044[i]<-sum(S[ind,31:45],L[ind,31:45],R[ind,31:45],I[ind,31:45],NI[ind,31:45],Sv[ind,31:45],Lv[ind,31:45],Rv[ind,31:45])
+        psize4459[i]<-sum(S[ind,45:60],L[ind,45:60],R[ind,45:60],I[ind,45:60],NI[ind,45:60],Sv[ind,45:60],Lv[ind,45:60],Rv[ind,45:60])
+        psize60plus[i]<-sum(S[ind,61:Mnage],L[ind,61:Mnage],R[ind,61:Mnage],I[ind,61:Mnage],NI[ind,61:Mnage],Sv[ind,61:Mnage],Lv[ind,61:Mnage],Rv[ind,61:Mnage])
         
-        ## HIV prevalence
-        prevHIV[i]<-100*sum(SH[i,],LH[i,],RH[i,],IH[i,],NIH[i,],SvH[i,],LvH[i,],RvH[i,])/psize[i]  
-        prevHIV1549[i]<-100*psizeH1549/(psize1549+psizeH1549)
+        ## number vaccinated
+        #need to set up matrix for psizevacc to be recorded in to**
+        #psizevacc[i]<-sum(Sv[i,],Lv[i,],Rv[i,])
+        #nmbvacc<-psizevacc[i]-psizevacc[i-1]
+        
         
         ## Death markers
-        # Number of TB deaths in HIV-, in HIV+, all form HIV deaths
+        # Number of TB deaths
         TBDeaths[i,]=dt*((ui)*I[i-1,]+(uni)*NI[i-1,]);
-        TBDeathsH[i,]=dt*(uiHA*IH[i-1,]+(uniHA)*NIH[i-1,]);
-        AllDeathsH[i,]=dt*((uH+uiHA)*IH[i-1,]+(uH+uniHA)*NIH[i-1,]);
-        # Age deaths HIV-, HIV+
+        
+        # Age deaths TB and background ##why age deaths???
         ADeaths[i,]=dt*(u*S[i-1,]+u*L[i-1,]+(u+ui)*I[i-1,]+(u+uni)*NI[i-1,]+u*R[i-1,]+u*Sv[i-1,]+u*Lv[i-1,]+u*Rv[i-1,])
-        ADeathsH[i,]=dt*(uH*SH[i-1,]+uH*LH[i-1,]+(uH+uiHA)*IH[i-1,]+(uH+uniHA)*NIH[i-1,]+uH*RH[i-1,]+u*SvH[i-1,]+u*LvH[i-1,]+u*RvH[i-1,])
+
         # Deaths matrix holds all death indices
-        # Columns: Number deaths HIV-, av. age HIV death, number HIV+ deaths, av age HIV+ death, av. age death
+        # Columns: Number deaths HIV-, av age at death av. age HIV death, number HIV+ deaths, av age HIV+ death, av. age death
         Deaths[i,1]=sum(ADeaths[i,]);   Deaths[i,2]=sum(ADeaths[i,]*seq(1:Mnage))/sum(ADeaths[i,])
-        Deaths[i,3]=sum(ADeathsH[i,]);  Deaths[i,4]=sum(ADeathsH[i,]*seq(1:Mnage))/sum(ADeathsH[i,])
-        Deaths[i,5]=sum((ADeathsH[i,]+ADeaths[i,])*seq(1:Mnage))/sum(ADeathsH[i,]+ADeaths[i,])
+        #Deaths[i,3]=sum(ADeathsH[i,]);  Deaths[i,4]=sum(ADeathsH[i,]*seq(1:Mnage))/sum(ADeathsH[i,])
+        #Deaths[i,5]=sum((ADeathsH[i,]+ADeaths[i,])*seq(1:Mnage))/sum(ADeathsH[i,]+ADeaths[i,])
         
         ## NUMBER ON TREATMENT & NUMBER SUCCESSFULLY TREATED
         # TBRx columns: HIV- detected, successfully treated, HIV+ detected, successfully treated
         TBRx[i,1]=CDR*(sum(new_I[i-1,])+e*sum(new_NI[i-1,]));    TBRx[i,2]=CDR*(CoT)*(sum(new_I[i-1,])+e*sum(new_NI[i-1,]))
-        TBRx[i,3]=CDRH*(sum(new_IH[i-1,])+e*sum(new_NIH[i-1,]));  TBRx[i,4]=CDRH*(CoTH)*(sum(new_IH[i-1,])+e*sum(new_NI[i-1,]))
+        #TBRx[i,3]=CDRH*(sum(new_IH[i-1,])+e*sum(new_NIH[i-1,]));  TBRx[i,4]=CDRH*(CoTH)*(sum(new_IH[i-1,])+e*sum(new_NI[i-1,]))
         
         # If last year
+        #is this therefore only returnign incidence rate for 2050??? OR is it last timepoint of the year?? I dont understand the if statement. 
+       
         if(i == ((1/dt)*(k-year1)+1/dt)){
           i1<-((1/dt)*(k-year1)+1); i2<-((1/dt)*(k-year1)+1/dt)
-          # TB INCIDENCE AND MORTALITY
+          # TB INCIDENCE AND MORTALITY etc for MODEL FITTING and RESEARCH OUTCOMES
           #print(c(i,TBI[1,],sum(new_I[i1:i2,],new_NI[i1:i2,]),mean(psize[i1:i2])))
           # Yearly average PSIZE, Incidence and mortality
+          ## (1) population size - need for 2010 also???
           PSIZEy[(k-year1+1),1]<-mean(psize[i1:i2]);
+          PSIZEy[(k-year1+1),2]<-mean(psize014[i1:i2,1:15])
+          PSIZEy[(k-year1+1),3]<-mean(psize1554[i1:i2,16:55])
+          PSIZEy[(k-year1+1),4]<-mean(psize5564[i1:i2,56:65])
+          PSIZEy[(k-year1+1),5]<-mean(psize65plus[i1:i2,66:Mnage])
+          PSIZEy[(k-year1+1),6]<-mean(psize1559[i1:i2,16:60])
+          PSIZEy[(k-year1+1),7]<-mean(psize1529[i1:i2,16:30])
+          PSIZEy[(k-year1+1),8]<-mean(psize3044[i1:i2,31:45])
+          PSIZEy[(k-year1+1),9]<-mean(psize4459[i1:i2,45:60])
+          PSIZEy[(k-year1+1),10]<-mean(psize60plus[i1:i2,61:Mnage])
+
+          ## (2) TB incidence rate
+          #where TBI and TBM set up so can add rows for additional TBI estimates???
           TBI[(k-year1+1),1]<-100000*sum(new_I[i1:i2,],new_NI[i1:i2,])/mean(psize[i1:i2])
-          TBI[(k-year1+1),2]<-100000*sum(new_IH[i1:i2,],new_NIH[i1:i2,])/mean(psize[i1:i2])
+          TBI[(k-year1+1),2]<-100000*sum(new_I[i1:i2,1:15],new_NI[i1:i2,1:15])/mean(psize014[i1:i2])
+          TBI[(k-year1+1),3]<-100000*sum(new_I[i1:i2,16:55],new_NI[i1:i2,16:55])/mean(psize1554[i1:i2])
+          TBI[(k-year1+1),4]<-100000*sum(new_I[i1:i2,56:65],new_NI[i1:i2,56:65])/mean(psize5564[i1:i2])
+          TBI[(k-year1+1),5]<-100000*sum(new_I[i1:i2,66:Mnage],new_NI[i1:i2,66:Mnage])/mean(psize65plus[i1:i2])
+          
+          ## (3) TB prevalence rate (need for 2000 and 2010)???
+          TBP[(k-year1+1),1]<-100000*sum(I[i1:i2,],NI[i1:i2,])/mean(psize[i1:i2])
+          TBP[(k-year1+1),2]<-100000*sum(I[i1:i2,1:15],NI[i1:i2,1:15])/mean(psize014[i1:i2])
+          TBP[(k-year1+1),3]<-100000*sum(I[i1:i2,16:30],NI[i1:i2,16:30])/mean(psize1529[i1:i2])
+          TBP[(k-year1+1),4]<-100000*sum(I[i1:i2,31:45],NI[i1:i2,31:45])/mean(psize3044[i1:i2])
+          TBP[(k-year1+1),5]<-100000*sum(I[i1:i2,46:60],NI[i1:i2,46:60])/mean(psize4559[i1:i2])
+          TBP[(k-year1+1),6]<-100000*sum(I[i1:i2,60:Mnage],NI[i1:i2,60:Mnage])/mean(psize60plus[i1:i2])
+          
+          ## (4) TB mortality
           #print(c("IH",sum(new_IH[i,],new_NIH[i,]),TBI[i,2]))
           TBM[(k-year1+1),1]<-100000*sum(TBDeaths[i1:i2,])/mean(psize[i1:i2])
-          TBM[(k-year1+1),2]<-100000*sum(TBDeathsH[i1:i2,])/mean(psize[i1:i2])
+          TBM[(k-year1+1),2]<-100000*sum(TBDeaths[i1:i2,1:15])/mean(psize014[i1:i2])
+          TBM[(k-year1+1),3]<-100000*sum(TBDeaths[i1:i2,16:55])/mean(psize1554[i1:i2])
+          TBM[(k-year1+1),4]<-100000*sum(TBDeaths[i1:i2,56:65])/mean(psize5564[i1:i2])
+          TBM[(k-year1+1),5]<-100000*sum(TBDeaths[i1:i2,66:Mnage])/mean(psize65plus[i1:i2])
+          TBM[(k-year1+1),6]<-100000*sum(TBDeaths[i1:i2,16:60])/mean(psize1559[i1:i2])
+          TBM[(k-year1+1),7]<-100000*sum(TBDeaths[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
+          
+          ## (5) Prevalence of infection - in case get data to fit to. WHAT ABOUT RECOVERDS???
+          TBPI[(k-year1+1),1]<-100000*sum(L[i1:i2,])/mean(psize[i1:i2])
+          TBPI[(k-year1+1),2]<-100000*sum(L[i1:i2,1:15])/mean(psize014[i1:i2])
+          TBPI[(k-year1+1),3]<-100000*sum(L[i1:i2,16:55])/mean(psize1554[i1:i2])
+          TBPI[(k-year1+1),4]<-100000*sum(L[i1:i2,56:65])/mean(psize5564[i1:i2])
+          TBPI[(k-year1+1),5]<-100000*sum(L[i1:i2,66:Mnage])/mean(psize65plus[i1:i2])
+          
+          #### FOR ADDITIONAL RESEARCH OUTCOMES
+          
+          # % of transmission due to the elderly
+          ##worried this wont sum across the right things, as want to sum across the i's cycled through the j's??? Do I need to loop one of them?
+          eldtrans[(k-year1+1)]<- 100* (sum(lambda[i1:i2,66:Mnage] * I[i1:i2,66:Mnage])/(i1-i2)) / (sum(lambda[i1:i2,] * I[i1:i2,])/(i1-i2))
+          
         }
         ####••••••••••••••••• END OF MIDDLE YEAR RUNS
       }
     }
   }
   
-  ## Outputs - in R, allows output to be seen without expressly wanting it
+  ## Outputs - in R, allows output to be seen without expressly wanting it - what is this???
   assign('S',S,envir = .GlobalEnv);assign('L',L,envir = .GlobalEnv);assign('I',I,envir = .GlobalEnv);assign('NI',NI,envir = .GlobalEnv);assign('R',R,envir = .GlobalEnv);assign('new_I',new_I,envir = .GlobalEnv);assign('new_NI',new_NI,envir = .GlobalEnv)
   assign('SH',SH,envir = .GlobalEnv);assign('LH',LH,envir = .GlobalEnv);assign('IH',IH,envir = .GlobalEnv);assign('NIH',NIH,envir = .GlobalEnv);assign('RH',RH,envir = .GlobalEnv);assign('new_IH',new_IH,envir = .GlobalEnv);assign('new_NIH',new_NIH,envir = .GlobalEnv)
   assign('Sv',Sv,envir = .GlobalEnv);assign('Lv',Lv,envir = .GlobalEnv);assign('Rv',Rv,envir = .GlobalEnv);assign('SvH',SvH,envir = .GlobalEnv);assign('LvH',LvH,envir = .GlobalEnv);assign('RvH',RvH,envir = .GlobalEnv);
@@ -428,7 +500,28 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   assign('TBI',TBI,envir=.GlobalEnv);assign('TBM',TBM,envir=.GlobalEnv);assign('TBRx',TBRx,envir=.GlobalEnv);assign('VX',VX,envir=.GlobalEnv);
   assign('Econout',EconOut,envir=.GlobalEnv);assign('Out',Out,envir=.GlobalEnv);assign('hbcout',hbcOut,envir=.GlobalEnv);
   
+  ## CUMULATIVE RESEARCH OUTCOMES
+  totmort<- matrix(0,1,7)
+  colnames(totmort)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+")
+  totmort[,1]<- sum(TBM[,1])
+  totmort[,2]<- sum(TBM[,2])
+  totmort[,3]<- sum(TBM[,3])
+  totmort[,4]<- sum(TBM[,4])
+  totmort[,5]<- sum(TBM[,5])
+  totmort[,6]<- sum(TBM[,6])
+  totmort[,7]<- sum(TBM[,7])
+  
+  totcase<- matrix(0,1,5)
+  colnames(totcase)<-c("All ages","0-14", "15-54", "55-64", "65+")
+  totcase[,1]<- sum(TBI[,1])
+  totcase[,2]<- sum(TBI[,2])
+  totcase[,3]<- sum(TBI[,3])
+  totcase[,4]<- sum(TBI[,4])
+  totcase[,5]<- sum(TBI[,5])
+  
+  
   ## Actual Output required (collected as progressed with model)
+  # need to update this. what does Ana do???
   X<-cbind(psize,rowSums(S),S[,1],TBI[,1],TBI[,2],TBM[,1],TBM[,2],PSIZEy,rowSums(I),rowSums(NI),prevHIV,prevHIV1549,rowSums(L),rowSums(new_I),rowSums(new_NI),rowSums(new_IH),rowSums(new_NI))
   colnames(X)<-c("PSIZE","S","Births","TBI","TBIH","TBM","TBMH","YearPsize","I","NI","PHIV","PHIV1549","L","new_I","new_NI","new_IH","new_NIH")
   X<-data.frame(X)
