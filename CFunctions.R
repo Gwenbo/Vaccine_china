@@ -154,6 +154,10 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       new_I[i,15:Mnage] = lambda[i-1]*padult*fadult*(S[i-1,14:(Mnage-1)] + g*R[i-1,14:(Mnage-1)])*dt + (v + lambda[i-1]*padult*x)*fadult*L[i-1,14:(Mnage-1)]*dt + r*hadult*R[i-1,14:(Mnage-1)]*dt + w*NI[i-1,14:(Mnage-1)]*dt
       new_NI[i,15:Mnage] = lambda[i-1]*padult*(1 - fadult)*(S[i-1,14:(Mnage-1)] + g*R[i-1,14:(Mnage-1)])*dt + (v + lambda[i-1]*padult*x)*(1 - fadult)*L[i-1,14:(Mnage-1)]*dt + r*(1 - hadult)*R[i-1,14:(Mnage-1)]*dt  
       
+      #for use in calc proportion reactiviation vs new. Check the f=*hadult term, what does g= ???
+      new_react[i,15:Mnage]=  g*R[i-1,14:(Mnage-1)])*dt + v*L[i-1,14:(Mnage-1)]*dt + r*R[i-1,14:(Mnage-1)]*dt
+      
+      
       R[i,15:Mnage] = R[i-1,14:(Mnage-1)] + n*(I[i-1,14:(Mnage-1)] + NI[i-1,14:(Mnage-1)])*dt + CDR*CoT*(new_I[i,15:Mnage] + e*new_NI[i,15:Mnage]) - (r + g*lambda[i-1] + u[14:(Mnage-1)] + hiv[14:(Mnage-1)] )*R[i-1,14:(Mnage-1)]*dt 
       I[i,15:Mnage] = I[i-1,14:(Mnage-1)] + (1 - CDR*CoT)*(new_I[i,15:Mnage]) - (n + u[14:(Mnage-1)] + ui + hiv[14:(Mnage-1)])*I[i-1,14:(Mnage-1)]*dt
       NI[i,15:Mnage] = NI[i-1,14:(Mnage-1)] + (1 - CDR*CoT)*(e*new_NI[i,15:Mnage]) - (n + u[14:(Mnage-1)] + uni + w + hiv[14:(Mnage-1)])*NI[i-1,14:(Mnage-1)]*dt                    
