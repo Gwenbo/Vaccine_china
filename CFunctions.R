@@ -281,7 +281,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
         # Calculate that years average
         
         for (i in 1:(length(yrcount)-1)){
-          #gives first and last timestep of a year??? no as first timestep of year runs. so why need???
+          #gives first and last timestep of a year??? no as first timestep of year runs. so why need?????
+          
           i1<-yrcount[i]; i2<-yrcount[i+1]-1
           EconOut[i,"AvAgeD"]=sum(colSums(ADeathsH[i1:i2,]+ADeaths[i1:i2,])*seq(1:Mnage))/sum(ADeathsH[i1:i2,]+ADeaths[i1:i2,])
           EconOut[i,"TBDeaths"]=sum(TBDeaths[i1:i2,]+TBDeathsH[i1:i2,])
