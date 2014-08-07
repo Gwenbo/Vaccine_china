@@ -303,32 +303,27 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
         ####•••••••••••••••••• TB model ••••••••••••••••••
         ## If the time step is not the first of the year 
         
-        S[i,1:14] = S[i-1,1:14] - (u[1:14]+lambda[i-1])*S[i-1,1:14]*dt 
-        L[i,1:14] = L[i-1,1:14] + lambda[i-1]*(1 - pchild)*(S[i-1,1:14] + g*R[i-1,1:14])*dt - (v + lambda[i-1]*pchild*x + u[1:14])*L[i-1,1:14]*dt
+        S[i,1:Mnage] = S[i-1,1:(Mnage)] - (u[1:Mnage]+lambda[i-1])*S[i-1,1:Mnage]*dt
+        L[i,1:Mnage] = L[i-1,1:(Mnage)] + lambda[i-1]*(1 - p[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt - (v + lambda[i-1]*p[1:(Mnage)]*x + u[1:(Mnage)])*L[i-1,1:(Mnage)]*dt 
         
-        new_I[i,1:14] = lambda[i-1]*pchild*fchild*(S[i-1,1:14] + g*R[i-1,1:14])*dt + (v + lambda[i-1]*pchild*x)*fchild*L[i-1,1:14]*dt + r*hchild*R[i-1,1:14]*dt + w*NI[i-1,1:14]*dt
-        new_NI[i,1:14] = lambda[i-1]*pchild*(1 - fchild)*(S[i-1,1:14] + g*R[i-1,1:14])*dt + (v + lambda[i-1]*pchild*x)*(1 - fchild)*L[i-1,1:14]*dt + r*(1 - hchild)*R[i-1,1:14]*dt
+        new_I_react[i,1:Mnage] = v*f[1:(Mnage)]*(L[i-1,1:(Mnage)])*dt + r*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt 
+        new_NI-react[i,1:Mnage] =  v*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
         
-        R[i,1:14] = R[i-1,1:14] + n*(I[i-1,1:14] + NI[i-1,1:14])*dt + CDR*CoT*(new_I[i,1:14] + e*new_NI[i,1:14]) - (r + g*lambda[i-1] + u[1:14])*R[i-1,1:14]*dt
-        I[i,1:14] = I[i-1,1:14] + (1 - CDR*CoT)*(new_I[i,1:14]) - (n + u[1:14] + ui)*I[i-1,1:14]*dt
-        NI[i,1:14] = NI[i-1,1:14] + (1 - CDR*CoT)*(e*new_NI[i,1:14]) - (n + u[1:14] + uni + w)*NI[i-1,1:14]*dt
+        new_I[i,1:Mnage] = lambda[i-1]*p[1:(Mnage)]*f[1:(Mnage)]*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v + lambda[i-1]*p[1:(Mnage)]*x)*f[1:(Mnage)]*L[i-1,1:(Mnage)]*dt + r*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt + w*NI[i-1,1:(Mnage)]*dt
+        new_NI[i,1:Mnage] = lambda[i-1]*p[1:(Mnage)]*(1 - f[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v + lambda[i-1]*p[1:(Mnage)]*x)*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
         
-        S[i,15:Mnage] = S[i-1,15:Mnage] - (u[15:Mnage]+lambda[i-1])*S[i-1,15:Mnage]*dt - hiv[15:Mnage]*S[i-1,15:Mnage]*dt 
-        L[i,15:Mnage] = L[i-1,15:Mnage] + lambda[i-1]*(1 - padult)*(S[i-1,15:Mnage] + g*R[i-1,15:Mnage])*dt - (v + lambda[i-1]*padult*x + u[15:Mnage] + hiv[15:Mnage])*L[i-1,15:Mnage]*dt
+        R[i,1:Mnage] = R[i-1,1:(Mnage)] + n*(I[i-1,1:(Mnage)] + NI[i-1,1:(Mnage)])*dt + CDR*CoT*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage]) - (r + g*lambda[i-1] + u[1:(Mnage)])*R[i-1,1:(Mnage)]*dt 
+        I[i,1:Mnage] = I[i-1,1:(Mnage)] + (1 - CDR*CoT)*(new_I[i,1:Mnage]) - (n + u[1:(Mnage)] + ui)*I[i-1,1:(Mnage)]*dt
+        NI[i,1:Mnage] = NI[i-1,1:(Mnage)] + (1 - CDR*CoT)*(e*new_NI[i,1:Mnage]) - (n + u[1:(Mnage)] + uni + w)*NI[i-1,1:(Mnage)]*dt                    
         
-        new_I[i,15:Mnage] = lambda[i-1]*padult*fadult*(S[i-1,15:Mnage] + g*R[i-1,15:Mnage])*dt + (v + lambda[i-1]*padult*x)*fadult*L[i-1,15:Mnage]*dt + r*hadult*R[i-1,15:Mnage]*dt + w*NI[i-1,15:Mnage]*dt
-        new_NI[i,15:Mnage] = lambda[i-1]*padult*(1 - fadult)*(S[i-1,15:Mnage] + g*R[i-1,15:Mnage])*dt + (v + lambda[i-1]*padult*x)*(1 - fadult)*L[i-1,15:Mnage]*dt + r*(1 - hadult)*R[i-1,15:Mnage]*dt  
-        
-        R[i,15:Mnage] = R[i-1,15:Mnage] + n*(I[i-1,15:Mnage] + NI[i-1,15:Mnage])*dt + CDR*CoT*(new_I[i,15:Mnage] + e*new_NI[i,15:Mnage]) - (r + g*lambda[i-1] + u[15:Mnage] + hiv[15:Mnage])*R[i-1,15:Mnage]*dt 
-        I[i,15:Mnage] = I[i-1,15:Mnage] + (1 - CDR*CoT)*(new_I[i,15:Mnage]) - (n + u[15:Mnage] + ui + hiv[15:Mnage])*I[i-1,15:Mnage]*dt
-        NI[i,15:Mnage] = NI[i-1,15:Mnage] + (1 - CDR*CoT)*(e*new_NI[i,15:Mnage]) - (n + u[15:Mnage] + uni + w + hiv[15:Mnage])*NI[i-1,15:Mnage]*dt                    
+                                
         
         ####•••••••••••••••••••• TB HIV model •••••••••••••••••
         #SH[i,15:Mnage] = SH[i-1,15:Mnage] - (uH[15:Mnage] + lambda[i-1])*SH[i-1,15:Mnage]*dt + hiv[15:Mnage]*S[i-1,15:Mnage]*dt 
         #LH[i,15:Mnage] = LH[i-1,15:Mnage] + lambda[i-1]*(1 - pHA)*(SH[i-1,15:Mnage] + gHA*RH[i-1,15:Mnage])*dt - (vHA + lambda[i-1]*pHA*xHA + uH[15:Mnage])*LH[i-1,15:Mnage]*dt + hiv[15:Mnage]*L[i-1,15:Mnage]*dt 
         
         #new_IH[i,15:Mnage] = lambda[i-1]*pHA*fH*(SH[i-1,15:Mnage] + gHA*RH[i-1,15:Mnage])*dt + (vHA + lambda[i-1]*pHA*xHA)*fH*LH[i-1,15:Mnage]*dt + rHA*hH*RH[i-1,15:Mnage]*dt + w*NIH[i-1,15:Mnage]*dt
-        new_NIH[i,15:Mnage] = lambda[i-1]*pHA*(1 - fH)*(SH[i-1,15:Mnage] + gHA*RH[i-1,15:Mnage])*dt + (vHA + lambda[i-1]*pHA*xHA)*(1 - fH)*LH[i-1,15:Mnage]*dt + rHA*(1 - hH)*RH[i-1,15:Mnage]*dt  
+        #new_NIH[i,15:Mnage] = lambda[i-1]*pHA*(1 - fH)*(SH[i-1,15:Mnage] + gHA*RH[i-1,15:Mnage])*dt + (vHA + lambda[i-1]*pHA*xHA)*(1 - fH)*LH[i-1,15:Mnage]*dt + rHA*(1 - hH)*RH[i-1,15:Mnage]*dt  
         
         #RH[i,15:Mnage] = RH[i-1,15:Mnage] + nH*(IH[i-1,15:Mnage] + NIH[i-1,15:Mnage])*dt + CDRH*CoTH*(new_IH[i-1,15:Mnage] + e*new_NIH[i-1,15:Mnage]) - (rHA + gHA*lambda[i-1] + uH[15:Mnage])*RH[i-1,15:Mnage]*dt + hiv[15:Mnage]*R[i-1,15:Mnage]*dt
         #IH[i,15:Mnage] = IH[i-1,15:Mnage] + (1 - CDRH*CoTH)*(new_IH[i-1,15:Mnage]) - (nH + uH[15:Mnage] + uiHA)*IH[i-1,15:Mnage]*dt + hiv[15:Mnage]*I[i-1,15:Mnage]*dt
@@ -336,16 +331,12 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
         
         #### •••••••••••••••••••• VACCINE AGING •••••••••••••••••••••••••
         
-        Sv[i,1:14] = Sv[i-1,1:14] - (u[1:14])*Sv[i-1,1:14]*dt - lambda[i-1]*(Sv[i-1,1:14])*dt 
-        Lv[i,1:14] = Lv[i-1,1:14] - (u[1:14])*Lv[i-1,1:14]*dt + lambda[i-1]*(Sv[i-1,1:14] + g*Rv[i-1,1:14])*dt 
-        Rv[i,1:14] = Rv[i-1,1:14] - (u[1:14])*Rv[i-1,1:14]*dt - lambda[i-1]*(g*Rv[i-1,1:14])*dt
-        
-        Sv[i,15:Mnage] = Sv[i-1,15:Mnage] - (u[15:Mnage] + hiv[15:Mnage])*Sv[i-1,15:Mnage]*dt - lambda[i-1]*(Sv[i-1,15:Mnage])*dt 
-        Lv[i,15:Mnage] = Lv[i-1,15:Mnage] - (u[15:Mnage] + hiv[15:Mnage])*Lv[i-1,15:Mnage]*dt + lambda[i-1]*(Sv[i-1,15:Mnage] + g*Rv[i-1,15:Mnage])*dt
-        Rv[i,15:Mnage] = Rv[i-1,15:Mnage] - (u[15:Mnage] + hiv[15:Mnage])*Rv[i-1,15:Mnage]*dt - lambda[i-1]*(g*Rv[i-1,15:Mnage])*dt
+        Sv[i,1:Mnage] = Sv[i-1,1:Mnage] - (u[1:Mnage])*Sv[i-1,1:Mnage]*dt - lambda[i-1]*(Sv[i-1,1:Mnage])*dt 
+        Lv[i,1:Mnage] = Lv[i-1,1:Mnage] - (u[1:Mnage])*Lv[i-1,1:Mnage]*dt + lambda[i-1]*(Sv[i-1,1:Mnage] + g*Rv[i-1,1:Mnage])*dt 
+        Rv[i,1:Mnage] = Rv[i-1,1:Mnage] - (u[1:Mnage])*Rv[i-1,1:Mnage]*dt - lambda[i-1]*(g*Rv[i-1,1:Mnage])*dt
         
         #SvH[i,15:Mnage] = SvH[i-1,15:Mnage] + hiv[15:Mnage]*Sv[i-1,15:Mnage]*dt - (uH[15:Mnage])*SvH[i-1,15:Mnage]*dt - lambda[i-1]*(SvH[i-1,15:Mnage])*dt 
-       # LvH[i,15:Mnage] = LvH[i-1,15:Mnage] + hiv[15:Mnage]*Lv[i-1,15:Mnage]*dt - (uH[15:Mnage])*LvH[i-1,15:Mnage]*dt + lambda[i-1]*(SvH[i-1,15:Mnage] + gHA*RvH[i-1,15:Mnage])*dt 
+        #LvH[i,15:Mnage] = LvH[i-1,15:Mnage] + hiv[15:Mnage]*Lv[i-1,15:Mnage]*dt - (uH[15:Mnage])*LvH[i-1,15:Mnage]*dt + lambda[i-1]*(SvH[i-1,15:Mnage] + gHA*RvH[i-1,15:Mnage])*dt 
         #RvH[i,15:Mnage] = RvH[i-1,15:Mnage] + hiv[15:Mnage]*Rv[i-1,15:Mnage]*dt - (uH[15:Mnage])*RvH[i-1,15:Mnage]*dt - lambda[i-1]*(gHA*RvH[i-1,15:Mnage])*dt 
         
         ###•••••••••••••••••• Vaccine coverage and duration ••••••••••••••••
@@ -373,8 +364,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
         #LvH2 = LvH[i,] - LvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*LH[i,]
         #RvH2 = RvH[i,] - RvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*RH[i,]
         
-        S[i,]<-S2;L[i,]<-L2;R[i,]<-R2;       SH[i,]<-SH2;LH[i,]<-LH2;RH[i,]<-RH2;
-        Sv[i,]<-Sv2;Lv[i,]<-Lv2;Rv[i,]<-Rv2; SvH[i,]<-SvH2;LvH[i,]<-LvH2;RvH[i,]<-RvH2;
+        S[i,]<-S2;L[i,]<-L2;R[i,]<-R2;       #SH[i,]<-SH2;LH[i,]<-LH2;RH[i,]<-RH2;
+        Sv[i,]<-Sv2;Lv[i,]<-Lv2;Rv[i,]<-Rv2; #SvH[i,]<-SvH2;LvH[i,]<-LvH2;RvH[i,]<-RvH2;
         
         
         ####•••••••••••••••••• Economic Output ••••••••••••••••••
