@@ -8,6 +8,7 @@ library("plotrix", lib.loc="/Library/Frameworks/R.framework/Versions/2.15/Resour
 # TBDeaths<-TBDeaths[-1,];TBDeathsH<-TBDeathsH[-1,]
 # VX<-VX[-1,];Deaths<-Deaths[-1,];
 # TBRx<-TBRx[-1,];TBI<-TBI[-1,];TBM<-TBM[-1,];
+# change
 
 plot(time,TBI[,1],type='l')
 lines(time,TBI[,2],col='red')
