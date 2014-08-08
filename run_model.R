@@ -3,9 +3,10 @@
 library(plyr)
 
 # Where do you want the model to run? where are the parameters/functions I need to load?
-home<-"~/Users/Rebecca/Documents/PhD/Model_Materials/CEmodel_Rebecca/Vaccine_china" # Could also set up and output folder
+home<-"/Users/Rebecca/Vaccine_china" # Could also set up and output folder
 setwd(home)
 source('#DataGrab.R')
+setwd(home)
 source('CFunctions.R')
 
 # On cluster (C=1) or no (C=0)?
@@ -25,7 +26,7 @@ rrun<-10 # It can be as high as 1000 but just do a few to get a feel and for it 
 xout<-c(); eee<-c(); # Initialise all vectors to be empty
 for (kkk in 1:rrun){
   print(kkk)
-  for (i in 1:length(nm)){assign(nm[i],as.numeric(pout[kkk,i]))} # Assign the parameters to the correct values
+  for (i in 1:length(nm)){assign(nm[i],as.numeric(para[kkk,i]))} # Assign the parameters to the correct values
   neta2<-neta # this parameter needs extra assigning for some annoying reason! 
   
   # Run the model with these parameters  

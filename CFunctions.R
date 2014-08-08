@@ -11,8 +11,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   # Plot <- whether to plot or not (1 = yes)
   
   # C is the cluster parameter -> C==0 if on laptop
-  if (C == 0){setwd("/Users/londonschool/Documents/My\ Documents/Vaccine/CEmodel/")}
-  if (C == 1){setwd("/users/eidegkni/Documents/vaccine")}
+  #if (C == 0){setwd("/Users/londonschool/Documents/My\ Documents/Vaccine/CEmodel/")}
+  #if (C == 1){setwd("/users/eidegkni/Documents/vaccine")}
   
   # Paranames in Fit and InitV
   FitV<-c('psz1900','rmort','neta','rmortTB','CDRscale','alpha')
@@ -130,7 +130,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       i = ((1/dt)*(k-year1)+1) # Time zero is first row
       start <- 1 # whether first ts of year. All year dependent parameters must be last years.
       # FIT: Takes in the neta defined as an input
-      lambda[i-1] <- (1-exp(-(neta) * z * ((sum(I[i-1,],IH[i-1,]))/(psize[i-1]))))
+      lambda[i-1] <- (1-exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
       
       ####•••••••••••••••••• TB model ••••••••••••••••••
       # Age 1, first time step of the year, all births occur
@@ -235,7 +235,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       ## Death markers
       # Number of TB deaths in HIV-, in HIV+, all form HIV deaths
       TBDeaths[i,]=dt*((ui)*I[i-1,]+(uni)*NI[i-1,]);
-      TBDeathsH[i,]=dt*(uiHA*IH[i-1,]+(uniHA)*NIH[i-1,]);
+      #TBDeathsH[i,]=dt*(uiHA*IH[i-1,]+(uniHA)*NIH[i-1,]);
       #AllDeathsH[i,]=dt*((uH+uiHA)*IH[i-1,]+(uH+uniHA)*NIH[i-1,]);
       
       # Age deaths HIV-, HIV+
@@ -243,15 +243,15 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       #ADeathsH[i,]=dt*(uH*SH[i-1,]+uH*LH[i-1,]+(uH+uiHA)*IH[i-1,]+(uH+uniHA)*NIH[i-1,]+uH*RH[i-1,]+u*SvH[i-1,]+u*LvH[i-1,]+u*RvH[i-1,])
       
       # Deaths matrix holds all death indices
-      # Columns: Number deaths HIV-, av. age HIV death, number HIV+ deaths, av age HIV+ death, av. age death
+      # Columns: Number deaths HIV-, av. age death, number HIV+ deaths, av age HIV+ death, av. age death
       Deaths[i,1]=sum(ADeaths[i,]);   Deaths[i,2]=sum(ADeaths[i,]*seq(1:Mnage))/sum(ADeaths[i,])
-      Deaths[i,3]=sum(ADeathsH[i,]);  Deaths[i,4]=sum(ADeathsH[i,]*seq(1:Mnage))/sum(ADeathsH[i,])
-      Deaths[i,5]=sum((ADeathsH[i,]+ADeaths[i,])*seq(1:Mnage))/sum(ADeathsH[i,]+ADeaths[i,])
+      #Deaths[i,3]=sum(ADeathsH[i,]);  Deaths[i,4]=sum(ADeathsH[i,]*seq(1:Mnage))/sum(ADeathsH[i,])
+      #Deaths[i,5]=sum((ADeathsH[i,]+ADeaths[i,])*seq(1:Mnage))/sum(ADeathsH[i,]+ADeaths[i,])
       
       ## NUMBER ON TREATMENT & NUMBER SUCCESSFULLY TREATED
       # TBRx columns: HIV- detected, successfully treated, HIV+ detected, successfully treated
       TBRx[i,1]=CDR*(sum(new_I[i-1,])+e*sum(new_NI[i-1,]));    TBRx[i,2]=CDR*(CoT)*(sum(new_I[i-1,])+e*sum(new_NI[i-1,]))
-      TBRx[i,3]=CDRH*(sum(new_IH[i-1,])+e*sum(new_NIH[i-1,]));  TBRx[i,4]=CDRH*(CoTH)*(sum(new_IH[i-1,])+e*sum(new_NI[i-1,]))
+      #TBRx[i,3]=CDRH*(sum(new_IH[i-1,])+e*sum(new_NIH[i-1,]));  TBRx[i,4]=CDRH*(CoTH)*(sum(new_IH[i-1,])+e*sum(new_NI[i-1,]))
       
       if (i==length(seq(year1,yearend,dt))){ # LAST TIME STEP
         # First is for whole population, second for HIV positives only... 
@@ -279,7 +279,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
           EconOut[i,"AvAgeD"]=sum(colSums(ADeathsH[i1:i2,]+ADeaths[i1:i2,])*seq(1:Mnage))/sum(ADeathsH[i1:i2,]+ADeaths[i1:i2,])
           EconOut[i,"TBDeaths"]=sum(TBDeaths[i1:i2,]+TBDeathsH[i1:i2,])
           EconOut[i,"HIV-cases"]=sum(new_I[i1:i2,]+new_NI[i1:i2,])
-          EconOut[i,"HIV+cases"]=sum(new_IH[i1:i2,]+new_NIH[i1:i2,])
+         # EconOut[i,"HIV+cases"]=sum(new_IH[i1:i2,]+new_NIH[i1:i2,])
           EconOut[i,"VaccDTP3"]=sum(VX[i1:i2,1])
           EconOut[i,"Vacc10"]=sum(VX[i1:i2,2])
           EconOut[i,"VaccMass"]=sum(VX[i1:i2,3])
@@ -287,9 +287,9 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
           
           hbcOut[i,"Psize"] = mean(psize[i1:i2])
           hbcOut[i,"negcases"] = sum(new_I[i1:i2,]+new_NI[i1:i2,])
-          hbcOut[i,"poscases"] = sum(new_IH[i1:i2,]+new_NIH[i1:i2,])
+          #hbcOut[i,"poscases"] = sum(new_IH[i1:i2,]+new_NIH[i1:i2,])
           hbcOut[i,"negdeaths"] =sum(TBDeaths[i1:i2,])
-          hbcOut[i,"posdeaths"] = sum(TBDeathsH[i1:i2,])
+          #hbcOut[i,"posdeaths"] = sum(TBDeathsH[i1:i2,])
         }
       } 
     } ####•••••••••••••••••• END OF START OF YEAR RUNS
@@ -298,7 +298,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     if (k < yearend){ 
       for (i in (2+(1/dt)*(k-year1)):((1/dt)*(k-year1)+1/dt)){
         start <- 0 # Not the start of the year
-        lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,],IH[i-1,]))/(psize[i-1]))))
+        lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
         
         ####•••••••••••••••••• TB model ••••••••••••••••••
         ## If the time step is not the first of the year 
@@ -477,7 +477,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   
   ## Outputs - in R, allows output to be seen without expressly wanting it - what is this??? comment out? 
   assign('S',S,envir = .GlobalEnv);assign('L',L,envir = .GlobalEnv);assign('I',I,envir = .GlobalEnv);assign('NI',NI,envir = .GlobalEnv);assign('R',R,envir = .GlobalEnv);assign('new_I',new_I,envir = .GlobalEnv);assign('new_NI',new_NI,envir = .GlobalEnv)
-  assign('SH',SH,envir = .GlobalEnv);assign('LH',LH,envir = .GlobalEnv);assign('IH',IH,envir = .GlobalEnv);assign('NIH',NIH,envir = .GlobalEnv);assign('RH',RH,envir = .GlobalEnv);assign('new_IH',new_IH,envir = .GlobalEnv);assign('new_NIH',new_NIH,envir = .GlobalEnv)
+  assign('SH',SH,envir = .GlobalEnv);assign('LH',LH,envir = .GlobalEnv);#assign('IH',IH,envir = .GlobalEnv);assign('NIH',NIH,envir = .GlobalEnv);assign('RH',RH,envir = .GlobalEnv);assign('new_IH',new_IH,envir = .GlobalEnv);assign('new_NIH',new_NIH,envir = .GlobalEnv)
   assign('Sv',Sv,envir = .GlobalEnv);assign('Lv',Lv,envir = .GlobalEnv);assign('Rv',Rv,envir = .GlobalEnv);assign('SvH',SvH,envir = .GlobalEnv);assign('LvH',LvH,envir = .GlobalEnv);assign('RvH',RvH,envir = .GlobalEnv);
   assign('lambda',lambda,envir=.GlobalEnv);assign('theta',theta,envir=.GlobalEnv);assign('d',d,envir=.GlobalEnv);
   assign('TBDeaths',TBDeaths,envir=.GlobalEnv);assign('TBDeathsH',TBDeathsH,envir=.GlobalEnv);
@@ -504,10 +504,16 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   totcase[,5]<- sum(TBI[,5])
   
   
+  colnames(TBI)<-c("All ages","0-14", "15-54", "55-64", "65+")
+  colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+")
+  colnames(TBP)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+")
+  colnames(TBPI)<-c("All ages","0-14", "15-54", "55-64", "65+")
+  colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+")
+  
   ## Actual Output required (collected as progressed with model)
   # need to update this. what does Ana do???
-  X<-cbind(psize,rowSums(S),S[,1],TBI[,1],TBI[,2],TBM[,1],TBM[,2],PSIZEy,rowSums(I),rowSums(NI),prevHIV,prevHIV1549,rowSums(L),rowSums(new_I),rowSums(new_NI),rowSums(new_IH),rowSums(new_NI))
-  colnames(X)<-c("PSIZE","S","Births","TBI","TBIH","TBM","TBMH","YearPsize","I","NI","PHIV","PHIV1549","L","new_I","new_NI","new_IH","new_NIH")
+  X<-cbind(psize,rowSums(S),S[,1],rowSums(I),rowSums(NI),rowSums(L),rowSums(new_I),rowSums(new_NI),rowSums(new_I_react),rowSums(new_NI_react), TBI[,1],TBI[,2], TBI[,3], TBI[,4], TBI[,5], TBM[,1],TBM[,2],TBM[,3], TBM[,4], TBM[,5], TBM[,6], TBM[,7],TBP[,1],TBP[,2],TBP[,3], TBP[,4], TBP[,5], TBP[,6],TBPI[,1],TBPI[,2],TBPI[,3], TBPI[,4], TBPI[,5], PSIZEy[1],PSIZEy[2], PSIZEy[3], PSIZEy[4], PSIZEy[5], PSIZEy[6], PSIZEy[7], PSIZEy[8], PSIZEy[9], PSIZEy[10])
+  colnames(X)<-c("PSIZE","S","Births","I","NI","L","new_I","new_NI","new_I_react","new_NI_react", "TBItot","TBI0-14","TBI15-54","TBI55-64","TBI65+","TBMtot","TBM0-14", "TBM15-54", "TBM55-64", "TBM65+", "TBM15-59", "TBM60+","TBPtot","TBP0-14", "TBP15-29", "TBP30-44", "TBP45-59", "TBP60+", "TBPItot","TBPI0-14", "TBPI15-54", "TBPI55-64", "TBPI65+", "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+")
   X<-data.frame(X)
   # To show
   Ana<-matrix(0,1,6);Ana[1:2]<-Popsize[1:2,cntry];Ana[3]<-as.numeric(TBIm[cntry]);Ana[4]<-as.numeric(TBMm[cntry]);Ana[5]<-as.numeric(TBIHIVm[cntry]);Ana[6]<-as.numeric(TBMHIVm[cntry]);

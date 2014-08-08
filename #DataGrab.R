@@ -1,14 +1,14 @@
 ## Grabs the needed parameters from data files and does initial manipulation (of ART coverage etc)
 
 ## Needs to be the address of the data file
-input<-"~/Documents/My Documents/Vaccine/CEmodel_Rebecca/"
+input<-"/Users/Rebecca/Vaccine_china/Data"
 setwd(input)
 
 ## ******* READ IN DATA
 ## Read in data from csv files (Stored in Data folder)
 # (header for names, check.names stops X appearing)
 suppressWarnings(library('gdata')) ## For drop.levels function
-setwd("Data")
+#setwd("Data")
 
 # Country lists (all, 22HBC, income groups)
 countries <- as.matrix(read.csv('CountryList_22HBC.csv',check.names=F))     ## change this to actual list later
