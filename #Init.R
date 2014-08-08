@@ -5,25 +5,28 @@ times<-seq(year1,yearend,dt)
 steps<-length(times)
 
 # Susceptible, Susceptible with HIV
-S<-matrix(0,steps,Mnage); SH<-matrix(0,steps,Mnage)
+S<-matrix(0,steps,Mnage); #SH<-matrix(0,steps,Mnage)
 # Latent, Latent with HIV
-L<-matrix(0,steps,Mnage);  LH<-matrix(0,steps,Mnage)
+L<-matrix(0,steps,Mnage);  #LH<-matrix(0,steps,Mnage)
 # Infectious, Infectious with HIV
-I<-matrix(0,steps,Mnage);  IH<-matrix(0,steps,Mnage)
+I<-matrix(0,steps,Mnage);  #IH<-matrix(0,steps,Mnage)
 # Non-Infectious, Non-Infectious with HIV
-NI<-matrix(0,steps,Mnage);  NIH<-matrix(0,steps,Mnage)
+NI<-matrix(0,steps,Mnage);  #NIH<-matrix(0,steps,Mnage)
 # Recovered, Recovered, Recovered with HIV
-R<-matrix(0,steps,Mnage);  RH<-matrix(0,steps,Mnage)
+R<-matrix(0,steps,Mnage);  #RH<-matrix(0,steps,Mnage)
 # New Infectious, New Infectious with HIV
-new_I<-matrix(0,steps,Mnage); new_IH<-matrix(0,steps,Mnage); 
+new_I<-matrix(0,steps,Mnage); #new_IH<-matrix(0,steps,Mnage); 
 # New non-Infectious, New non-Infectious with HIV
-new_NI<-matrix(0,steps,Mnage); new_NIH<-matrix(0,steps,Mnage);
+new_NI<-matrix(0,steps,Mnage); #new_NIH<-matrix(0,steps,Mnage);
+#new reactivation Infectious/non infectious
+new_I_react<-matrix(0,steps,Mnage)
+new_NI_react<-matrix(0,steps,Mnage)
 # Prevelance of HIV for checking
-prevHIV<-matrix(0,steps,1);prevHIV1549<-matrix(0,steps,1);
+#prevHIV<-matrix(0,steps,1);prevHIV1549<-matrix(0,steps,1);
 
 # Vaccine matrices: Susceptible, Latent, Recovered and vaccinated. And then with HIV
 Sv<-matrix(0,steps,Mnage); Lv<-matrix(0,steps,Mnage);Rv<-matrix(0,steps,Mnage);
-SvH<-matrix(0,steps,Mnage);LvH<-matrix(0,steps,Mnage);RvH<-matrix(0,steps,Mnage);
+#SvH<-matrix(0,steps,Mnage);LvH<-matrix(0,steps,Mnage);RvH<-matrix(0,steps,Mnage);
 
 ## Initialising depends on fit...  (Maybe change this...)
 if (run==1){
@@ -43,7 +46,7 @@ if (run==1){
 
 # Population size
 psize<-matrix(0,steps,1);
-psize[1]<-sum(S[1,],L[1,],R[1,],I[1,],NI[1,],SH[1,],LH[1,],RH[1,],IH[1,],NIH[1,],Sv[1,],Lv[1,],Rv[1,],SvH[1,],LvH[1,],RvH[1,])
+psize[1]<-sum(S[1,],L[1,],R[1,],I[1,],NI[1,],Sv[1,],Lv[1,],Rv[1,])
 # Number of births
 birthsnum<-matrix(0,steps,1); bv<-c();
 # FOI
@@ -57,4 +60,23 @@ TBDeaths<-matrix(0,steps,Mnage);TBDeathsH<-matrix(0,steps,Mnage);AllDeathsH<-mat
 # Number vaccinated
 VX<--matrix(0,steps,3);
 # Number of TB treatments, TB Incidence, TB mortality, ?
-TBRx<--matrix(0,steps,4);TBI<-matrix(0,steps,2);TBM<-matrix(0,steps,2);PSIZEy<-matrix(0,steps,1);
+TBRx<--matrix(0,steps,2);
+TBI<-matrix(0,steps,5);
+TBM<-matrix(0,steps,7);
+TBP<-matrix(0,steps,6)
+TBPI<-matrix(0,steps,5)
+PSIZEy<-matrix(0,steps,10);
+
+colnames(TBI)<-c("All ages","0-14", "15-54", "55-64", "65+")
+colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+")
+colnames(TBP)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+")
+colnames(TBPI)<-c("All ages","0-14", "15-54", "55-64", "65+")
+colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+")
+
+
+#cumulative cases and deaths
+totmort<- matrix(0,1,7)
+colnames(totmort)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+")
+
+totcase<- matrix(0,1,5)
+colnames(totcase)<-c("All ages","0-14", "15-54", "55-64", "65+")
