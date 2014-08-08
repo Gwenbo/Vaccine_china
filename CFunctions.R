@@ -142,7 +142,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       L[i,2:Mnage] = L[i-1,1:(Mnage-1)] + lambda[i-1]*(1 - p[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt - (v + lambda[i-1]*p[1:(Mnage-1)]*x + u[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt 
 
       new_I_react[i,2:Mnage] = v*f[1:(Mnage-1)]*(L[i-1,1:(Mnage-1)])*dt + r*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt 
-      new_NI-react[i,2:Mnage] =  v*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
+      new_NI_react[i,2:Mnage] =  v*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
       
       new_I[i,2:Mnage] = lambda[i-1]*p[1:(Mnage-1)]*f[1:(Mnage-1)]*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v + lambda[i-1]*p[1:(Mnage-1)]*x)*f[1:(Mnage-1)]*L[i-1,1:(Mnage-1)]*dt + r*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt + w*NI[i-1,1:(Mnage-1)]*dt
       new_NI[i,2:Mnage] = lambda[i-1]*p[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v + lambda[i-1]*p[1:(Mnage-1)]*x)*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
@@ -307,7 +307,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
         L[i,1:Mnage] = L[i-1,1:(Mnage)] + lambda[i-1]*(1 - p[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt - (v + lambda[i-1]*p[1:(Mnage)]*x + u[1:(Mnage)])*L[i-1,1:(Mnage)]*dt 
         
         new_I_react[i,1:Mnage] = v*f[1:(Mnage)]*(L[i-1,1:(Mnage)])*dt + r*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt 
-        new_NI-react[i,1:Mnage] =  v*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
+        new_NI_react[i,1:Mnage] =  v*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
         
         new_I[i,1:Mnage] = lambda[i-1]*p[1:(Mnage)]*f[1:(Mnage)]*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v + lambda[i-1]*p[1:(Mnage)]*x)*f[1:(Mnage)]*L[i-1,1:(Mnage)]*dt + r*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt + w*NI[i-1,1:(Mnage)]*dt
         new_NI[i,1:Mnage] = lambda[i-1]*p[1:(Mnage)]*(1 - f[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v + lambda[i-1]*p[1:(Mnage)]*x)*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
@@ -444,7 +444,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
           TBP[(k-year1+1),3]<-100000*sum(I[i1:i2,16:30],NI[i1:i2,16:30])/mean(psize1529[i1:i2])
           TBP[(k-year1+1),4]<-100000*sum(I[i1:i2,31:45],NI[i1:i2,31:45])/mean(psize3044[i1:i2])
           TBP[(k-year1+1),5]<-100000*sum(I[i1:i2,46:60],NI[i1:i2,46:60])/mean(psize4559[i1:i2])
-          TBP[(k-year1+1),6]<-100000*sum(I[i1:i2,60:Mnage],NI[i1:i2,60:Mnage])/mean(psize60plus[i1:i2])
+          TBP[(k-year1+1),6]<-100000*sum(I[i1:i2,61:Mnage],NI[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
           
           ## (4) TB mortality
           #print(c("IH",sum(new_IH[i,],new_NIH[i,]),TBI[i,2]))

@@ -3,7 +3,7 @@
 library(plyr)
 
 # Where do you want the model to run? where are the parameters/functions I need to load?
-home<-"~/Documents/My Documents/Vaccine/CEmodel_Rebecca/" # Could also set up and output folder
+home<-"~/Users/Rebecca/Documents/PhD/Model_Materials/CEmodel_Rebecca/Vaccine_china" # Could also set up and output folder
 setwd(home)
 source('#DataGrab.R')
 source('CFunctions.R')
