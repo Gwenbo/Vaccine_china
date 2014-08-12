@@ -19,10 +19,11 @@ countries_UMIC <- as.matrix(read.csv('CountryList_UMIC.csv',check.names=F))[,1] 
 
 # Births, mortality, contact number, Popsize in 2009 and 2050, Pop structure in 2009, in 2050
 births <- drop.levels(read.csv('Births.csv',header=TRUE,check.names=F,stringsAsFactors = FALSE))      # countries as column titles, number of contacts/life expectancy/
-mortm<-read.csv('MortAge.csv',header=TRUE,check.names=F) # Columns = countries, rows = mortality rate per age... But by 5 year gaps... 
+#mortm<-read.csv('MortAge.csv',header=TRUE,check.names=F) # Columns = countries, rows = mortality rate per age... But by 5 year gaps... 
+mortage<-read.csv('LEtables.csv',header=TRUE,check.names=F) # Columns = countries, rows = mortality rate per age... But by 5 year gaps... 
 sing <- suppressWarnings(read.csv('Singular.csv',header=TRUE,check.names=F))      # countries as column titles, number of contacts(neta) 
 M<-suppressWarnings(read.csv('Outputdata.csv',header=TRUE,check.names=F))[,-1]
-Popsize <- suppressWarnings(read.csv('PSize(0950).csv',header=TRUE,check.names=F))      # countries as column titles, Population size in 2009, 2050 sep rows
+Popsize <- suppressWarnings(read.csv('PSize(0950).csv',header=TRUE,check.names=F))      # countries as column titles, Population size in 2010, 2050 sep rows
 pstruc <- suppressWarnings(read.csv('AgeStruc09.csv',header=TRUE,check.names=F))      # countries as column titles, Rows are ages
 pstruc50 <- suppressWarnings(drop.levels(read.csv('AgeStruc50.csv',header=TRUE,check.names=F)))      # countries as column titles, Rows are ages. For checking
 # Case detection, treatment success, natural history parameters, ranges for previous
@@ -45,60 +46,60 @@ dalydata<- as.matrix(drop.levels(read.csv('Dalydata_22HBC.csv',header=TRUE,check
 
 # Get HIVnegative incidence for those countries of interest
 # TBIm above is for TB mortality in both HIV+ and HIV-s
-TBI2<-c();
-for (i in 1:length(countries)){
-  TBI2 <- c(TBI2,TBIm[countries[i]]-TBIHIVm[countries[i]])
-}
-names(TBI2)<-countries
-TBIm<-TBI2
+# TBI2<-c();
+# for (i in 1:length(countries)){
+#   TBI2 <- c(TBI2,TBIm[countries[i]]-TBIHIVm[countries[i]])
+# }
+# names(TBI2)<-countries
+# TBIm<-TBI2
 
-## Calculate ART coverage - sigmoidal increase 2009-2025 then stable. (a + b/(1+e(+/-)t))
-artm<-matrix(0,length(countries),(2050-2009+1))
-for (i in 1:length(countries)){
-  # Grab the data for that country
-  hh<-HIVdata[,countries[i]] # HIV incidence in 15-49yos, ART 2009, ART 2025
-  art2009<-hh[2]; art2025<-hh[3];
-  # Assign start and amount to increase
-  a<-art2009;  b<-art2025-art2009;
-  for (j in 1:(2025-2009+1)){
-    # Calculate curve
-    artm[i,j]<-a + b/(1+ 1.1*exp(-0.8*(j-7)))^(2) 
-  }
-  # Assign later values to the constant from 2025
-  artm[i,(2026-2009+1):(2050-2009+1)]<-artm[i,(2025-2009+1)]
-}
-rownames(artm)<-countries
+# ## Calculate ART coverage - sigmoidal increase 2009-2025 then stable. (a + b/(1+e(+/-)t))
+# artm<-matrix(0,length(countries),(2050-2009+1))
+# for (i in 1:length(countries)){
+#   # Grab the data for that country
+#   hh<-HIVdata[,countries[i]] # HIV incidence in 15-49yos, ART 2009, ART 2025
+#   art2009<-hh[2]; art2025<-hh[3];
+#   # Assign start and amount to increase
+#   a<-art2009;  b<-art2025-art2009;
+#   for (j in 1:(2025-2009+1)){
+#     # Calculate curve
+#     artm[i,j]<-a + b/(1+ 1.1*exp(-0.8*(j-7)))^(2) 
+#   }
+#   # Assign later values to the constant from 2025
+#   artm[i,(2026-2009+1):(2050-2009+1)]<-artm[i,(2025-2009+1)]
+# }
+# rownames(artm)<-countries
 
 # Calculate Case detection rate increase (sigmoidal as above)
-cdrm<-matrix(0,length(countries),(2050-2009+1))
+cdrm<-matrix(0,length(countries),(2050-2010+1))
 for (i in 1:length(countries)){
-  hh<-cdrv[,countries[i]] # HIV incidence in 15-49yos, cdr 2009, cdr 2025
-  cdr2009<-hh[1]; cdr2025<-hh[2];
-  a<-cdr2009;b<-cdr2025-cdr2009;
-  for (j in 1:(2025-2009+1)){
+  hh<-cdrv[,countries[i]] # HIV incidence in 15-49yos, cdr 2010, cdr 2025
+  cdr2010<-hh[1]; cdr2025<-hh[2];
+  a<-cdr2010;b<-cdr2025-cdr2010;
+  for (j in 1:(2025-2010+1)){
     cdrm[i,j]<-a + b/(1+ 1.1*exp(-0.8*(j-7)))^(2) 
   }
-  cdrm[i,(2026-2009+1):(2050-2009+1)]<-cdrm[i,(2025-2009+1)]
+  cdrm[i,(2026-2010+1):(2050-2010+1)]<-cdrm[i,(2025-2010+1)]
 }
 cdrm<-cdrm/100
 rownames(cdrm)<-countries
 
 # Treatment success (sigmoidal increase as above)
-suctm<-matrix(0,length(countries),(2050-2009+1))
+suctm<-matrix(0,length(countries),(2050-2010+1))
 for (i in 1:length(countries)){
-  hh<-suctv[,countries[i]] # HIV incidence in 15-49yos, cdr 2009, cdr 2025
-  cdr2009<-hh[1]; cdr2025<-hh[2];
-  a<-cdr2009;  b<-cdr2025-cdr2009;
-  for (j in 1:(2025-2009+1)){
+  hh<-suctv[,countries[i]] # HIV incidence in 15-49yos, cdr 2010, cdr 2025
+  cdr2010<-hh[1]; cdr2025<-hh[2];
+  a<-cdr2010;  b<-cdr2025-cdr2010;
+  for (j in 1:(2025-2010+1)){
     suctm[i,j]<-a + b/(1+ 1.1*exp(-0.8*(j-7)))^(2) 
   }
-  suctm[i,(2026-2009+1):(2050-2009+1)]<-suctm[i,(2025-2009+1)]
+  suctm[i,(2026-2010+1):(2050-2010+1)]<-suctm[i,(2025-2010+1)]
 }
 rownames(suctm)<-countries
 
 ## AGES - how wide are the age classes? 
 widthage <- 1    ## Take individual age classes
-mm <- 85         # Maximum age 
+mm <- 101         # Maximum age 
 Mnage <- ceiling(mm/widthage) # Number of age classes for matrix
 
 ## ********* PARAMETERS
@@ -109,7 +110,7 @@ for (i in 1:length(para[,1])){assign(para[i,1],as.numeric(para[i,2]))}
 setwd(input)
 
 # plot ART, cdr and suct increase
-# plot(0,0,xlim=c(2009,2050),ylim=c(0,1),xlab="Years",ylab="ART coverage (proportion)")
+# plot(0,0,xlim=c(2010,2050),ylim=c(0,1),xlab="Years",ylab="ART coverage (proportion)")
 # for (i in 1:length(countries)){
 #   lines(seq(2009,2050,1),artm[i,])
 #   points(c(2009,2025),c(art2009,art2025),pch=4)

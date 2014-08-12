@@ -4,6 +4,7 @@
 times<-seq(year1,yearend,dt)
 steps<-length(times)
 
+
 # Susceptible, Susceptible with HIV
 S<-matrix(0,steps,Mnage); #SH<-matrix(0,steps,Mnage)
 # Latent, Latent with HIV
@@ -45,8 +46,33 @@ if (run==1){
 }
 
 # Population size
-psize<-matrix(0,steps,1);
+psize<-matrix(0,steps,1)
+psize014<-matrix(0,steps,1)
+psize1554<-matrix(0,steps,1)
+psize5564<-matrix(0,steps,1)
+psize65plus<-matrix(0,steps,1)
+psize1559<-matrix(0,steps,1)
+psize1529<-matrix(0,steps,1)
+psize3044<-matrix(0,steps,1)
+psize4559<-matrix(0,steps,1)
+psize60plus<-matrix(0,steps,1)
+
+#filling in first time step as is usually calculated at later tme steps of the year
 psize[1]<-sum(S[1,],L[1,],R[1,],I[1,],NI[1,],Sv[1,],Lv[1,],Rv[1,])
+psize014[1]<-sum(S[1,1:15],L[1,1:15],R[1,1:15],I[1,1:15],NI[1,1:15],Sv[1,1:15],Lv[1,1:15],Rv[1,1:15])
+psize1554[1]<-sum(S[1,16:55],L[1,16:55],R[1,16:55],I[1,16:55],NI[1,16:55],Sv[1,16:55],Lv[1,16:55],Rv[1,16:55])
+psize5564[1]<-sum(S[1,56:65],L[1,56:65],R[1,56:65],I[1,56:65],NI[1,56:65],Sv[1,56:65],Lv[1,56:65],Rv[1,56:65])
+psize65plus[1]<-sum(S[1,66:Mnage],L[1,66:Mnage],R[1,66:Mnage],I[1,66:Mnage],NI[1,66:Mnage],Sv[1,66:Mnage],Lv[1,66:Mnage],Rv[1,66:Mnage])
+
+psize1559[1]<-sum(S[1,16:60],L[1,16:60],R[1,16:60],I[1,16:60],NI[1,16:60],Sv[1,16:60],Lv[1,16:60],Rv[1,16:60])
+psize1529[1]<-sum(S[1,16:30],L[1,16:30],R[1,16:30],I[1,16:30],NI[1,16:30],Sv[1,16:30],Lv[1,16:30],Rv[1,16:30])
+psize3044[1]<-sum(S[1,31:45],L[1,31:45],R[1,31:45],I[1,31:45],NI[1,31:45],Sv[1,31:45],Lv[1,31:45],Rv[1,31:45])
+psize4559[1]<-sum(S[1,46:60],L[1,46:60],R[1,46:60],I[1,46:60],NI[1,46:60],Sv[1,46:60],Lv[1,46:60],Rv[1,46:60])
+psize60plus[1]<-sum(S[1,61:Mnage],L[1,61:Mnage],R[1,61:Mnage],I[1,61:Mnage],NI[1,61:Mnage],Sv[1,61:Mnage],Lv[1,61:Mnage],Rv[1,61:Mnage])
+
+
+
+
 # Number of births
 birthsnum<-matrix(0,steps,1); bv<-c();
 # FOI
@@ -60,6 +86,7 @@ TBDeaths<-matrix(0,steps,Mnage);TBDeathsH<-matrix(0,steps,Mnage);AllDeathsH<-mat
 # Number vaccinated
 VX<--matrix(0,steps,3);
 # Number of TB treatments, TB Incidence, TB mortality, ?
+
 TBRx<--matrix(0,steps,2);
 TBI<-matrix(0,steps,5);
 TBM<-matrix(0,steps,7);

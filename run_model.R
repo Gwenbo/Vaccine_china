@@ -31,113 +31,123 @@ for (kkk in 1:rrun){
   
   # Run the model with these parameters  
   Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)  
-  EOn<-Econout;h10<-hbcout
+  #EOn<-Econout;h10<-hbcout
   # save in big df for plot - original one
-  eee<-cbind(hbcout,kkk); colnames(eee)<-c(colnames(hbcout),"fit");
-  eee<-data.frame(eee)
-  newo<-ddply(eee,.(Year,fit),summarise,psize=Psize,tbi=100000*(negcases)/Psize,tbm=100000*(negdeaths)/Psize,tbih=100000*(poscases)/Psize,tbmh=100000*(posdeaths)/Psize)
-  xout<-rbind(xout,newo)
+  #eee<-cbind(hbcout,kkk); colnames(eee)<-c(colnames(hbcout),"fit");
+  #eee<-data.frame(eee)
+  #newo<-ddply(eee,.(Year,fit),summarise,psize=Psize,tbi=100000*(negcases)/Psize,tbm=100000*(negdeaths)/Psize,tbih=100000*(poscases)/Psize,tbmh=100000*(posdeaths)/Psize)
+  #newo<-ddply(eee,.(Year,fit),summarise,psize=Psize,tbi=100000*(negcases)/Psize,tbm=100000*(negdeaths)/Psize,tbih=100000*(poscases)/Psize,tbmh=100000*(posdeaths)/Psize)
+  #xout<-rbind(xout,newo)
 }
 
-# Convert to data.frame and only want 1980 onwards
-xout<-data.frame(xout)
-neww<-xout[which(xout[,"Year"]>1980),]
 
-## Plot data - required packages
-library(ggplot2);theme_set(theme_bw())
-library(plyr);library(gridExtra)
+## PLOTS TEMP REPLACE GWENS
 
-#### DATA - what it was fitted to 
+
+# #### DATA - what it was fitted to 
 Ana<-M[7:12,cntry]
 AnaLimo<-cbind(M[1:6,cntry],M[13:18,cntry])
 AnaLim<-AnaLimo
 
-# Need to convert HIV range to 5x larger 
-if(cntry=="Afghanistan"){lower<-0}else{lower<-0.01}
-AnaLim[5,1] = max(lower,Ana[5] - (Ana[5]-AnaLim[5,1])*5)
-AnaLim[6,1] = max(lower,Ana[6] - (Ana[6]-AnaLim[6,1])*5)
-AnaLim[5:6,2] = Ana[5:6] + (AnaLim[5:6,2]-Ana[5:6])*5
-
-
-# ****************** Plot median 
-### Get median and ranges
-meds <- ddply(neww, .(Year), summarise, min_ps=min(psize),med_ps = median(psize),max_ps=max(psize),min_tbi=min(tbi),
-              med_tbi = median(tbi),max_tbi=max(tbi), 
-              min_tbm=min(tbm),med_tbm = median(tbm),max_tbm=max(tbm),
-              min_tbih=min(tbih),med_tbih = median(tbih),max_tbih=max(tbih),
-              min_tbmh=min(tbmh),med_tbmh = median(tbmh),max_tbmh=max(tbmh))
-
-setwd(home);setwd("Output/A.output")
-write.csv(meds,paste(cntry,"_median&range.csv",sep=''))
-
-## Plot
-setwd(home);setwd("Output/A.plots")
-gg <- ggplot(meds, aes(x=Year)) + scale_y_continuous("Population size") + scale_x_continuous("Year")
-gg <- gg + geom_ribbon(aes(ymin=min_ps, ymax=max_ps),fill='grey') + geom_line(aes(y=med_ps)) + theme(legend.position="none")
-gg <- gg + geom_errorbar(aes(x=2009, ymin=AnaLim[1,1], ymax=AnaLim[1,2]),width=1,col='red')+ geom_point(x=2009,y=Ana[1],pch=4,col='red',size=2.5) 
-gg <- gg + geom_errorbar(aes(x=2049, ymin=AnaLim[2,1], ymax=AnaLim[2,2]),width=5,col='red')+ geom_point(x=2049,y=Ana[2],pch=4,col='red',size=2.5) 
-ggsave(paste(cntry,"_tbps_med.pdf",sep=''))
-h <- ggplot(meds, aes(x=Year)) + scale_y_continuous("TB Incidence \n (cases per 100,000)") + scale_x_continuous("Year")
-h <- h + geom_ribbon(aes(ymin=min_tbi, ymax=max_tbi),fill='grey') + geom_line(aes(y=med_tbi)) + theme(legend.position="none")
-h <- h + geom_errorbar(aes(x=2009, ymin=AnaLim[3,1], ymax=AnaLim[3,2]),width=1,col='red')+ geom_point(x=2009,y=Ana[3],pch=4,col='red',size=2.5) 
-ggsave(paste(cntry,"_tbi_med.pdf",sep=''))
-hh <- ggplot(meds, aes(x=Year)) + scale_y_continuous("TB Mortality \n (deaths per 100,000)") + scale_x_continuous("Year")
-hh <- hh + geom_ribbon(aes(ymin=min_tbm, ymax=max_tbm),fill='grey') + geom_line(aes(y=med_tbm))+ theme(legend.position="none")
-hh <- hh + geom_errorbar(aes(x=2009, ymin=AnaLim[4,1], ymax=AnaLim[4,2]),width=1,col='red')+ geom_point(x=2009,y=Ana[4],pch=4,col='red',size=2.5) 
-ggsave(paste(cntry,"_tbm_med.pdf",sep=''))
-hhh <- ggplot(meds, aes(x=Year)) + scale_y_continuous("TB Incidence in HIV+ \n (cases per 100,000)") + scale_x_continuous("Year")
-hhh <- hhh + geom_ribbon(aes(ymin=min_tbih, ymax=max_tbih),fill='grey') + geom_line(aes(y=med_tbih))+ theme(legend.position="none")
-hhh <- hhh + geom_errorbar(aes(x=2009, ymin=AnaLim[5,1], ymax=AnaLim[5,2]),width=1,col='red')+ geom_point(x=2009,y=Ana[5],pch=4,col='red',size=2.5) 
-ggsave(paste(cntry,"_tbih_med.pdf",sep=''))
-hg <- ggplot(meds, aes(x=Year)) + scale_y_continuous("TB Mortality in HIV+ \n (deaths per 100,000)") + scale_x_continuous("Year")
-hg <- hg + geom_ribbon(aes(ymin=min_tbmh, ymax=max_tbmh),fill='grey') + geom_line(aes(y=med_tbmh))+ theme(legend.position="none")
-hg <- hg + geom_errorbar(aes(x=2009, ymin=AnaLim[6,1], ymax=AnaLim[6,2]),width=1,col='red')+ geom_point(x=2009,y=Ana[6],pch=4,col='red',size=2.5) 
-ggsave(paste(cntry,"_tbmh_med.pdf",sep=''))
-
-# Structure with psize row1, hiv- row2, hiv+ row3
-blankPanel<-grid.rect(gp=gpar(col="white")) 
-pdf(paste(cntry,"cloud_all.pdf"))
-grid.arrange(gg,blankPanel,h,hh,hhh,hg,ncol=2)    
-dev.off() 
-
-# Figure 1 plot
-blankPanel<-grid.rect(gp=gpar(col="white")) 
-pdf(paste(cntry,"cloud_3.pdf"),width=10,height=4)
-grid.arrange(gg,h,hh,ncol=3)
-dev.off() 
-
-## FOLLOWING MAY NOT WORK IF >1000....
-# *************** Plot fits to one pdf
-pp1<-ggplot(neww,aes(x=Year,y=psize,colour=factor(fit)))+geom_line(size=1)+scale_x_continuous("Years",lim=c(1980,2050))
-pp<- pp1 + scale_y_continuous("Population size",lim=c(0,max(neww[,'psize'],AnaLim[1:2,]))) + theme(legend.position="none")
-pp<- pp + geom_errorbar(aes(x=2009, ymin=AnaLim[1,1], ymax=AnaLim[1,2]),width=1,col='red')+ geom_point(x=2009,y=Ana[1],pch=4,col='red',size=2.5) 
-pp<- pp + geom_errorbar(aes(x=2049, ymin=AnaLim[2,1], ymax=AnaLim[2,2]),width=5,col='red')+ geom_point(x=2049,y=Ana[2],pch=4,col='red',size=2.5) 
-
-qq1<-ggplot(neww,aes(x=Year,y=tbi,colour=factor(fit)))+geom_line(size=1)+scale_x_continuous("Years",lim=c(1980,2050))
-qq<- qq1 + scale_y_continuous("TB Incidence",lim=c(0,max(neww[,'tbi'],AnaLim[3,]))) + geom_point(x=2009,y=Ana[3],pch=4,col='red',size=2.5) 
-qq11<- qq + geom_errorbar(aes(x=2009, ymin=AnaLim[3,1], ymax=AnaLim[3,2]),width=5,col='red')+ theme(legend.position="none")
-
-qq1<-ggplot(neww,aes(x=Year,y=tbm,colour=factor(fit)))+geom_line(size=1)+scale_x_continuous("Years",lim=c(1980,2050))
-qq<- qq1 + scale_y_continuous("TB Mortality",lim=c(0,max(neww[,'tbm'],AnaLim[4,]))) + geom_point(x=2009,y=Ana[4],pch=4,col='red',size=2.5) 
-qq2<- qq + geom_errorbar(aes(x=2009, ymin=AnaLim[4,1], ymax=AnaLim[4,2]),width=5,col='red')+ theme(legend.position="none")
-
-qq1<-ggplot(neww,aes(x=Year,y=tbih,colour=factor(fit)))+geom_line(size=1)+scale_x_continuous("Years",lim=c(1980,2050))
-qq<- qq1 + scale_y_continuous("TB Incidence in HIV+",lim=c(0,max(neww[,'tbih'],AnaLim[5,]))) + geom_point(x=2009,y=Ana[5],pch=4,col='red',size=2.5) 
-qq3<- qq + geom_errorbar(aes(x=2009, ymin=AnaLim[5,1], ymax=AnaLim[5,2]),width=5,col='red')+ theme(legend.position="none")
-
-qq1<-ggplot(neww,aes(x=Year,y=tbmh,colour=factor(fit)))+geom_line(size=1)+scale_x_continuous("Years",lim=c(1980,2050))
-qq<- qq1 + scale_y_continuous("TB Mortality in HIV+",lim=c(0,max(neww[,'tbmh'],AnaLim[6,]))) + geom_point(x=2009,y=Ana[6],pch=4,col='red',size=2.5) 
-qq4<- qq + geom_errorbar(aes(x=2009, ymin=AnaLim[6,1], ymax=AnaLim[6,2]),width=5,col='red')+ theme(legend.position="none")
-
-# Structure with psize row1, hiv- row2, hiv+ row3
-blankPanel<-grid.rect(gp=gpar(col="white")) 
-# save in plots folder
-setwd(home);setwd("Output/A.plots")
-pdf(paste(cntry,"fits.pdf"))
-grid.arrange(pp,blankPanel,qq11,qq2,qq3,qq4, ncol=2)
-dev.off()
-
-
+# # Convert to data.frame and only want 1980 onwards
+# #xout<-data.frame(xout)
+# neww<-xout[which(xout[,"Year"]>1980),]
+# 
+# ## Plot data - required packages
+# library(ggplot2);theme_set(theme_bw())
+# library(plyr);library(gridExtra)
+# 
+# #### DATA - what it was fitted to 
+# Ana<-M[7:12,cntry]
+# AnaLimo<-cbind(M[1:6,cntry],M[13:18,cntry])
+# AnaLim<-AnaLimo
+# 
+# # Need to convert HIV range to 5x larger 
+# if(cntry=="Afghanistan"){lower<-0}else{lower<-0.01}
+# AnaLim[5,1] = max(lower,Ana[5] - (Ana[5]-AnaLim[5,1])*5)
+# AnaLim[6,1] = max(lower,Ana[6] - (Ana[6]-AnaLim[6,1])*5)
+# AnaLim[5:6,2] = Ana[5:6] + (AnaLim[5:6,2]-Ana[5:6])*5
+# 
+# 
+# # ****************** Plot median 
+# ### Get median and ranges
+# meds <- ddply(neww, .(Year), summarise, min_ps=min(psize),med_ps = median(psize),max_ps=max(psize),min_tbi=min(tbi),
+#               med_tbi = median(tbi),max_tbi=max(tbi), 
+#               min_tbm=min(tbm),med_tbm = median(tbm),max_tbm=max(tbm),
+#               min_tbih=min(tbih),med_tbih = median(tbih),max_tbih=max(tbih),
+#               min_tbmh=min(tbmh),med_tbmh = median(tbmh),max_tbmh=max(tbmh))
+# 
+# setwd(home);setwd("Output/A.output")
+# write.csv(meds,paste(cntry,"_median&range.csv",sep=''))
+# 
+# ## Plot
+# setwd(home);setwd("Output/A.plots")
+# gg <- ggplot(meds, aes(x=Year)) + scale_y_continuous("Population size") + scale_x_continuous("Year")
+# gg <- gg + geom_ribbon(aes(ymin=min_ps, ymax=max_ps),fill='grey') + geom_line(aes(y=med_ps)) + theme(legend.position="none")
+# gg <- gg + geom_errorbar(aes(x=2009, ymin=AnaLim[1,1], ymax=AnaLim[1,2]),width=1,col='red')+ geom_point(x=2009,y=Ana[1],pch=4,col='red',size=2.5) 
+# gg <- gg + geom_errorbar(aes(x=2049, ymin=AnaLim[2,1], ymax=AnaLim[2,2]),width=5,col='red')+ geom_point(x=2049,y=Ana[2],pch=4,col='red',size=2.5) 
+# ggsave(paste(cntry,"_tbps_med.pdf",sep=''))
+# h <- ggplot(meds, aes(x=Year)) + scale_y_continuous("TB Incidence \n (cases per 100,000)") + scale_x_continuous("Year")
+# h <- h + geom_ribbon(aes(ymin=min_tbi, ymax=max_tbi),fill='grey') + geom_line(aes(y=med_tbi)) + theme(legend.position="none")
+# h <- h + geom_errorbar(aes(x=2009, ymin=AnaLim[3,1], ymax=AnaLim[3,2]),width=1,col='red')+ geom_point(x=2009,y=Ana[3],pch=4,col='red',size=2.5) 
+# ggsave(paste(cntry,"_tbi_med.pdf",sep=''))
+# hh <- ggplot(meds, aes(x=Year)) + scale_y_continuous("TB Mortality \n (deaths per 100,000)") + scale_x_continuous("Year")
+# hh <- hh + geom_ribbon(aes(ymin=min_tbm, ymax=max_tbm),fill='grey') + geom_line(aes(y=med_tbm))+ theme(legend.position="none")
+# hh <- hh + geom_errorbar(aes(x=2009, ymin=AnaLim[4,1], ymax=AnaLim[4,2]),width=1,col='red')+ geom_point(x=2009,y=Ana[4],pch=4,col='red',size=2.5) 
+# ggsave(paste(cntry,"_tbm_med.pdf",sep=''))
+# hhh <- ggplot(meds, aes(x=Year)) + scale_y_continuous("TB Incidence in HIV+ \n (cases per 100,000)") + scale_x_continuous("Year")
+# hhh <- hhh + geom_ribbon(aes(ymin=min_tbih, ymax=max_tbih),fill='grey') + geom_line(aes(y=med_tbih))+ theme(legend.position="none")
+# hhh <- hhh + geom_errorbar(aes(x=2009, ymin=AnaLim[5,1], ymax=AnaLim[5,2]),width=1,col='red')+ geom_point(x=2009,y=Ana[5],pch=4,col='red',size=2.5) 
+# ggsave(paste(cntry,"_tbih_med.pdf",sep=''))
+# hg <- ggplot(meds, aes(x=Year)) + scale_y_continuous("TB Mortality in HIV+ \n (deaths per 100,000)") + scale_x_continuous("Year")
+# hg <- hg + geom_ribbon(aes(ymin=min_tbmh, ymax=max_tbmh),fill='grey') + geom_line(aes(y=med_tbmh))+ theme(legend.position="none")
+# hg <- hg + geom_errorbar(aes(x=2009, ymin=AnaLim[6,1], ymax=AnaLim[6,2]),width=1,col='red')+ geom_point(x=2009,y=Ana[6],pch=4,col='red',size=2.5) 
+# ggsave(paste(cntry,"_tbmh_med.pdf",sep=''))
+# 
+# # Structure with psize row1, hiv- row2, hiv+ row3
+# blankPanel<-grid.rect(gp=gpar(col="white")) 
+# pdf(paste(cntry,"cloud_all.pdf"))
+# grid.arrange(gg,blankPanel,h,hh,hhh,hg,ncol=2)    
+# dev.off() 
+# 
+# # Figure 1 plot
+# blankPanel<-grid.rect(gp=gpar(col="white")) 
+# pdf(paste(cntry,"cloud_3.pdf"),width=10,height=4)
+# grid.arrange(gg,h,hh,ncol=3)
+# dev.off() 
+# 
+# ## FOLLOWING MAY NOT WORK IF >1000....
+# # *************** Plot fits to one pdf
+# pp1<-ggplot(neww,aes(x=Year,y=psize,colour=factor(fit)))+geom_line(size=1)+scale_x_continuous("Years",lim=c(1980,2050))
+# pp<- pp1 + scale_y_continuous("Population size",lim=c(0,max(neww[,'psize'],AnaLim[1:2,]))) + theme(legend.position="none")
+# pp<- pp + geom_errorbar(aes(x=2009, ymin=AnaLim[1,1], ymax=AnaLim[1,2]),width=1,col='red')+ geom_point(x=2009,y=Ana[1],pch=4,col='red',size=2.5) 
+# pp<- pp + geom_errorbar(aes(x=2049, ymin=AnaLim[2,1], ymax=AnaLim[2,2]),width=5,col='red')+ geom_point(x=2049,y=Ana[2],pch=4,col='red',size=2.5) 
+# 
+# qq1<-ggplot(neww,aes(x=Year,y=tbi,colour=factor(fit)))+geom_line(size=1)+scale_x_continuous("Years",lim=c(1980,2050))
+# qq<- qq1 + scale_y_continuous("TB Incidence",lim=c(0,max(neww[,'tbi'],AnaLim[3,]))) + geom_point(x=2009,y=Ana[3],pch=4,col='red',size=2.5) 
+# qq11<- qq + geom_errorbar(aes(x=2009, ymin=AnaLim[3,1], ymax=AnaLim[3,2]),width=5,col='red')+ theme(legend.position="none")
+# 
+# qq1<-ggplot(neww,aes(x=Year,y=tbm,colour=factor(fit)))+geom_line(size=1)+scale_x_continuous("Years",lim=c(1980,2050))
+# qq<- qq1 + scale_y_continuous("TB Mortality",lim=c(0,max(neww[,'tbm'],AnaLim[4,]))) + geom_point(x=2009,y=Ana[4],pch=4,col='red',size=2.5) 
+# qq2<- qq + geom_errorbar(aes(x=2009, ymin=AnaLim[4,1], ymax=AnaLim[4,2]),width=5,col='red')+ theme(legend.position="none")
+# 
+# qq1<-ggplot(neww,aes(x=Year,y=tbih,colour=factor(fit)))+geom_line(size=1)+scale_x_continuous("Years",lim=c(1980,2050))
+# qq<- qq1 + scale_y_continuous("TB Incidence in HIV+",lim=c(0,max(neww[,'tbih'],AnaLim[5,]))) + geom_point(x=2009,y=Ana[5],pch=4,col='red',size=2.5) 
+# qq3<- qq + geom_errorbar(aes(x=2009, ymin=AnaLim[5,1], ymax=AnaLim[5,2]),width=5,col='red')+ theme(legend.position="none")
+# 
+# qq1<-ggplot(neww,aes(x=Year,y=tbmh,colour=factor(fit)))+geom_line(size=1)+scale_x_continuous("Years",lim=c(1980,2050))
+# qq<- qq1 + scale_y_continuous("TB Mortality in HIV+",lim=c(0,max(neww[,'tbmh'],AnaLim[6,]))) + geom_point(x=2009,y=Ana[6],pch=4,col='red',size=2.5) 
+# qq4<- qq + geom_errorbar(aes(x=2009, ymin=AnaLim[6,1], ymax=AnaLim[6,2]),width=5,col='red')+ theme(legend.position="none")
+# 
+# # Structure with psize row1, hiv- row2, hiv+ row3
+# blankPanel<-grid.rect(gp=gpar(col="white")) 
+# # save in plots folder
+# setwd(home);setwd("Output/A.plots")
+# pdf(paste(cntry,"fits.pdf"))
+# grid.arrange(pp,blankPanel,qq11,qq2,qq3,qq4, ncol=2)
+# dev.off()
+# 
+# 
 ######******************************************* Run vaccine scenarios
 
 ## Vaccine interventions

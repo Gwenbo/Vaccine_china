@@ -6,8 +6,8 @@ probt <- 0.1
 neta <- sing[1,cntry]
 
 ## ********* AGE specific mortality ** SHOULD PROBABLY BE DONE IN DATA •• now done in data
-mort<-mortage
-colnames(mort)<-c('year',seq(0,100,1))
+mort<-as.matrix(mortage)
+#colnames(mort)<-c('year',seq(0,100,1))
   
 #times<-seq(2009,2050,1)
 #mort<-matrix(0,length(times),85)
@@ -39,7 +39,7 @@ bb <- births[,cntry]
 cdr<-cdrm[cntry,];cdrH<-cdr;suctt<-suctm[cntry,];sucttH<-suctt;
 #cdr<-matrix(0.42,1,42);cdrH<-cdr;suctt<-matrix(0.84,1,42);sucttH<-suctt;
 ## *********** INITIAL population structure 
-ps<-pstruc[1:85,cntry] ## Remove those in the pstruc over the age of 85.... 
+ps<-pstruc[1:101,cntry] ## Remove those in the pstruc over the age of 85.... ## keep up to 100
 
 ## ********* HIV and ART 
 #hivI1<-HIVdata[1,cntry] # HIV incidence in 15-49yos
