@@ -91,9 +91,9 @@ points(seq(1990,2050),TBM[91:151,7],type='l',col='green')
 points(yrplot2010c,mortality2010)
 
 # #### DATA - what it was fitted to 
-Ana<-M[7:12,cntry]
-AnaLimo<-cbind(M[1:6,cntry],M[13:18,cntry])
-AnaLim<-AnaLimo
+# Ana<-M[7:12,cntry]
+# AnaLimo<-cbind(M[1:6,cntry],M[13:18,cntry])
+# AnaLim<-AnaLimo
 
 # # Convert to data.frame and only want 1980 onwards
 # #xout<-data.frame(xout)
