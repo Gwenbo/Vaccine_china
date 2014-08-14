@@ -88,7 +88,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     if (rmort < 0) {u<-as.vector(rmort*(mort[1+yr-2010,2:102]) + mort[1+yr-2010,2:102])#;names(u)<-NULL;#print(c("neg","u",u,"rmort",rmort)) 
     } else {u<-as.vector(rmort*(1-(mort[1+yr-2010,2:102])) + mort[1+yr-2010,2:102])#;names(u)<-NULL;#print(c("u",u,"rmort",rmort))
     }
-    is.vector(u)
+    #is.vector(u)
     #u<-mort[1+yr-2010,2:102]
     print("u")
     #print(u)
@@ -577,7 +577,7 @@ print("done assign")
   ## Actual Output required (collected as progressed with model)
   # need to update this. what does Ana do???
   X<-cbind(psize,rowSums(S),S[,1],rowSums(I),rowSums(NI),rowSums(L),rowSums(new_I),rowSums(new_NI),rowSums(new_I_react),rowSums(new_NI_react), TBI[,1],TBI[,2], TBI[,3], TBI[,4], TBI[,5], TBM[,1],TBM[,2],TBM[,3], TBM[,4], TBM[,5], TBM[,6], TBM[,7],TBP[,1],TBP[,2],TBP[,3], TBP[,4], TBP[,5], TBP[,6],TBPI[,1],TBPI[,2],TBPI[,3], TBPI[,4], TBPI[,5], PSIZEy[,1],PSIZEy[,2], PSIZEy[,3], PSIZEy[,4], PSIZEy[,5], PSIZEy[,6], PSIZEy[,7], PSIZEy[,8], PSIZEy[,9], PSIZEy[,10])
-  colnames(X)<-c("PSIZE","S","Births","I","NI","L","new_I","new_NI","new_I_react","new_NI_react", "TBItot","TBI0-14","TBI15-54","TBI55-64","TBI65+","TBMtot","TBM0-14", "TBM15-54", "TBM55-64", "TBM65+", "TBM15-59", "TBM60+","TBPtot","TBP0-14", "TBP15-29", "TBP30-44", "TBP45-59", "TBP60+", "TBPItot","TBPI0-14", "TBPI15-54", "TBPI55-64", "TBPI65+", "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+")
+  colnames(X)<-c("PSIZE",,"S","Births","I","NI","L","new_I","new_NI","new_I_react","new_NI_react", "TBItot","TBI0-14","TBI15-54","TBI55-64","TBI65+","TBMtot","TBM0-14", "TBM15-54", "TBM55-64", "TBM65+", "TBM15-59", "TBM60+","TBPtot","TBP0-14", "TBP15-29", "TBP30-44", "TBP45-59", "TBP60+", "TBPItot","TBPI0-14", "TBPI15-54", "TBPI55-64", "TBPI65+", "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+")
   print("X")
 #X<-data.frame(X)
   # To show
