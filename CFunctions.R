@@ -153,8 +153,11 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       i = ((1/dt)*(k-year1)+1) # Time zero is first row
       start <- 1 # whether first ts of year. All year dependent parameters must be last years.
       # FIT: Takes in the neta defined as an input
-      lambda[i-1] <- (1-exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
-      
+      print("pre-start lambda")
+      #lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
+      #1-exp turns rate->probability
+      lambda[i-1,1:Mnage] <- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[i-1,1:4])/(psizematrix[i-1,1:4]))))))
+                      
       print("post-start lambda")
       ####•••••••••••••••••• TB model ••••••••••••••••••
       # Age 1, first time step of the year, all births occur
@@ -162,16 +165,16 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       j = 1; S[i,j]<-B #B is set by year by lines BIRTHS above    
       
       
-      S[i,2:Mnage] = S[i-1,1:(Mnage-1)] - (u[1:Mnage-1]+lambda[i-1])*S[i-1,1:(Mnage-1)]*dt 
-      L[i,2:Mnage] = L[i-1,1:(Mnage-1)] + lambda[i-1]*(1 - p[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt - (v + lambda[i-1]*p[1:(Mnage-1)]*x + u[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt 
+      S[i,2:Mnage] = S[i-1,1:(Mnage-1)] - (u[1:Mnage-1]+lambda[i-1,1:(Mnage-1)])*S[i-1,1:(Mnage-1)]*dt 
+      L[i,2:Mnage] = L[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*(1 - p[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt - (v + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x + u[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt 
 
       new_I_react[i,2:Mnage] = v*f[1:(Mnage-1)]*(L[i-1,1:(Mnage-1)])*dt + r*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt 
       new_NI_react[i,2:Mnage] =  v*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
       
-      new_I[i,2:Mnage] = lambda[i-1]*p[1:(Mnage-1)]*f[1:(Mnage-1)]*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v + lambda[i-1]*p[1:(Mnage-1)]*x)*f[1:(Mnage-1)]*L[i-1,1:(Mnage-1)]*dt + r*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt + w*NI[i-1,1:(Mnage-1)]*dt
-      new_NI[i,2:Mnage] = lambda[i-1]*p[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v + lambda[i-1]*p[1:(Mnage-1)]*x)*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
+      new_I[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*f[1:(Mnage-1)]*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*f[1:(Mnage-1)]*L[i-1,1:(Mnage-1)]*dt + r*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt + w*NI[i-1,1:(Mnage-1)]*dt
+      new_NI[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
       
-      R[i,2:Mnage] = R[i-1,1:(Mnage-1)] + n*(I[i-1,1:(Mnage-1)] + NI[i-1,1:(Mnage-1)])*dt + CDR*CoT*(new_I[i,2:Mnage] + e*new_NI[i,2:Mnage]) - (r + g*lambda[i-1] + u[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt 
+      R[i,2:Mnage] = R[i-1,1:(Mnage-1)] + n*(I[i-1,1:(Mnage-1)] + NI[i-1,1:(Mnage-1)])*dt + CDR*CoT*(new_I[i,2:Mnage] + e*new_NI[i,2:Mnage]) - (r + g*lambda[i-1,1:(Mnage-1)] + u[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt 
       I[i,2:Mnage] = I[i-1,1:(Mnage-1)] + (1 - CDR*CoT)*(new_I[i,2:Mnage]) - (n + u[1:(Mnage-1)] + ui)*I[i-1,1:(Mnage-1)]*dt
       NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + (1 - CDR*CoT)*(e*new_NI[i,2:Mnage]) - (n + u[1:(Mnage-1)] + uni + w)*NI[i-1,1:(Mnage-1)]*dt                    
       
@@ -181,13 +184,13 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       
       ####•••••••••••••••••••• TB HIV model •••••••••••••••••
       
-      #SH[i,15:Mnage] = SH[i-1,14:(Mnage-1)] - (uH[14:(Mnage-1)] + lambda[i-1])*SH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*S[i-1,14:(Mnage-1)]*dt 
-      #LH[i,15:Mnage] = LH[i-1,14:(Mnage-1)] + lambda[i-1]*(1 - pHA)*(SH[i-1,14:(Mnage-1)] + gHA*RH[i-1,14:(Mnage-1)])*dt - (vHA + lambda[i-1]*pHA*xHA + uH[14:(Mnage-1)])*LH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*L[i-1,14:(Mnage-1)]*dt 
+      #SH[i,15:Mnage] = SH[i-1,14:(Mnage-1)] - (uH[14:(Mnage-1)] + lambda[i-1,1:Mnage])*SH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*S[i-1,14:(Mnage-1)]*dt 
+      #LH[i,15:Mnage] = LH[i-1,14:(Mnage-1)] + lambda[i-1,1:Mnage]*(1 - pHA)*(SH[i-1,14:(Mnage-1)] + gHA*RH[i-1,14:(Mnage-1)])*dt - (vHA + lambda[i-1,1:Mnage]*pHA*xHA + uH[14:(Mnage-1)])*LH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*L[i-1,14:(Mnage-1)]*dt 
       
-      #new_IH[i,15:Mnage] = lambda[i-1]*pHA*fH*(SH[i-1,14:(Mnage-1)] + gHA*RH[i-1,14:(Mnage-1)])*dt + (vHA + lambda[i-1]*pHA*xHA)*fH*LH[i-1,14:(Mnage-1)]*dt + rHA*hH*RH[i-1,14:(Mnage-1)]*dt + w*NIH[i-1,14:(Mnage-1)]*dt
-      #new_NIH[i,15:Mnage] = lambda[i-1]*pHA*(1 - fH)*(SH[i-1,14:(Mnage-1)] + gHA*RH[i-1,14:(Mnage-1)])*dt + (vHA + lambda[i-1]*pHA*xHA)*(1 - fH)*LH[i-1,14:(Mnage-1)]*dt + rHA*(1 - hH)*RH[i-1,14:(Mnage-1)]*dt  
+      #new_IH[i,15:Mnage] = lambda[i-1,1:Mnage]*pHA*fH*(SH[i-1,14:(Mnage-1)] + gHA*RH[i-1,14:(Mnage-1)])*dt + (vHA + lambda[i-1,1:Mnage]*pHA*xHA)*fH*LH[i-1,14:(Mnage-1)]*dt + rHA*hH*RH[i-1,14:(Mnage-1)]*dt + w*NIH[i-1,14:(Mnage-1)]*dt
+      #new_NIH[i,15:Mnage] = lambda[i-1,1:Mnage]*pHA*(1 - fH)*(SH[i-1,14:(Mnage-1)] + gHA*RH[i-1,14:(Mnage-1)])*dt + (vHA + lambda[i-1,1:Mnage]*pHA*xHA)*(1 - fH)*LH[i-1,14:(Mnage-1)]*dt + rHA*(1 - hH)*RH[i-1,14:(Mnage-1)]*dt  
       
-      #RH[i,15:Mnage] = RH[i-1,14:(Mnage-1)] + nH*(IH[i-1,14:(Mnage-1)] + NIH[i-1,14:(Mnage-1)])*dt + CDRH*CoTH*(new_IH[i-1,14:(Mnage-1)] + e*new_NIH[i-1,14:(Mnage-1)]) - (rHA + gHA*lambda[i-1] + uH[14:(Mnage-1)])*RH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*R[i-1,14:(Mnage-1)]*dt
+      #RH[i,15:Mnage] = RH[i-1,14:(Mnage-1)] + nH*(IH[i-1,14:(Mnage-1)] + NIH[i-1,14:(Mnage-1)])*dt + CDRH*CoTH*(new_IH[i-1,14:(Mnage-1)] + e*new_NIH[i-1,14:(Mnage-1)]) - (rHA + gHA*lambda[i-1,1:Mnage] + uH[14:(Mnage-1)])*RH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*R[i-1,14:(Mnage-1)]*dt
       #IH[i,15:Mnage] = IH[i-1,14:(Mnage-1)] + (1 - CDRH*CoTH)*(new_IH[i-1,14:(Mnage-1)]) - (nH + uH[14:(Mnage-1)] + uiHA)*IH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*I[i-1,14:(Mnage-1)]*dt
       #NIH[i,15:Mnage] = NIH[i-1,14:(Mnage-1)] + (1 - CDRH*CoTH)*(e*new_NIH[i-1,14:(Mnage-1)]) - (nH + uH[14:(Mnage-1)] + uniHA + w)*NIH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*NI[i-1,14:(Mnage-1)]*dt                
       
@@ -195,13 +198,13 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       ## Others have aged so need these to be reset to zero
       Sv[i,1] = 0;Lv[i,1] = 0;Rv[i,1] = 0; #SvH[i,1] = 0;LvH[i,1] = 0;RvH[i,1] = 0;
       
-      Sv[i,2:Mnage] = Sv[i-1,1:(Mnage-1)] - (u[1:(Mnage-1)] + lambda[i-1])*Sv[i-1,1:(Mnage-1)]*dt
-      Lv[i,2:Mnage] = Lv[i-1,1:(Mnage-1)] - (u[1:(Mnage-1)])*Lv[i-1,1:(Mnage-1)]*dt + lambda[i-1]*(Sv[i-1,1:(Mnage-1)] + g*Rv[i-1,1:(Mnage-1)])*dt
-      Rv[i,2:Mnage] = Rv[i-1,1:(Mnage-1)] - (u[1:(Mnage-1)] + lambda[i-1]*g)*Rv[i-1,1:(Mnage-1)]*dt
+      Sv[i,2:Mnage] = Sv[i-1,1:(Mnage-1)] - (u[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)])*Sv[i-1,1:(Mnage-1)]*dt
+      Lv[i,2:Mnage] = Lv[i-1,1:(Mnage-1)] - (u[1:(Mnage-1)])*Lv[i-1,1:(Mnage-1)]*dt + lambda[i-1,1:(Mnage-1)]*(Sv[i-1,1:(Mnage-1)] + g*Rv[i-1,1:(Mnage-1)])*dt
+      Rv[i,2:Mnage] = Rv[i-1,1:(Mnage-1)] - (u[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*g)*Rv[i-1,1:(Mnage-1)]*dt
       
-      #SvH[i,15:Mnage] = SvH[i-1,14:(Mnage-1)] + hiv[14:(Mnage-1)]*Sv[i-1,14:(Mnage-1)]*dt - (uH[14:(Mnage-1)])*SvH[i-1,14:(Mnage-1)]*dt - lambda[i-1]*(SvH[i-1,14:(Mnage-1)])*dt
-      #LvH[i,15:Mnage] = LvH[i-1,14:(Mnage-1)] + hiv[14:(Mnage-1)]*Lv[i-1,14:(Mnage-1)]*dt - (uH[14:(Mnage-1)])*LvH[i-1,14:(Mnage-1)]*dt + lambda[i-1]*(SvH[i-1,14:(Mnage-1)] + gHA*RvH[i-1,14:(Mnage-1)])*dt
-      #RvH[i,15:Mnage] = RvH[i-1,14:(Mnage-1)] + hiv[14:(Mnage-1)]*Rv[i-1,14:(Mnage-1)]*dt - (uH[14:(Mnage-1)])*RvH[i-1,14:(Mnage-1)]*dt - lambda[i-1]*(gHA*RvH[i-1,14:(Mnage-1)])*dt          
+      #SvH[i,15:Mnage] = SvH[i-1,14:(Mnage-1)] + hiv[14:(Mnage-1)]*Sv[i-1,14:(Mnage-1)]*dt - (uH[14:(Mnage-1)])*SvH[i-1,14:(Mnage-1)]*dt - lambda[i-1,1:Mnage]*(SvH[i-1,14:(Mnage-1)])*dt
+      #LvH[i,15:Mnage] = LvH[i-1,14:(Mnage-1)] + hiv[14:(Mnage-1)]*Lv[i-1,14:(Mnage-1)]*dt - (uH[14:(Mnage-1)])*LvH[i-1,14:(Mnage-1)]*dt + lambda[i-1,1:Mnage]*(SvH[i-1,14:(Mnage-1)] + gHA*RvH[i-1,14:(Mnage-1)])*dt
+      #RvH[i,15:Mnage] = RvH[i-1,14:(Mnage-1)] + hiv[14:(Mnage-1)]*Rv[i-1,14:(Mnage-1)]*dt - (uH[14:(Mnage-1)])*RvH[i-1,14:(Mnage-1)]*dt - lambda[i-1,1:Mnage]*(gHA*RvH[i-1,14:(Mnage-1)])*dt          
       
       ###•••••••••••••••••• Vaccine coverage and duration ••••••••••••••••
       # NUMBER OF VACCINES (column 1=infant, 2=10yos, 3=mass)
@@ -247,6 +250,16 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       psize3044[i]<-sum(S[i,31:45],L[i,31:45],R[i,31:45],I[i,31:45],NI[i,31:45],Sv[i,31:45],Lv[i,31:45],Rv[i,31:45])
       psize4559[i]<-sum(S[i,46:60],L[i,46:60],R[i,46:60],I[i,46:60],NI[i,46:60],Sv[i,46:60],Lv[i,46:60],Rv[i,46:60])
       psize60plus[i]<-sum(S[i,61:Mnage],L[i,61:Mnage],R[i,61:Mnage],I[i,61:Mnage],NI[i,61:Mnage],Sv[i,61:Mnage],Lv[i,61:Mnage],Rv[i,61:Mnage])
+      #ages and incidence for contact matrices
+      psizematrix[i,1]<-sum(S[i,1:6],L[i,1:6],R[i,1:6],I[i,1:6],NI[i,1:6],Sv[i,1:6],Lv[i,1:6],Rv[i,1:6])
+      psizematrix[i,2]<-sum(S[i,7:20],L[i,7:20],R[i,7:20],I[i,7:20],NI[i,7:20],Sv[i,7:20],Lv[i,7:20],Rv[i,7:20])
+      psizematrix[i,3]<-sum(S[i,21:65],L[i,21:65],R[i,21:65],I[i,21:65],NI[i,21:65],Sv[i,21:65],Lv[i,21:65],Rv[i,21:65])
+      psizematrix[i,4]<-sum(S[i,66:Mnage],L[i,66:Mnage],R[i,66:Mnage],I[i,66:Mnage],NI[i,66:Mnage],Sv[i,66:Mnage],Lv[i,66:Mnage],Rv[i,66:Mnage])
+      
+      Imatrix[i,1]<-sum(I[i,1:6])
+      Imatrix[i,2]<-sum(I[i,7:20])
+      Imatrix[i,3]<-sum(I[i,21:65])
+      Imatrix[i,4]<-sum(I[i,66:Mnage])
       
       print ("done psize start yr")
       
@@ -330,27 +343,29 @@ print("done start year")
     if (k < yearend){ 
       for (i in (2+(1/dt)*(k-year1)):((1/dt)*(k-year1)+1/dt)){
         start <- 0 # Not the start of the year
-        lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
+        #lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
+        print("pre-post lambda")
+        lambda[i-1,1:Mnage] <- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[i-1,1:4])/(psizematrix[i-1,1:4]))))))
         
         print("post-lambda")
         #print(lambda)
         ####•••••••••••••••••• TB model ••••••••••••••••••
         ## If the time step is not the first of the year 
         #save(S,file="S1.RData")
-        S[i,1:Mnage] = S[i-1,1:Mnage] - (u[1:Mnage]+lambda[i-1])*S[i-1,1:Mnage]*dt
+        S[i,1:Mnage] = S[i-1,1:Mnage] - (u[1:Mnage]+lambda[i-1,1:Mnage])*S[i-1,1:Mnage]*dt
         #print("1")
         #save(S,file="S.RData")
-        L[i,1:Mnage] = L[i-1,1:Mnage] + lambda[i-1]*(1 - p[1:Mnage])*(S[i-1,1:Mnage] + g*R[i-1,1:Mnage])*dt - (v + lambda[i-1]*p[1:Mnage]*x + u[1:Mnage])*L[i-1,1:Mnage]*dt 
+        L[i,1:Mnage] = L[i-1,1:Mnage] + lambda[i-1,1:Mnage]*(1 - p[1:Mnage])*(S[i-1,1:Mnage] + g*R[i-1,1:Mnage])*dt - (v + lambda[i-1,1:Mnage]*p[1:Mnage]*x + u[1:Mnage])*L[i-1,1:Mnage]*dt 
         #print("1")
         new_I_react[i,1:Mnage] = v*f[1:(Mnage)]*(L[i-1,1:(Mnage)])*dt + r*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt 
         #print("1")
         new_NI_react[i,1:Mnage] =  v*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
         #print("1")
-        new_I[i,1:Mnage] = lambda[i-1]*p[1:(Mnage)]*f[1:(Mnage)]*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v + lambda[i-1]*p[1:(Mnage)]*x)*f[1:(Mnage)]*L[i-1,1:(Mnage)]*dt + r*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt + w*NI[i-1,1:(Mnage)]*dt
+        new_I[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:(Mnage)]*f[1:(Mnage)]*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*f[1:(Mnage)]*L[i-1,1:(Mnage)]*dt + r*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt + w*NI[i-1,1:(Mnage)]*dt
         #print("1")
-        new_NI[i,1:Mnage] = lambda[i-1]*p[1:(Mnage)]*(1 - f[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v + lambda[i-1]*p[1:(Mnage)]*x)*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
+        new_NI[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:(Mnage)]*(1 - f[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
         #print("1")
-        R[i,1:Mnage] = R[i-1,1:(Mnage)] + n*(I[i-1,1:(Mnage)] + NI[i-1,1:(Mnage)])*dt + CDR*CoT*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage]) - (r + g*lambda[i-1] + u[1:(Mnage)])*R[i-1,1:(Mnage)]*dt 
+        R[i,1:Mnage] = R[i-1,1:(Mnage)] + n*(I[i-1,1:(Mnage)] + NI[i-1,1:(Mnage)])*dt + CDR*CoT*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage]) - (r + g*lambda[i-1,1:Mnage] + u[1:(Mnage)])*R[i-1,1:(Mnage)]*dt 
         #print("1")
         I[i,1:Mnage] = I[i-1,1:(Mnage)] + (1 - CDR*CoT)*(new_I[i,1:Mnage]) - (n + u[1:(Mnage)] + ui)*I[i-1,1:(Mnage)]*dt
         #print("1")
@@ -359,25 +374,25 @@ print("done start year")
         print("done nonvacc")                        
         
         ####•••••••••••••••••••• TB HIV model •••••••••••••••••
-        #SH[i,15:Mnage] = SH[i-1,15:Mnage] - (uH[15:Mnage] + lambda[i-1])*SH[i-1,15:Mnage]*dt + hiv[15:Mnage]*S[i-1,15:Mnage]*dt 
-        #LH[i,15:Mnage] = LH[i-1,15:Mnage] + lambda[i-1]*(1 - pHA)*(SH[i-1,15:Mnage] + gHA*RH[i-1,15:Mnage])*dt - (vHA + lambda[i-1]*pHA*xHA + uH[15:Mnage])*LH[i-1,15:Mnage]*dt + hiv[15:Mnage]*L[i-1,15:Mnage]*dt 
+        #SH[i,15:Mnage] = SH[i-1,15:Mnage] - (uH[15:Mnage] + lambda[i-1,1:Mnage])*SH[i-1,15:Mnage]*dt + hiv[15:Mnage]*S[i-1,15:Mnage]*dt 
+        #LH[i,15:Mnage] = LH[i-1,15:Mnage] + lambda[i-1,1:Mnage]*(1 - pHA)*(SH[i-1,15:Mnage] + gHA*RH[i-1,15:Mnage])*dt - (vHA + lambda[i-1,1:Mnage]*pHA*xHA + uH[15:Mnage])*LH[i-1,15:Mnage]*dt + hiv[15:Mnage]*L[i-1,15:Mnage]*dt 
         
-        #new_IH[i,15:Mnage] = lambda[i-1]*pHA*fH*(SH[i-1,15:Mnage] + gHA*RH[i-1,15:Mnage])*dt + (vHA + lambda[i-1]*pHA*xHA)*fH*LH[i-1,15:Mnage]*dt + rHA*hH*RH[i-1,15:Mnage]*dt + w*NIH[i-1,15:Mnage]*dt
-        #new_NIH[i,15:Mnage] = lambda[i-1]*pHA*(1 - fH)*(SH[i-1,15:Mnage] + gHA*RH[i-1,15:Mnage])*dt + (vHA + lambda[i-1]*pHA*xHA)*(1 - fH)*LH[i-1,15:Mnage]*dt + rHA*(1 - hH)*RH[i-1,15:Mnage]*dt  
+        #new_IH[i,15:Mnage] = lambda[i-1,1:Mnage]*pHA*fH*(SH[i-1,15:Mnage] + gHA*RH[i-1,15:Mnage])*dt + (vHA + lambda[i-1,1:Mnage]*pHA*xHA)*fH*LH[i-1,15:Mnage]*dt + rHA*hH*RH[i-1,15:Mnage]*dt + w*NIH[i-1,15:Mnage]*dt
+        #new_NIH[i,15:Mnage] = lambda[i-1,1:Mnage]*pHA*(1 - fH)*(SH[i-1,15:Mnage] + gHA*RH[i-1,15:Mnage])*dt + (vHA + lambda[i-1,1:Mnage]*pHA*xHA)*(1 - fH)*LH[i-1,15:Mnage]*dt + rHA*(1 - hH)*RH[i-1,15:Mnage]*dt  
         
-        #RH[i,15:Mnage] = RH[i-1,15:Mnage] + nH*(IH[i-1,15:Mnage] + NIH[i-1,15:Mnage])*dt + CDRH*CoTH*(new_IH[i-1,15:Mnage] + e*new_NIH[i-1,15:Mnage]) - (rHA + gHA*lambda[i-1] + uH[15:Mnage])*RH[i-1,15:Mnage]*dt + hiv[15:Mnage]*R[i-1,15:Mnage]*dt
+        #RH[i,15:Mnage] = RH[i-1,15:Mnage] + nH*(IH[i-1,15:Mnage] + NIH[i-1,15:Mnage])*dt + CDRH*CoTH*(new_IH[i-1,15:Mnage] + e*new_NIH[i-1,15:Mnage]) - (rHA + gHA*lambda[i-1,1:Mnage] + uH[15:Mnage])*RH[i-1,15:Mnage]*dt + hiv[15:Mnage]*R[i-1,15:Mnage]*dt
         #IH[i,15:Mnage] = IH[i-1,15:Mnage] + (1 - CDRH*CoTH)*(new_IH[i-1,15:Mnage]) - (nH + uH[15:Mnage] + uiHA)*IH[i-1,15:Mnage]*dt + hiv[15:Mnage]*I[i-1,15:Mnage]*dt
         #NIH[i,15:Mnage] = NIH[i-1,15:Mnage] + (1 - CDRH*CoTH)*(e*new_NIH[i-1,15:Mnage]) - (nH + uH[15:Mnage] + uniHA + w)*NIH[i-1,15:Mnage]*dt + hiv[15:Mnage]*NI[i-1,15:Mnage]*dt                
         
         #### •••••••••••••••••••• VACCINE AGING •••••••••••••••••••••••••
         
-        Sv[i,1:Mnage] = Sv[i-1,1:Mnage] - (u[1:Mnage])*Sv[i-1,1:Mnage]*dt - lambda[i-1]*(Sv[i-1,1:Mnage])*dt 
-        Lv[i,1:Mnage] = Lv[i-1,1:Mnage] - (u[1:Mnage])*Lv[i-1,1:Mnage]*dt + lambda[i-1]*(Sv[i-1,1:Mnage] + g*Rv[i-1,1:Mnage])*dt 
-        Rv[i,1:Mnage] = Rv[i-1,1:Mnage] - (u[1:Mnage])*Rv[i-1,1:Mnage]*dt - lambda[i-1]*(g*Rv[i-1,1:Mnage])*dt
+        Sv[i,1:Mnage] = Sv[i-1,1:Mnage] - (u[1:Mnage])*Sv[i-1,1:Mnage]*dt - lambda[i-1,1:Mnage]*(Sv[i-1,1:Mnage])*dt 
+        Lv[i,1:Mnage] = Lv[i-1,1:Mnage] - (u[1:Mnage])*Lv[i-1,1:Mnage]*dt + lambda[i-1,1:Mnage]*(Sv[i-1,1:Mnage] + g*Rv[i-1,1:Mnage])*dt 
+        Rv[i,1:Mnage] = Rv[i-1,1:Mnage] - (u[1:Mnage])*Rv[i-1,1:Mnage]*dt - lambda[i-1,1:Mnage]*(g*Rv[i-1,1:Mnage])*dt
         
-        #SvH[i,15:Mnage] = SvH[i-1,15:Mnage] + hiv[15:Mnage]*Sv[i-1,15:Mnage]*dt - (uH[15:Mnage])*SvH[i-1,15:Mnage]*dt - lambda[i-1]*(SvH[i-1,15:Mnage])*dt 
-        #LvH[i,15:Mnage] = LvH[i-1,15:Mnage] + hiv[15:Mnage]*Lv[i-1,15:Mnage]*dt - (uH[15:Mnage])*LvH[i-1,15:Mnage]*dt + lambda[i-1]*(SvH[i-1,15:Mnage] + gHA*RvH[i-1,15:Mnage])*dt 
-        #RvH[i,15:Mnage] = RvH[i-1,15:Mnage] + hiv[15:Mnage]*Rv[i-1,15:Mnage]*dt - (uH[15:Mnage])*RvH[i-1,15:Mnage]*dt - lambda[i-1]*(gHA*RvH[i-1,15:Mnage])*dt 
+        #SvH[i,15:Mnage] = SvH[i-1,15:Mnage] + hiv[15:Mnage]*Sv[i-1,15:Mnage]*dt - (uH[15:Mnage])*SvH[i-1,15:Mnage]*dt - lambda[i-1,1:Mnage]*(SvH[i-1,15:Mnage])*dt 
+        #LvH[i,15:Mnage] = LvH[i-1,15:Mnage] + hiv[15:Mnage]*Lv[i-1,15:Mnage]*dt - (uH[15:Mnage])*LvH[i-1,15:Mnage]*dt + lambda[i-1,1:Mnage]*(SvH[i-1,15:Mnage] + gHA*RvH[i-1,15:Mnage])*dt 
+        #RvH[i,15:Mnage] = RvH[i-1,15:Mnage] + hiv[15:Mnage]*Rv[i-1,15:Mnage]*dt - (uH[15:Mnage])*RvH[i-1,15:Mnage]*dt - lambda[i-1,1:Mnage]*(gHA*RvH[i-1,15:Mnage])*dt 
         print("done vacc")
         ###•••••••••••••••••• Vaccine coverage and duration ••••••••••••••••
         # NUMBER OF VACCINES
@@ -427,6 +442,18 @@ print("done start year")
         psize3044[i]<-sum(S[i,31:45],L[i,31:45],R[i,31:45],I[i,31:45],NI[i,31:45],Sv[i,31:45],Lv[i,31:45],Rv[i,31:45])
         psize4559[i]<-sum(S[i,46:60],L[i,46:60],R[i,46:60],I[i,46:60],NI[i,46:60],Sv[i,46:60],Lv[i,46:60],Rv[i,46:60])
         psize60plus[i]<-sum(S[i,61:Mnage],L[i,61:Mnage],R[i,61:Mnage],I[i,61:Mnage],NI[i,61:Mnage],Sv[i,61:Mnage],Lv[i,61:Mnage],Rv[i,61:Mnage])
+        
+        #ages and incidence for contact matrices
+        psizematrix[i,1]<-sum(S[i,1:6],L[i,1:6],R[i,1:6],I[i,1:6],NI[i,1:6],Sv[i,1:6],Lv[i,1:6],Rv[i,1:6])
+        psizematrix[i,2]<-sum(S[i,7:20],L[i,7:20],R[i,7:20],I[i,7:20],NI[i,7:20],Sv[i,7:20],Lv[i,7:20],Rv[i,7:20])
+        psizematrix[i,3]<-sum(S[i,21:65],L[i,21:65],R[i,21:65],I[i,21:65],NI[i,21:65],Sv[i,21:65],Lv[i,21:65],Rv[i,21:65])
+        psizematrix[i,4]<-sum(S[i,66:Mnage],L[i,66:Mnage],R[i,66:Mnage],I[i,66:Mnage],NI[i,66:Mnage],Sv[i,66:Mnage],Lv[i,66:Mnage],Rv[i,66:Mnage])
+        
+        Imatrix[i,1]<-sum(I[i,1:6])
+        Imatrix[i,2]<-sum(I[i,7:20])
+        Imatrix[i,3]<-sum(I[i,21:65])
+        Imatrix[i,4]<-sum(I[i,66:Mnage])
+        
         
         print("done pop")
         
@@ -513,6 +540,7 @@ print("done start year")
           
           # % of transmission due to the elderly
           ##worried this wont sum across the right things, as want to sum across the i's cycled through the j's??? play with mock vectors. suceptibles on top and bottom? terms form eqns Do I need to loop one of them?
+          #haven't updated lambda
           #eldtrans[(k-year1+1)]<- 100* (sum(lambda[i1:i2,66:Mnage] * I[i1:i2,66:Mnage])/(i1-i2)) / (sum(lambda[i1:i2,] * I[i1:i2,])/(i1-i2))
           
         }

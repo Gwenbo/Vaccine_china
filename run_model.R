@@ -9,6 +9,7 @@ source('#DataGrab.R')
 setwd(home)
 source('CFunctions.R')
 
+
 # On cluster (C=1) or no (C=0)?
 C=0
 
@@ -76,6 +77,9 @@ points(seq(1990,2050),TBI[91:151,3],type='l',col='blue')
 points(seq(1990,2050),TBI[91:151,4],type='l',col='green')
 points(seq(1990,2050),TBI[91:151,5],type='l',col='pink')
 points(yrplot2010b,incidence2010)
+
+plot(seq(1900,2050),TBI[1:151,1], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),type='l')
+
 
 plot(seq(1990,2050),TBP[91:151,1], ylab="Prevalence/100,000pop",xlab="year", ylim=c(0,600),type='l')
 points(seq(1990,2050),TBP[91:151,3],type='l',col='red')

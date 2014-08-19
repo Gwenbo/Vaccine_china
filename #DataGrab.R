@@ -17,6 +17,9 @@ countries_LIC <- as.matrix(read.csv('CountryList_LIC.csv',check.names=F))[,1]   
 countries_LMIC <- as.matrix(read.csv('CountryList_LMIC.csv',check.names=F))[,1]      # LMIC
 countries_UMIC <- as.matrix(read.csv('CountryList_UMIC.csv',check.names=F))[,1]      # UMIC
 
+#import contact matrix
+myneta<- suppressWarnings(as.matrix(read.csv('myneta.csv',header=FALSE,check.names=F)[,-1])) #reads in cij
+
 # Births, mortality, contact number, Popsize in 2009 and 2050, Pop structure in 2009, in 2050
 births <- drop.levels(read.csv('Births.csv',header=TRUE,check.names=F,stringsAsFactors = FALSE))      # countries as column titles, number of contacts/life expectancy/
 #mortm<-read.csv('MortAge.csv',header=TRUE,check.names=F) # Columns = countries, rows = mortality rate per age... But by 5 year gaps... 

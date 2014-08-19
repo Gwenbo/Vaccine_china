@@ -57,6 +57,11 @@ psize3044<-matrix(0,steps,1)
 psize4559<-matrix(0,steps,1)
 psize60plus<-matrix(0,steps,1)
 
+#psize and I for contact matirx
+psizematrix<-matrix(0,steps,4)
+Imatrix<-matrix(0,steps,4)
+
+
 #filling in first time step as is usually calculated at later tme steps of the year
 psize[1]<-sum(S[1,],L[1,],R[1,],I[1,],NI[1,],Sv[1,],Lv[1,],Rv[1,])
 psize014[1]<-sum(S[1,1:15],L[1,1:15],R[1,1:15],I[1,1:15],NI[1,1:15],Sv[1,1:15],Lv[1,1:15],Rv[1,1:15])
@@ -70,13 +75,39 @@ psize3044[1]<-sum(S[1,31:45],L[1,31:45],R[1,31:45],I[1,31:45],NI[1,31:45],Sv[1,3
 psize4559[1]<-sum(S[1,46:60],L[1,46:60],R[1,46:60],I[1,46:60],NI[1,46:60],Sv[1,46:60],Lv[1,46:60],Rv[1,46:60])
 psize60plus[1]<-sum(S[1,61:Mnage],L[1,61:Mnage],R[1,61:Mnage],I[1,61:Mnage],NI[1,61:Mnage],Sv[1,61:Mnage],Lv[1,61:Mnage],Rv[1,61:Mnage])
 
+#initalise contact matrices
+psizematrix[1,1]<-sum(S[1,1:6],L[1,1:6],R[1,1:6],I[1,1:6],NI[1,1:6],Sv[1,1:6],Lv[1,1:6],Rv[1,1:6])
+psizematrix[1,2]<-sum(S[1,7:20],L[1,7:20],R[1,7:20],I[1,7:20],NI[1,7:20],Sv[1,7:20],Lv[1,7:20],Rv[1,7:20])
+psizematrix[1,3]<-sum(S[1,21:65],L[1,21:65],R[1,21:65],I[1,21:65],NI[1,21:65],Sv[1,21:65],Lv[1,21:65],Rv[1,21:65])
+psizematrix[1,4]<-sum(S[1,66:Mnage],L[1,66:Mnage],R[1,66:Mnage],I[1,66:Mnage],NI[1,66:Mnage],Sv[1,66:Mnage],Lv[1,66:Mnage],Rv[1,66:Mnage])
+
+Imatrix[1,1]<-sum(I[1,1:6])
+Imatrix[1,2]<-sum(I[1,7:20])
+Imatrix[1,3]<-sum(I[1,21:65])
+Imatrix[1,4]<-sum(I[1,66:Mnage])
+
+# Imatrix[1,1]<-sum(I0[1:6])
+# Imatrix[1,2]<-sum(I0[7:20])
+# Imatrix[1,3]<-sum(I0[21:65])
+# Imatrix[1,4]<-sum(I0[66:Mnage])
+# psizematrix[1,1]<-sum(ps[1:6])
+# psizematrix[1,2]<-sum(ps[7:20])
+# psizematrix[1,3]<-sum(ps[21:65])
+# psizematrix[1,4]<-sum(ps[66:Mnage])
+
+# FOI
+lambda<-matrix(0,steps,Mnage);
+
+#initialise lambda
+lambda[1,1:Mnage]<- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[1,1:4])/(psizematrix[1,1:4]))))))
+
+
 
 
 
 # Number of births
 birthsnum<-matrix(0,steps,1); bv<-c();
-# FOI
-lambda<-matrix(0,steps,1);
+
 
 ## Matrices for cost-effectiveness
 # Age of death, age of death with HIV
