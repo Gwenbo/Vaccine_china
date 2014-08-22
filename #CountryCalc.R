@@ -7,6 +7,7 @@ neta <- sing[1,cntry]
 
 ## ********* AGE specific mortality ** SHOULD PROBABLY BE DONE IN DATA •• now done in data
 mort<-as.matrix(mortage)
+
 #colnames(mort)<-c('year',seq(0,100,1))
   
 #times<-seq(2009,2050,1)

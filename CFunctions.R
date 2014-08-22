@@ -93,10 +93,10 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     print(k)
     
     #### •••••••••••••••••• Yearly parameters #••••••••••••••••••
-    # Only start marking years after 2009
+    # Only start marking years after 2009 
+
     if (k <= 2010){ yr <- 2010 } else { yr <- k }
-    if (k <= 1990){ CDR_yr <- 1990 } else { CDR_yr <- k }
-    if (k <= 1994){ CoT_yr <- 1994 } else { CoT_yr <- k }
+    
     
     #### MORTALITY. Runs from age 1 to age 101 (equiv 0-100yo)
     # FIT: Rmort multiplies background death rates. Range [-1,1]
@@ -145,6 +145,10 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     # print(c('ui',ui,'uiH',uiH,'uiHA',uiHA,'uniHA',uniHA))
     # print(c('pH',pH,'pHA',pHA,'vHa',vHA,'xHA',xHA,'rHA',rHA,'art',art[20],'alpha',alpha))
     
+    # yr changed for some parameters
+    if (k <= 1990){ CDR_yr <- 1990 } else { CDR_yr <- k }
+    if (k <= 1994){ CoT_yr <- 1994 } else { CoT_yr <- k }
+    
     #### CDR & TREATMENT SUCCESS (a proportion of cases that are found and successfully treated)
     # FIT: CDRscale multiplies the cdr value for both HIV+s and HIV-s
     CDR<-CDRscale*cdr[1+CDR_yr-1990];#CDRH<-CDRscale*cdrH[1+yr-2010];
@@ -153,10 +157,24 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     
     #### BIRTHS 
     # Need to have 2010 birth RATE pre-2010 else won't get curve 
-    if (k < 2010) { br<-bb[1]/(Popsize[1,cntry])
-                    if (k == year1){B<-round(br*psize[1]); bv<-c(bv,B)
-                    } else { B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);}
-    } else { B<-bb[1+yr-2010] }
+    #added in a step pre-2010 to account for chinese one-child policy impact on population structure
+    
+    fertdrop<-1980
+    e_bb<-18533.326
+    e_pop<-1359822
+    if (k < 1980){ br<-e_bb/e_pop
+                      if (k == year1){B<-round(br*psize[1]); bv<-c(bv,B)}
+                      else { B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);}} 
+    else{
+    if (k < 2010) { br<-bb[1]/(Popsize[1,cntry]);
+                    B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);
+    } else { B<-bb[1+yr-2010] }}
+    
+#     if (k < 2010) { br<-bb[1]/(Popsize[1,cntry])
+#                 
+#                     if (k == year1){B<-round(br*psize[1]); bv<-c(bv,B)             
+#                     } else { B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);}     
+#     } else { B<-bb[1+yr-2010] }
     print(c("BIRTHS",br,B,psize[((k-year1)*(1/dt))],((k-year1)*(1/dt))))
     BIRTHS[i]<-B
     ####•••••••••••••••••• END OF YEARLY PARAMETERS
