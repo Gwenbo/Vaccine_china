@@ -119,12 +119,14 @@ TBRx<--matrix(0,steps,2);
 TBI<-matrix(0,steps,5);
 TBM<-matrix(0,steps,7);
 TBP<-matrix(0,steps,6)
+TBPb<-matrix(0,steps,6)
 TBPI<-matrix(0,steps,5)
 PSIZEy<-matrix(0,steps,10);
 
 colnames(TBI)<-c("All ages","0-14", "15-54", "55-64", "65+")
 colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+")
 colnames(TBP)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+")
+colnames(TBPb)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+")
 colnames(TBPI)<-c("All ages","0-14", "15-54", "55-64", "65+")
 colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+")
 

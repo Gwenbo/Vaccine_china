@@ -1,17 +1,16 @@
 ### Life expectancy check ####
 
 
-setwd("/Users/Rebecca/Documents/PhD/Model Materials/CEmodel_Rebecca/China Model")
+setwd("/Users/Rebecca/Documents/PhD/Model_Materials/CEmodel_Rebecca/China Model")
 #setwd("/Users/Karen/My Documents/LSHTM/China_pop")
 
 ## reads in data
 cpop<- read.csv("chinapop.csv", header=TRUE)
 initialpop<- read.csv("Chinapop2010.csv", header=TRUE)
 pop_med_fert<- read.csv("china_med_fert.csv", header=FALSE)
-<<<<<<< HEAD
+
 LE<- read.csv("LEtables.csv", header=TRUE)
-=======
->>>>>>> FETCH_HEAD
+
 #print (cpop)
 
 #read in yr as vector from cpop
@@ -21,16 +20,16 @@ year<- cpop[,1]
 #for now doing it with birth number, but could do rate*popsize if desired using Brate<- cpop[,3]
 B<- cpop[,2]
 
-<<<<<<< HEAD
+
 
 #read in death rate/age/yr
 u<-LE[,2:102]
-=======
+
 #Life expectancy
 LE<-cpop[,6]
 #read in death rate/yr
 u<-1/LE
->>>>>>> FETCH_HEAD
+
 
 #put maxage in file higher than 100??
 maxage<-length(initialpop[,1])
@@ -79,11 +78,11 @@ for (k in 1:length(year))
         }
         else
         {
-<<<<<<< HEAD
+
           A[k,j]<-A[k-1,j-1] - u[k-1,j-1]*A[k-1,j-1]
-=======
+
           A[k,j]<-A[k-1,j-1] - u[k-1]*A[k-1,j-1]
->>>>>>> FETCH_HEAD
+
           # if decide to vary risk of death by age, will need to set up u as a 2D marix of yr and age A[k,j]<-A[k-1,k-1] - u[k-1,j-1]*A[k-1,j-1]
         }
         #print (A[k,j])

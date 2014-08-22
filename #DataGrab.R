@@ -31,7 +31,7 @@ pstruc <- suppressWarnings(read.csv('AgeStruc09.csv',header=TRUE,check.names=F))
 pstruc50 <- suppressWarnings(drop.levels(read.csv('AgeStruc50.csv',header=TRUE,check.names=F)))      # countries as column titles, Rows are ages. For checking
 # Case detection, treatment success, natural history parameters, ranges for previous
 cdrv <- suppressWarnings(read.csv('CDR.csv',header=TRUE,check.names=F))[1:24,]        # Number of years, cols = countries)
-suctv <- suppressWarnings(read.csv('SucT.csv',header=TRUE,check.names=F))[1:2,]        # Number of years, cols = countries)
+suctv <- suppressWarnings(read.csv('SucT.csv',header=TRUE,check.names=F))[1:19,]        # Number of years, cols = countries)
 para <- as.matrix(drop.levels(read.csv('para.csv',header=TRUE,check.names=F)))       # Number of parameters same for all countries - CHECK with new model
 pararange <- as.matrix(drop.levels(read.csv('pararanges.csv',header=TRUE,check.names=F)))       # Number of parameters same for all countries - CHECK with new model
 # TB incidence, TB mortality, in HIV+s, in HIV-s, data on HIV (incidence in 15-49yos, ART 2009, ART 2025)
@@ -116,18 +116,16 @@ rownames(cdrm)<-countries
 # cdrm<-cdrm/100
 # rownames(cdrm)<-countries
 
-# Treatment success (sigmoidal increase as above)
-suctm<-matrix(0,length(countries),(2050-2010+1))
-for (i in 1:length(countries)){
-  hh<-suctv[,countries[i]] # HIV incidence in 15-49yos, cdr 2010, cdr 2025
-  cdr2010<-hh[1]; cdr2025<-hh[2];
-  a<-cdr2010;  b<-cdr2025-cdr2010;
-  for (j in 1:(2025-2010+1)){
-    suctm[i,j]<-a + b/(1+ 1.1*exp(-0.8*(j-7)))^(2) 
-  }
-  suctm[i,(2026-2010+1):(2050-2010+1)]<-suctm[i,(2025-2010+1)]
-}
+# Treatment success 
+#pessimistic
+suctm<-matrix(0,length(countries),(2050-1994+1))
 rownames(suctm)<-countries
+for (i in 1:length(countries)){
+  suctm[i,(1:(2011-1994+1))]<- t(suctv[(1:18),countries[i]])
+  #suctm remains constant after 2011
+  suctm[i,(2012-1994+1):(2050-1994+1)]<-suctm[i,(2011-1994+1)]
+}
+
 
 ## AGES - how wide are the age classes? 
 widthage <- 1    ## Take individual age classes

@@ -54,6 +54,17 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   if(length(Fit)>3){if (rmortTB<0){ui<-rmortTB*(ui)+ui; uni<-rmortTB*(uni)+uni;
   } else {ui<-rmortTB*(1-ui)+ui; uni<-rmortTB*(1-uni)+uni}
   }
+  # u and ui use age depandent pattern and apply to existing number
+#   uichild<-ui*
+#   uiadult<-ui*
+#   uielderly<-ui*
+#   unichild<-uni*
+#   uniadult<-uni*
+#   unielderly<-uni*
+#     
+#   ui=c((rep(uichild, l=chiyrs)),(rep(uiadult, l=aduyrs)),(rep(uielderly, l=eldyrs)))
+#   uni=c((rep(unichild, l=chiyrs)),(rep(uniadult, l=aduyrs)),(rep(unielderly, l=eldyrs)))
+#     
   # If don't assign CDRscale set it to 1 (i.e. use data)
   if(length(Fit)<5){CDRscale <- 1}
   
@@ -85,14 +96,16 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     # Only start marking years after 2009
     if (k <= 2010){ yr <- 2010 } else { yr <- k }
     if (k <= 1990){ CDR_yr <- 1990 } else { CDR_yr <- k }
+    if (k <= 1994){ CoT_yr <- 1994 } else { CoT_yr <- k }
+    
     #### MORTALITY. Runs from age 1 to age 101 (equiv 0-100yo)
     # FIT: Rmort multiplies background death rates. Range [-1,1]
     #is in k loop, so generates a new u (vector of length number of ages) each year
     if (rmort < 0) {u<-as.vector(rmort*(mort[1+yr-2010,2:102]) + mort[1+yr-2010,2:102])#;names(u)<-NULL;#print(c("neg","u",u,"rmort",rmort)) 
     } else {u<-as.vector(rmort*(1-(mort[1+yr-2010,2:102])) + mort[1+yr-2010,2:102])#;names(u)<-NULL;#print(c("u",u,"rmort",rmort))
     }
-    print(c("U",u,mort[1+yr-2010,2:102],rmort))
-    #is.vector(u)
+    
+    #print(c("U",u,mort[1+yr-2010,2:102],rmort))
     #u<-mort[1+yr-2010,2:102]
     #print(u)
     #### HIV MORTALITY (weighted by ART coverage)
@@ -135,7 +148,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     #### CDR & TREATMENT SUCCESS (a proportion of cases that are found and successfully treated)
     # FIT: CDRscale multiplies the cdr value for both HIV+s and HIV-s
     CDR<-CDRscale*cdr[1+CDR_yr-1990];#CDRH<-CDRscale*cdrH[1+yr-2010];
-    CoT<-suctt[1+yr-2010];#CoTH<-sucttH[1+yr-2010];
+    CoT<-suctt[1+CoT_yr-1994];#CoTH<-sucttH[1+yr-2010];
     #print(c(yr,'CDRH',CDRH,'CoT',CoT,'CoTH',CoTH,1+yr-2010))
     
     #### BIRTHS 
@@ -522,6 +535,15 @@ print("done start year")
           TBP[(k-year1+1),5]<-100000*sum(I[i1:i2,46:60],NI[i1:i2,46:60])/mean(psize4559[i1:i2])
           TBP[(k-year1+1),6]<-100000*sum(I[i1:i2,61:Mnage],NI[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
           
+          ## (3) TB prevalence rate 
+          TBPb[(k-year1+1),1]<-100000*sum(I[i1:i2,])/mean(psize[i1:i2])
+          TBPb[(k-year1+1),2]<-100000*sum(I[i1:i2,1:15])/mean(psize014[i1:i2])
+          TBPb[(k-year1+1),3]<-100000*sum(I[i1:i2,16:30])/mean(psize1529[i1:i2])
+          TBPb[(k-year1+1),4]<-100000*sum(I[i1:i2,31:45])/mean(psize3044[i1:i2])
+          TBPb[(k-year1+1),5]<-100000*sum(I[i1:i2,46:60])/mean(psize4559[i1:i2])
+          TBPb[(k-year1+1),6]<-100000*sum(I[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
+          
+          
           ## (4) TB mortality
           #print(c("IH",sum(new_IH[i,],new_NIH[i,]),TBI[i,2]))
           TBM[(k-year1+1),1]<-100000*sum(TBDeaths[i1:i2,])/mean(psize[i1:i2])
@@ -533,11 +555,11 @@ print("done start year")
           TBM[(k-year1+1),7]<-100000*sum(TBDeaths[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
           
           ## (5) Prevalence of infection - in case get data to fit to. WHAT ABOUT RECOVERDS???
-          TBPI[(k-year1+1),1]<-100000*sum(L[i1:i2,])/mean(psize[i1:i2])
-          TBPI[(k-year1+1),2]<-100000*sum(L[i1:i2,1:15])/mean(psize014[i1:i2])
-          TBPI[(k-year1+1),3]<-100000*sum(L[i1:i2,16:55])/mean(psize1554[i1:i2])
-          TBPI[(k-year1+1),4]<-100000*sum(L[i1:i2,56:65])/mean(psize5564[i1:i2])
-          TBPI[(k-year1+1),5]<-100000*sum(L[i1:i2,66:Mnage])/mean(psize65plus[i1:i2])
+          TBPI[(k-year1+1),1]<-100*(((sum(L[i1:i2,]))/2)/mean(psize[i1:i2]))
+          TBPI[(k-year1+1),2]<-100*(((sum(L[i1:i2,1:15]))/2)/mean(psize014[i1:i2]))
+          TBPI[(k-year1+1),3]<-100*(((sum(L[i1:i2,16:55]))/2)/mean(psize1554[i1:i2]))
+          TBPI[(k-year1+1),4]<-100*(((sum(L[i1:i2,56:65]))/2)/mean(psize5564[i1:i2]))
+          TBPI[(k-year1+1),5]<-100*(((sum(L[i1:i2,66:Mnage]))/2)/mean(psize65plus[i1:i2]))
           
           #### FOR ADDITIONAL RESEARCH OUTCOMES
           
@@ -576,7 +598,8 @@ print("done start year")
   assign('psize60plus',psize60plus,envir=.GlobalEnv)
   assign('psize65plus',psize65plus,envir=.GlobalEnv)
   assign('TBI',TBI,envir=.GlobalEnv);assign('TBM',TBM,envir=.GlobalEnv);assign('TBRx',TBRx,envir=.GlobalEnv);assign('VX',VX,envir=.GlobalEnv);
-  assign('TBP',TBP,envir=.GlobalEnv);assign('TBPI',TBPI,envir=.GlobalEnv);assign('PSIZEy',PSIZEy,envir=.GlobalEnv);
+  assign('TBP',TBP,envir=.GlobalEnv);assign('TBPb',TBPb,envir=.GlobalEnv)
+  assign('TBPI',TBPI,envir=.GlobalEnv);assign('PSIZEy',PSIZEy,envir=.GlobalEnv);
   #assign('Econout',EconOut,envir=.GlobalEnv);
   assign('Out',Out,envir=.GlobalEnv);
   #assign('hbcout',hbcOut,envir=.GlobalEnv);
@@ -603,6 +626,7 @@ print("done assign")
   colnames(TBI)<-c("All ages","0-14", "15-54", "55-64", "65+")
   colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+")
   colnames(TBP)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+")
+  colnames(TBPb)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+")
   colnames(TBPI)<-c("All ages","0-14", "15-54", "55-64", "65+")
   colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+")
   
@@ -611,9 +635,9 @@ print("done assign")
   X<-cbind(psize,rowSums(S),S[,1],rowSums(I),rowSums(NI),rowSums(L),rowSums(R),rowSums(new_I),rowSums(new_NI),
            rowSums(new_I_react),rowSums(new_NI_react), 
            rowSums(Sv),rowSums(Lv),rowSums(Rv),
-           TBI[,1],TBI[,2], TBI[,3], TBI[,4], TBI[,5], TBM[,1],TBM[,2],TBM[,3], TBM[,4], TBM[,5], TBM[,6], TBM[,7],TBP[,1],TBP[,2],TBP[,3], TBP[,4], TBP[,5], TBP[,6],TBPI[,1],TBPI[,2],TBPI[,3], TBPI[,4], TBPI[,5], PSIZEy[,1],PSIZEy[,2], PSIZEy[,3], PSIZEy[,4], PSIZEy[,5], PSIZEy[,6], PSIZEy[,7], PSIZEy[,8], PSIZEy[,9], PSIZEy[,10])
+           TBI[,1],TBI[,2], TBI[,3], TBI[,4], TBI[,5], TBM[,1],TBM[,2],TBM[,3], TBM[,4], TBM[,5], TBM[,6], TBM[,7],TBP[,1],TBP[,2],TBP[,3], TBP[,4], TBP[,5], TBP[,6],TBPb[,1],TBPb[,2],TBPb[,3], TBPb[,4], TBPb[,5], TBP[,6],TBPI[,1],TBPI[,2],TBPI[,3], TBPI[,4], TBPI[,5], PSIZEy[,1],PSIZEy[,2], PSIZEy[,3], PSIZEy[,4], PSIZEy[,5], PSIZEy[,6], PSIZEy[,7], PSIZEy[,8], PSIZEy[,9], PSIZEy[,10])
   colnames(X)<-c("PSIZE","S","Births","I","NI","L","R","new_I","new_NI","new_I_react","new_NI_react", "Sv","Lv","Rv",
-                 "TBItot","TBI0-14","TBI15-54","TBI55-64","TBI65+","TBMtot","TBM0-14", "TBM15-54", "TBM55-64", "TBM65+", "TBM15-59", "TBM60+","TBPtot","TBP0-14", "TBP15-29", "TBP30-44", "TBP45-59", "TBP60+", "TBPItot","TBPI0-14", "TBPI15-54", "TBPI55-64", "TBPI65+", "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+")
+                 "TBItot","TBI0-14","TBI15-54","TBI55-64","TBI65+","TBMtot","TBM0-14", "TBM15-54", "TBM55-64", "TBM65+", "TBM15-59", "TBM60+","TBPtot","TBP0-14", "TBP15-29", "TBP30-44", "TBP45-59", "TBP60+","TBPbtot","TBPb0-14", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBP60+", "TBPItot","TBPI0-14", "TBPI15-54", "TBPI55-64", "TBPI65+", "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+")
   print("X")
 #X<-data.frame(X)
   # To show
