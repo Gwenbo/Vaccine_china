@@ -36,6 +36,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   p=c((rep(pchild, l=chiyrs)),(rep(padult, l=aduyrs)),(rep(pelderly, l=eldyrs)))
   f=c((rep(fchild, l=chiyrs)),(rep(fadult, l=aduyrs)),(rep(felderly, l=eldyrs)))
   h=c((rep(hchild, l=chiyrs)),(rep(hadult, l=aduyrs)),(rep(helderly, l=eldyrs)))
+  #v=c((rep(vchild, l=chiyrs)),(rep(vadult, l=aduyrs)),(rep(velderly, l=eldyrs)))
+  
   
   print("doneeldyears")
   
@@ -82,15 +84,16 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     #### •••••••••••••••••• Yearly parameters #••••••••••••••••••
     # Only start marking years after 2009
     if (k <= 2010){ yr <- 2010 } else { yr <- k }
+    if (k <= 1990){ CDR_yr <- 1990 } else { CDR_yr <- k }
     #### MORTALITY. Runs from age 1 to age 101 (equiv 0-100yo)
     # FIT: Rmort multiplies background death rates. Range [-1,1]
     #is in k loop, so generates a new u (vector of length number of ages) each year
     if (rmort < 0) {u<-as.vector(rmort*(mort[1+yr-2010,2:102]) + mort[1+yr-2010,2:102])#;names(u)<-NULL;#print(c("neg","u",u,"rmort",rmort)) 
     } else {u<-as.vector(rmort*(1-(mort[1+yr-2010,2:102])) + mort[1+yr-2010,2:102])#;names(u)<-NULL;#print(c("u",u,"rmort",rmort))
     }
+    print(c("U",u,mort[1+yr-2010,2:102],rmort))
     #is.vector(u)
     #u<-mort[1+yr-2010,2:102]
-    print("u")
     #print(u)
     #### HIV MORTALITY (weighted by ART coverage)
     #uH <- u + 1/( (1 - art[1+yr-2010]) * LEHIV + art[1+yr-2010] * LEART)
@@ -131,7 +134,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     
     #### CDR & TREATMENT SUCCESS (a proportion of cases that are found and successfully treated)
     # FIT: CDRscale multiplies the cdr value for both HIV+s and HIV-s
-    CDR<-CDRscale*cdr[1+yr-2010];#CDRH<-CDRscale*cdrH[1+yr-2010];
+    CDR<-CDRscale*cdr[1+CDR_yr-1990];#CDRH<-CDRscale*cdrH[1+yr-2010];
     CoT<-suctt[1+yr-2010];#CoTH<-sucttH[1+yr-2010];
     #print(c(yr,'CDRH',CDRH,'CoT',CoT,'CoTH',CoTH,1+yr-2010))
     
@@ -142,7 +145,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
                     } else { B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);}
     } else { B<-bb[1+yr-2010] }
     print(c("BIRTHS",br,B,psize[((k-year1)*(1/dt))],((k-year1)*(1/dt))))
-    
+    BIRTHS[i]<-B
     ####•••••••••••••••••• END OF YEARLY PARAMETERS
     
     print("done params")
@@ -442,18 +445,18 @@ print("done start year")
         psize3044[i]<-sum(S[i,31:45],L[i,31:45],R[i,31:45],I[i,31:45],NI[i,31:45],Sv[i,31:45],Lv[i,31:45],Rv[i,31:45])
         psize4559[i]<-sum(S[i,46:60],L[i,46:60],R[i,46:60],I[i,46:60],NI[i,46:60],Sv[i,46:60],Lv[i,46:60],Rv[i,46:60])
         psize60plus[i]<-sum(S[i,61:Mnage],L[i,61:Mnage],R[i,61:Mnage],I[i,61:Mnage],NI[i,61:Mnage],Sv[i,61:Mnage],Lv[i,61:Mnage],Rv[i,61:Mnage])
-        
+        print("psize pre-matrix")
         #ages and incidence for contact matrices
         psizematrix[i,1]<-sum(S[i,1:6],L[i,1:6],R[i,1:6],I[i,1:6],NI[i,1:6],Sv[i,1:6],Lv[i,1:6],Rv[i,1:6])
         psizematrix[i,2]<-sum(S[i,7:20],L[i,7:20],R[i,7:20],I[i,7:20],NI[i,7:20],Sv[i,7:20],Lv[i,7:20],Rv[i,7:20])
         psizematrix[i,3]<-sum(S[i,21:65],L[i,21:65],R[i,21:65],I[i,21:65],NI[i,21:65],Sv[i,21:65],Lv[i,21:65],Rv[i,21:65])
         psizematrix[i,4]<-sum(S[i,66:Mnage],L[i,66:Mnage],R[i,66:Mnage],I[i,66:Mnage],NI[i,66:Mnage],Sv[i,66:Mnage],Lv[i,66:Mnage],Rv[i,66:Mnage])
-        
+        print("psize post-matrix")
         Imatrix[i,1]<-sum(I[i,1:6])
         Imatrix[i,2]<-sum(I[i,7:20])
         Imatrix[i,3]<-sum(I[i,21:65])
         Imatrix[i,4]<-sum(I[i,66:Mnage])
-        
+        print("imatrix post-matrix")
         
         print("done pop")
         
@@ -554,7 +557,8 @@ print("done start year")
 
   ## Outputs - in R, allows output to be seen without expressly wanting it - what is this??? comment out? 
   assign('S',S,envir = .GlobalEnv);assign('L',L,envir = .GlobalEnv);assign('I',I,envir = .GlobalEnv);assign('NI',NI,envir = .GlobalEnv);assign('R',R,envir = .GlobalEnv);assign('new_I',new_I,envir = .GlobalEnv);assign('new_NI',new_NI,envir = .GlobalEnv)
-  #assign('SH',SH,envir = .GlobalEnv);assign('LH',LH,envir = .GlobalEnv);#assign('IH',IH,envir = .GlobalEnv);assign('NIH',NIH,envir = .GlobalEnv);assign('RH',RH,envir = .GlobalEnv);assign('new_IH',new_IH,envir = .GlobalEnv);assign('new_NIH',new_NIH,envir = .GlobalEnv)
+  assign('NBirths',BIRTHS,envir=.GlobalEnv)  
+#assign('SH',SH,envir = .GlobalEnv);assign('LH',LH,envir = .GlobalEnv);#assign('IH',IH,envir = .GlobalEnv);assign('NIH',NIH,envir = .GlobalEnv);assign('RH',RH,envir = .GlobalEnv);assign('new_IH',new_IH,envir = .GlobalEnv);assign('new_NIH',new_NIH,envir = .GlobalEnv)
   assign('Sv',Sv,envir = .GlobalEnv);assign('Lv',Lv,envir = .GlobalEnv);assign('Rv',Rv,envir = .GlobalEnv);#assign('SvH',SvH,envir = .GlobalEnv);assign('LvH',LvH,envir = .GlobalEnv);assign('RvH',RvH,envir = .GlobalEnv);
   assign('lambda',lambda,envir=.GlobalEnv);assign('theta',theta,envir=.GlobalEnv);assign('d',d,envir=.GlobalEnv);
   assign('TBDeaths',TBDeaths,envir=.GlobalEnv);#assign('TBDeathsH',TBDeathsH,envir=.GlobalEnv);
@@ -595,7 +599,7 @@ print("done assign")
   totcase[,4]<- sum(TBI[,4])
   totcase[,5]<- sum(TBI[,5])
   
-  
+  print("done tot case")
   colnames(TBI)<-c("All ages","0-14", "15-54", "55-64", "65+")
   colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+")
   colnames(TBP)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+")
@@ -604,8 +608,12 @@ print("done assign")
   
   ## Actual Output required (collected as progressed with model)
   # need to update this. what does Ana do???
-  X<-cbind(psize,rowSums(S),S[,1],rowSums(I),rowSums(NI),rowSums(L),rowSums(new_I),rowSums(new_NI),rowSums(new_I_react),rowSums(new_NI_react), TBI[,1],TBI[,2], TBI[,3], TBI[,4], TBI[,5], TBM[,1],TBM[,2],TBM[,3], TBM[,4], TBM[,5], TBM[,6], TBM[,7],TBP[,1],TBP[,2],TBP[,3], TBP[,4], TBP[,5], TBP[,6],TBPI[,1],TBPI[,2],TBPI[,3], TBPI[,4], TBPI[,5], PSIZEy[,1],PSIZEy[,2], PSIZEy[,3], PSIZEy[,4], PSIZEy[,5], PSIZEy[,6], PSIZEy[,7], PSIZEy[,8], PSIZEy[,9], PSIZEy[,10])
-  colnames(X)<-c("PSIZE","S","Births","I","NI","L","new_I","new_NI","new_I_react","new_NI_react", "TBItot","TBI0-14","TBI15-54","TBI55-64","TBI65+","TBMtot","TBM0-14", "TBM15-54", "TBM55-64", "TBM65+", "TBM15-59", "TBM60+","TBPtot","TBP0-14", "TBP15-29", "TBP30-44", "TBP45-59", "TBP60+", "TBPItot","TBPI0-14", "TBPI15-54", "TBPI55-64", "TBPI65+", "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+")
+  X<-cbind(psize,rowSums(S),S[,1],rowSums(I),rowSums(NI),rowSums(L),rowSums(R),rowSums(new_I),rowSums(new_NI),
+           rowSums(new_I_react),rowSums(new_NI_react), 
+           rowSums(Sv),rowSums(Lv),rowSums(Rv),
+           TBI[,1],TBI[,2], TBI[,3], TBI[,4], TBI[,5], TBM[,1],TBM[,2],TBM[,3], TBM[,4], TBM[,5], TBM[,6], TBM[,7],TBP[,1],TBP[,2],TBP[,3], TBP[,4], TBP[,5], TBP[,6],TBPI[,1],TBPI[,2],TBPI[,3], TBPI[,4], TBPI[,5], PSIZEy[,1],PSIZEy[,2], PSIZEy[,3], PSIZEy[,4], PSIZEy[,5], PSIZEy[,6], PSIZEy[,7], PSIZEy[,8], PSIZEy[,9], PSIZEy[,10])
+  colnames(X)<-c("PSIZE","S","Births","I","NI","L","R","new_I","new_NI","new_I_react","new_NI_react", "Sv","Lv","Rv",
+                 "TBItot","TBI0-14","TBI15-54","TBI55-64","TBI65+","TBMtot","TBM0-14", "TBM15-54", "TBM55-64", "TBM65+", "TBM15-59", "TBM60+","TBPtot","TBP0-14", "TBP15-29", "TBP30-44", "TBP45-59", "TBP60+", "TBPItot","TBPI0-14", "TBPI15-54", "TBPI55-64", "TBPI65+", "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+")
   print("X")
 #X<-data.frame(X)
   # To show

@@ -60,7 +60,7 @@ psize60plus<-matrix(0,steps,1)
 #psize and I for contact matirx
 psizematrix<-matrix(0,steps,4)
 Imatrix<-matrix(0,steps,4)
-
+BIRTHS<-vector('numeric',steps)
 
 #filling in first time step as is usually calculated at later tme steps of the year
 psize[1]<-sum(S[1,],L[1,],R[1,],I[1,],NI[1,],Sv[1,],Lv[1,],Rv[1,])
@@ -98,11 +98,8 @@ Imatrix[1,4]<-sum(I[1,66:Mnage])
 # FOI
 lambda<-matrix(0,steps,Mnage);
 
-#initialise lambda
+#initialise lambda. not sure if necessary since other elements are initialised?
 lambda[1,1:Mnage]<- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[1,1:4])/(psizematrix[1,1:4]))))))
-
-
-
 
 
 # Number of births

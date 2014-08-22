@@ -36,7 +36,8 @@ mort<-as.matrix(mortage)
 bb <- births[,cntry]
 
 ## ********* Detection and treatment 
-cdr<-cdrm[cntry,];cdrH<-cdr;suctt<-suctm[cntry,];sucttH<-suctt;
+cdr<-cdrm[cntry,];#cdrH<-cdr;
+suctt<-suctm[cntry,];#sucttH<-suctt;
 #cdr<-matrix(0.42,1,42);cdrH<-cdr;suctt<-matrix(0.84,1,42);sucttH<-suctt;
 ## *********** INITIAL population structure 
 ps<-pstruc[1:101,cntry] ## Remove those in the pstruc over the age of 85.... ## keep up to 100

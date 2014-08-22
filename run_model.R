@@ -44,7 +44,7 @@ for (kkk in 1:rrun){
 #data to fit to
 population2010<- c(1359822,246707,863710,135859,113546)
 population2050<- c(1384976,204187,623982,225492,331315)
-incidence2010<- c(3.02,74.56,120.54,165.63)
+incidence2010<- c(73.78,3.02,74.56,120.54,165.63)
 prevalence2000<- c(92,119,213,596)
 prevalence2010<- c(59,73,133,346)
 mortality2010<- c(0.29,1.91,15.69)
@@ -62,7 +62,12 @@ yrplot2010c<-rep(2010,3)
 
 
 ## PLOTS TEMP REPLACE GWENS
-
+# colours<-vector(mode="list", length=5)
+# colours[1]<-'black'
+# colours[2]<-'red'
+# colours[3]<-'blue'
+# colours[4]<-'green'
+# colours[5]<-'pink'
 plot(seq(1990,2050),PSIZEy[91:151,1], ylab="Population (thousands)",xlab="year", ylim=c(0,3000000),type='l')
 points(seq(1990,2050),PSIZEy[91:151,2],type='l',col='red')
 points(seq(1990,2050),PSIZEy[91:151,3],type='l',col='blue')
@@ -76,10 +81,12 @@ points(seq(1990,2050),TBI[91:151,2],type='l',col='red')
 points(seq(1990,2050),TBI[91:151,3],type='l',col='blue')
 points(seq(1990,2050),TBI[91:151,4],type='l',col='green')
 points(seq(1990,2050),TBI[91:151,5],type='l',col='pink')
-points(yrplot2010b,incidence2010)
+points(yrplot2010,incidence2010)
 
-plot(seq(1900,2050),TBI[1:151,1], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),type='l')
-
+# plot(seq(1900,2050),TBI[1:151,1], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),type='l')
+# plot(seq(1900,2050),Xn[,"new_I"][1:151], ylim=c(0,1000))
+# plot(seq(1900,2050,0.5),Xn[,"new_I"], ylim=c(0,1000))
+plot(Xn[,"PSIZE"],ylim=c(0,max(Xn[,"PSIZE"])))
 
 plot(seq(1990,2050),TBP[91:151,1], ylab="Prevalence/100,000pop",xlab="year", ylim=c(0,600),type='l')
 points(seq(1990,2050),TBP[91:151,3],type='l',col='red')
@@ -87,6 +94,7 @@ points(seq(1990,2050),TBP[91:151,4],type='l',col='blue')
 points(seq(1990,2050),TBP[91:151,5],type='l',col='green')
 points(seq(1990,2050),TBP[91:151,6],type='l',col='pink')
 points(yrplot2000,prevalence2000)
+points(yrplot2010b,prevalence2010)
 
 plot(seq(1990,2050),TBM[91:151,1], ylab="Mortality/100,000pop",xlab="year", ylim=c(0,20),type='l')
 points(seq(1990,2050),TBM[91:151,2],type='l',col='red')

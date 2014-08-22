@@ -30,7 +30,7 @@ Popsize <- suppressWarnings(read.csv('PSize(0950).csv',header=TRUE,check.names=F
 pstruc <- suppressWarnings(read.csv('AgeStruc09.csv',header=TRUE,check.names=F))      # countries as column titles, Rows are ages
 pstruc50 <- suppressWarnings(drop.levels(read.csv('AgeStruc50.csv',header=TRUE,check.names=F)))      # countries as column titles, Rows are ages. For checking
 # Case detection, treatment success, natural history parameters, ranges for previous
-cdrv <- suppressWarnings(read.csv('CDR.csv',header=TRUE,check.names=F))[1:2,]        # Number of years, cols = countries)
+cdrv <- suppressWarnings(read.csv('CDR.csv',header=TRUE,check.names=F))[1:24,]        # Number of years, cols = countries)
 suctv <- suppressWarnings(read.csv('SucT.csv',header=TRUE,check.names=F))[1:2,]        # Number of years, cols = countries)
 para <- as.matrix(drop.levels(read.csv('para.csv',header=TRUE,check.names=F)))       # Number of parameters same for all countries - CHECK with new model
 pararange <- as.matrix(drop.levels(read.csv('pararanges.csv',header=TRUE,check.names=F)))       # Number of parameters same for all countries - CHECK with new model
@@ -73,19 +73,48 @@ dalydata<- as.matrix(drop.levels(read.csv('Dalydata_22HBC.csv',header=TRUE,check
 # }
 # rownames(artm)<-countries
 
-# Calculate Case detection rate increase (sigmoidal as above)
-cdrm<-matrix(0,length(countries),(2050-2010+1))
+# # Calculate Case detection rate increase (sigmoidal as above)
+# cdrm<-matrix(0,length(countries),(2050-2010+1))
+# for (i in 1:length(countries)){
+#   hh<-cdrv[,countries[i]] # HIV incidence in 15-49yos, cdr 2010, cdr 2025
+#   cdr2010<-hh[1]; cdr2025<-hh[2];
+#   a<-cdr2010;b<-cdr2025-cdr2010;
+#   for (j in 1:(2025-2010+1)){
+#     ###what does this mean???
+#     cdrm[i,j]<-a + b/(1+ 1.1*exp(-0.8*(j-7)))^(2) 
+#   }
+#   #cdr remains constant after 2025
+#   cdrm[i,(2026-2010+1):(2050-2010+1)]<-cdrm[i,(2025-2010+1)]
+# }
+# cdrm<-cdrm/100
+# rownames(cdrm)<-countries
+
+#pessimistic
+cdrm<-matrix(0,length(countries),(2050-1990+1))
 for (i in 1:length(countries)){
-  hh<-cdrv[,countries[i]] # HIV incidence in 15-49yos, cdr 2010, cdr 2025
-  cdr2010<-hh[1]; cdr2025<-hh[2];
-  a<-cdr2010;b<-cdr2025-cdr2010;
-  for (j in 1:(2025-2010+1)){
-    cdrm[i,j]<-a + b/(1+ 1.1*exp(-0.8*(j-7)))^(2) 
-  }
-  cdrm[i,(2026-2010+1):(2050-2010+1)]<-cdrm[i,(2025-2010+1)]
+  cdrm[i,(1:(2012-1990+1))]<- t(cdrv[1:23,countries[i]])
+  #cdr remains constant after 2012
+  cdrm[i,(2013-1990+1):(2050-1990+1)]<-cdrm[i,(2012-1990+1)]
 }
 cdrm<-cdrm/100
 rownames(cdrm)<-countries
+# 
+# #optimistic
+# cdrm2<-<-matrix(0,length(countries),(2050-1990+1))
+# for (i in 1:length(countries)){
+#   a<-cdrv[1,countries[i]] # cdr 2010,
+#   ### this needs to change as need to be the level that would deliver 2025 goals
+#   c<-cdrv[1,countries[i]] # cdr 2025
+#   b<-c-a
+#   for (j in 1:(2025-2010+1)){
+#     ###what does this mean??? sigmoidal increase to 2025 level??
+#     cdrm[i,j]<-a + b/(1+ 1.1*exp(-0.8*(j-7)))^(2) 
+#   }
+#   #cdr remains constant after 2025
+#   cdrm[i,(2026-2010+1):(2050-2010+1)]<-cdrm[i,(2025-2010+1)]
+# }
+# cdrm<-cdrm/100
+# rownames(cdrm)<-countries
 
 # Treatment success (sigmoidal increase as above)
 suctm<-matrix(0,length(countries),(2050-2010+1))
