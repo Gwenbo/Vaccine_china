@@ -36,8 +36,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   p=c((rep(pchild, l=chiyrs)),(rep(padult, l=aduyrs)),(rep(pelderly, l=eldyrs)))
   f=c((rep(fchild, l=chiyrs)),(rep(fadult, l=aduyrs)),(rep(felderly, l=eldyrs)))
   h=c((rep(hchild, l=chiyrs)),(rep(hadult, l=aduyrs)),(rep(helderly, l=eldyrs)))
-  #v=c((rep(vchild, l=chiyrs)),(rep(vadult, l=aduyrs)),(rep(velderly, l=eldyrs)))
-  
+  v=c((rep(vchild, l=chiyrs)),(rep(vadult, l=aduyrs)),(rep(velderly, l=eldyrs)))
+  r=c((rep(rchild, l=chiyrs)),(rep(radult, l=aduyrs)),(rep(relderly, l=eldyrs)))
   
   print("doneeldyears")
   
@@ -158,11 +158,11 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     #### BIRTHS 
     # Need to have 2010 birth RATE pre-2010 else won't get curve 
     #added in a step pre-2010 to account for chinese one-child policy impact on population structure
-    
+    #one child policy started in 1979. early numbers are 1980 population (984016) and av fertility in 1975-1980 (20887) (average number of births in the 1950-1980period would be 24000, so could go higher)
     fertdrop<-1980
-    e_bb<-18533.326
-    e_pop<-1359822
-    if (k < 1980){ br<-e_bb/e_pop
+    e_bb<-20887
+    e_pop<-984016
+    if (k < fertdrop){ br<-e_bb/e_pop
                       if (k == year1){B<-round(br*psize[1]); bv<-c(bv,B)}
                       else { B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);}} 
     else{
@@ -200,15 +200,15 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       
       
       S[i,2:Mnage] = S[i-1,1:(Mnage-1)] - (u[1:Mnage-1]+lambda[i-1,1:(Mnage-1)])*S[i-1,1:(Mnage-1)]*dt 
-      L[i,2:Mnage] = L[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*(1 - p[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt - (v + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x + u[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt 
+      L[i,2:Mnage] = L[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*(1 - p[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt - (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x + u[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt 
 
-      new_I_react[i,2:Mnage] = v*f[1:(Mnage-1)]*(L[i-1,1:(Mnage-1)])*dt + r*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt 
-      new_NI_react[i,2:Mnage] =  v*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
+      new_I_react[i,2:Mnage] = v[1:(Mnage-1)]*f[1:(Mnage-1)]*(L[i-1,1:(Mnage-1)])*dt + r[1:(Mnage-1)]*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt 
+      new_NI_react[i,2:Mnage] =  v[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
       
-      new_I[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*f[1:(Mnage-1)]*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*f[1:(Mnage-1)]*L[i-1,1:(Mnage-1)]*dt + r*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt + w*NI[i-1,1:(Mnage-1)]*dt
-      new_NI[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
+      new_I[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*f[1:(Mnage-1)]*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*f[1:(Mnage-1)]*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt + w*NI[i-1,1:(Mnage-1)]*dt
+      new_NI[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
       
-      R[i,2:Mnage] = R[i-1,1:(Mnage-1)] + n*(I[i-1,1:(Mnage-1)] + NI[i-1,1:(Mnage-1)])*dt + CDR*CoT*(new_I[i,2:Mnage] + e*new_NI[i,2:Mnage]) - (r + g*lambda[i-1,1:(Mnage-1)] + u[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt 
+      R[i,2:Mnage] = R[i-1,1:(Mnage-1)] + n*(I[i-1,1:(Mnage-1)] + NI[i-1,1:(Mnage-1)])*dt + CDR*CoT*(new_I[i,2:Mnage] + e*new_NI[i,2:Mnage]) - (r[1:(Mnage-1)] + g*lambda[i-1,1:(Mnage-1)] + u[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt 
       I[i,2:Mnage] = I[i-1,1:(Mnage-1)] + (1 - CDR*CoT)*(new_I[i,2:Mnage]) - (n + u[1:(Mnage-1)] + ui)*I[i-1,1:(Mnage-1)]*dt
       NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + (1 - CDR*CoT)*(e*new_NI[i,2:Mnage]) - (n + u[1:(Mnage-1)] + uni + w)*NI[i-1,1:(Mnage-1)]*dt                    
       
@@ -389,17 +389,17 @@ print("done start year")
         S[i,1:Mnage] = S[i-1,1:Mnage] - (u[1:Mnage]+lambda[i-1,1:Mnage])*S[i-1,1:Mnage]*dt
         #print("1")
         #save(S,file="S.RData")
-        L[i,1:Mnage] = L[i-1,1:Mnage] + lambda[i-1,1:Mnage]*(1 - p[1:Mnage])*(S[i-1,1:Mnage] + g*R[i-1,1:Mnage])*dt - (v + lambda[i-1,1:Mnage]*p[1:Mnage]*x + u[1:Mnage])*L[i-1,1:Mnage]*dt 
+        L[i,1:Mnage] = L[i-1,1:Mnage] + lambda[i-1,1:Mnage]*(1 - p[1:Mnage])*(S[i-1,1:Mnage] + g*R[i-1,1:Mnage])*dt - (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*x + u[1:Mnage])*L[i-1,1:Mnage]*dt 
         #print("1")
-        new_I_react[i,1:Mnage] = v*f[1:(Mnage)]*(L[i-1,1:(Mnage)])*dt + r*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt 
+        new_I_react[i,1:Mnage] = v[1:Mnage]*f[1:(Mnage)]*(L[i-1,1:(Mnage)])*dt + r[1:Mnage]*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt 
         #print("1")
-        new_NI_react[i,1:Mnage] =  v*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
+        new_NI_react[i,1:Mnage] =  v[1:Mnage]*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
         #print("1")
-        new_I[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:(Mnage)]*f[1:(Mnage)]*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*f[1:(Mnage)]*L[i-1,1:(Mnage)]*dt + r*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt + w*NI[i-1,1:(Mnage)]*dt
+        new_I[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:(Mnage)]*f[1:(Mnage)]*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*f[1:(Mnage)]*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt + w*NI[i-1,1:(Mnage)]*dt
         #print("1")
-        new_NI[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:(Mnage)]*(1 - f[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
+        new_NI[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:(Mnage)]*(1 - f[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
         #print("1")
-        R[i,1:Mnage] = R[i-1,1:(Mnage)] + n*(I[i-1,1:(Mnage)] + NI[i-1,1:(Mnage)])*dt + CDR*CoT*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage]) - (r + g*lambda[i-1,1:Mnage] + u[1:(Mnage)])*R[i-1,1:(Mnage)]*dt 
+        R[i,1:Mnage] = R[i-1,1:(Mnage)] + n*(I[i-1,1:(Mnage)] + NI[i-1,1:(Mnage)])*dt + CDR*CoT*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage]) - (r[1:Mnage] + g*lambda[i-1,1:Mnage] + u[1:(Mnage)])*R[i-1,1:(Mnage)]*dt 
         #print("1")
         I[i,1:Mnage] = I[i-1,1:(Mnage)] + (1 - CDR*CoT)*(new_I[i,1:Mnage]) - (n + u[1:(Mnage)] + ui)*I[i-1,1:(Mnage)]*dt
         #print("1")
