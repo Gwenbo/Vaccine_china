@@ -55,16 +55,18 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   } else {ui<-rmortTB*(1-ui)+ui; uni<-rmortTB*(1-uni)+uni}
   }
   # u and ui use age depandent pattern and apply to existing number
-#   uichild<-ui*
-#   uiadult<-ui*
-#   uielderly<-ui*
-#   unichild<-uni*
-#   uniadult<-uni*
-#   unielderly<-uni*
-#     
-#   ui=c((rep(uichild, l=chiyrs)),(rep(uiadult, l=aduyrs)),(rep(uielderly, l=eldyrs)))
-#   uni=c((rep(unichild, l=chiyrs)),(rep(uniadult, l=aduyrs)),(rep(unielderly, l=eldyrs)))
-#     
+  uichild<-ui*uiscaleC
+  uiadult<-ui*uiscaleA
+  uielderly<-ui*uiscaleE
+  unichild<-uni*uiscaleC
+  uniadult<-uni*uiscaleA
+  unielderly<-uni*uiscaleE
+    
+  ui=c((rep(uichild, l=chiyrs)),(rep(uiadult, l=aduyrs)),(rep(uielderly, l=eldyrs)))
+  uni=c((rep(unichild, l=chiyrs)),(rep(uniadult, l=aduyrs)),(rep(unielderly, l=eldyrs)))
+  
+ 
+  
   # If don't assign CDRscale set it to 1 (i.e. use data)
   if(length(Fit)<5){CDRscale <- 1}
   
@@ -209,8 +211,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       new_NI[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
       
       R[i,2:Mnage] = R[i-1,1:(Mnage-1)] + n*(I[i-1,1:(Mnage-1)] + NI[i-1,1:(Mnage-1)])*dt + CDR*CoT*(new_I[i,2:Mnage] + e*new_NI[i,2:Mnage]) - (r[1:(Mnage-1)] + g*lambda[i-1,1:(Mnage-1)] + u[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt 
-      I[i,2:Mnage] = I[i-1,1:(Mnage-1)] + (1 - CDR*CoT)*(new_I[i,2:Mnage]) - (n + u[1:(Mnage-1)] + ui)*I[i-1,1:(Mnage-1)]*dt
-      NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + (1 - CDR*CoT)*(e*new_NI[i,2:Mnage]) - (n + u[1:(Mnage-1)] + uni + w)*NI[i-1,1:(Mnage-1)]*dt                    
+      I[i,2:Mnage] = I[i-1,1:(Mnage-1)] + (1 - CDR*CoT)*(new_I[i,2:Mnage]) - (n + u[1:(Mnage-1)] + ui[1:(Mnage-1)])*I[i-1,1:(Mnage-1)]*dt
+      NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + (1 - CDR*CoT)*(e*new_NI[i,2:Mnage]) - (n + u[1:(Mnage-1)] + uni[1:(Mnage-1)] + w)*NI[i-1,1:(Mnage-1)]*dt                    
       
       #if(I[i,2] < I[i-1,1]){print(c(i,I[i,2],I[i-1,1],"stop",(n + u[1:13] + ui),"cdr",CDR,CoT))}
       
@@ -401,9 +403,9 @@ print("done start year")
         #print("1")
         R[i,1:Mnage] = R[i-1,1:(Mnage)] + n*(I[i-1,1:(Mnage)] + NI[i-1,1:(Mnage)])*dt + CDR*CoT*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage]) - (r[1:Mnage] + g*lambda[i-1,1:Mnage] + u[1:(Mnage)])*R[i-1,1:(Mnage)]*dt 
         #print("1")
-        I[i,1:Mnage] = I[i-1,1:(Mnage)] + (1 - CDR*CoT)*(new_I[i,1:Mnage]) - (n + u[1:(Mnage)] + ui)*I[i-1,1:(Mnage)]*dt
+        I[i,1:Mnage] = I[i-1,1:(Mnage)] + (1 - CDR*CoT)*(new_I[i,1:Mnage]) - (n + u[1:(Mnage)] + ui[1:Mnage])*I[i-1,1:(Mnage)]*dt
         #print("1")
-        NI[i,1:Mnage] = NI[i-1,1:(Mnage)] + (1 - CDR*CoT)*(e*new_NI[i,1:Mnage]) - (n + u[1:(Mnage)] + uni + w)*NI[i-1,1:(Mnage)]*dt                    
+        NI[i,1:Mnage] = NI[i-1,1:(Mnage)] + (1 - CDR*CoT)*(e*new_NI[i,1:Mnage]) - (n + u[1:(Mnage)] + uni[1:Mnage] + w)*NI[i-1,1:(Mnage)]*dt                    
         
         print("done nonvacc")                        
         
@@ -592,8 +594,6 @@ print("done start year")
     }
   print("done mid year")
   } 
-  
-
 
   ## Outputs - in R, allows output to be seen without expressly wanting it - what is this??? comment out? 
   assign('S',S,envir = .GlobalEnv);assign('L',L,envir = .GlobalEnv);assign('I',I,envir = .GlobalEnv);assign('NI',NI,envir = .GlobalEnv);assign('R',R,envir = .GlobalEnv);assign('new_I',new_I,envir = .GlobalEnv);assign('new_NI',new_NI,envir = .GlobalEnv)
