@@ -37,7 +37,10 @@ mort<-as.matrix(mortage)
 bb <- births[,cntry]
 
 ## ********* Detection and treatment 
-cdr<-cdrm[cntry,];#cdrH<-cdr;
+cdr<-matrix(0,length(cdrm[cntry,]),Mnage)
+cdr[,1:Mnage]<-cdrm[cntry,];#cdrH<-cdr;
+
+
 suctt<-suctm[cntry,];#sucttH<-suctt;
 #cdr<-matrix(0.42,1,42);cdrH<-cdr;suctt<-matrix(0.84,1,42);sucttH<-suctt;
 ## *********** INITIAL population structure 

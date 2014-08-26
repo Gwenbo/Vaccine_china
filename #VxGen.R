@@ -54,11 +54,11 @@ if (yrintro < yearend){
 #     }
     # If any step is the start of the year then vaccinate 55yos
     if (any(startyr==i)){
-      thetaV2a[i,56]<-adultcov # Because of this at the start of the year theta[i,j]*X[i-1,j-1]. As the j-1 have just hit 10yo and are immediately vaccinated
+      thetaV2a[i,56]<-coverage # Because of this at the start of the year theta[i,j]*X[i-1,j-1]. As the j-1 have just hit 10yo and are immediately vaccinated
     }
     # If a masscampyear (start of then) then get 56-64yos. Campaign over 3 yrs, so divide adult coverage by the 3 yrs of the campaign
     if (any(masscampyr==i)){
-      thetaV2m[i,57:65]<-adultcov/3
+      thetaV2m[i,57:65]<-coverage/3
     }
   }
   
@@ -108,7 +108,7 @@ if (vaccine == 1){
   d<-dV2
   #print(c('sumtheta',sum(theta)))
 } else if (vaccine == 3){
-  theta<-thetaV3*eff
+  theta<-thetaV2*eff
   thetaS<-theta
   thetaL<-theta
   thetaR<-theta
@@ -118,4 +118,4 @@ if (vaccine == 1){
 # For checking output
 #assign('thetaV1',thetaV1,envir=.GlobalEnv);
 assign('thetaV2a',thetaV2a,envir=.GlobalEnv);
-#assign('thetaV2m',thetaV2m,envir=.GlobalEnv);
+assign('thetaV2m',thetaV2m,envir=.GlobalEnv);

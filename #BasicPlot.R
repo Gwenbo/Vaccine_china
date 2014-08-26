@@ -69,7 +69,7 @@ plot.new()
 # plot(seq(1900,2050),TBI[1:151,1], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),type='l')
 # plot(seq(1900,2050),Xn[,"new_I"][1:151], ylim=c(0,1000))
 # plot(seq(1900,2050,0.5),Xn[,"new_I"], ylim=c(0,1000))
-plot(Xn[,"TBMtot"],ylim=c(0,max(Xn[,"TBMtot"])))
+#plot(Xn[,"TBMtot"],ylim=c(0,max(Xn[,"TBMtot"])))
 
 ## prevalence plot
 par(mfrow=c(2,3))

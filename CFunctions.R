@@ -5,8 +5,8 @@
 # Takes in country, vaccine details, fit parameters, initial values, time for simulation, whether to plot, cluster or not
 FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   # Cntry <- country name; 
-  # Vx <- vector of vaccine properties. c(vxtype, efficacy, duration). If blank then no vaccine (for fit)
-  # Fit <- 6 fit parameters
+  # Vx <- vector of vaccine properties. c(vxtype, coverage, efficacy, duration). If blank then no vaccine (for fit)
+  # Fit <- 7 fit parameters
   # InitV <- vector of initial values: Run number, timestep, proportion TB initially (either 1 or four = ? )
   # TimeScale <- c(year1, yearend)
   # Plot <- whether to plot or not (1 = yes)
@@ -16,7 +16,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   #if (C == 1){setwd("/users/eidegkni/Documents/vaccine")}
   
   # Paranames in Fit and InitV
-  FitV<-c('psz1900','rmort','neta','rmortTB','CDRscale','alpha')
+  FitV<-c('psz1900','rmort','neta','rmortTB','CDRscale','CDRscaleE','alpha')
   InitialV<-c('run','dt','prop') 
   
   #### Run model with these input parameters
@@ -39,7 +39,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   h=c((rep(hchild, l=chiyrs)),(rep(hadult, l=aduyrs)),(rep(helderly, l=eldyrs)))
   v=c((rep(vchild, l=chiyrs)),(rep(vadult, l=aduyrs)),(rep(velderly, l=eldyrs)))
   r=c((rep(rchild, l=chiyrs)),(rep(radult, l=aduyrs)),(rep(relderly, l=eldyrs)))
-  
+  n=c((rep(n, l=chiyrs)),(rep(n, l=aduyrs)),(rep(nelderly, l=eldyrs)))
   print("doneeldyears")
   
   # Timesteps with inputted start end and timestep
@@ -70,17 +70,17 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   
   # If don't assign CDRscale set it to 1 (i.e. use data)
   if(length(Fit)<5){CDRscale <- 1}
-  
+  print('cdrscale set')
   ## Generate Vaccine specific data using above eff and D if specified in input
   if(length(Vx)>1){
-    assign('vaccine',Vx[1],envir = .GlobalEnv); assign('eff',Vx[2],envir = .GlobalEnv); assign('D',Vx[3],envir = .GlobalEnv)
+    assign('vaccine',Vx[1],envir = .GlobalEnv); assign('coverage',Vx[2],envir = .GlobalEnv); assign('eff',Vx[3],envir = .GlobalEnv); assign('D',Vx[4],envir = .GlobalEnv)
     source("#VxGen.R")
   } else {d<-matrix(0,steps,Mnage); 
           thetaS<-matrix(0,steps,Mnage);
           thetaL<-matrix(0,steps,Mnage)
           thetaR<-matrix(0,steps,Mnage)
           vaccine<-0;#thetaH<-theta;
-          eff<-0;Dur<-0;
+          eff<-0;Dur<-0;coverage<-0
           }
   print("Done vacc gen")
   
@@ -156,7 +156,12 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     
     #### CDR & TREATMENT SUCCESS (a proportion of cases that are found and successfully treated)
     # FIT: CDRscale multiplies the cdr value for both HIV+s and HIV-s
-    CDR<-CDRscale*cdr[1+CDR_yr-1990];#CDRH<-CDRscale*cdrH[1+yr-2010];
+  
+    CDRscales<-c((rep(CDRscale, l=chiyrs)),(rep(CDRscale, l=aduyrs)),(rep(CDRscaleE, l=eldyrs)))
+    CDRscaled<-CDRscales[1:Mnage]*cdr[,1:Mnage];
+    CDR<-CDRscaled[1+CDR_yr-1990,]
+    
+    #CDRH<-CDRscale*cdrH[1+yr-2010];
     CoT<-suctt[1+CoT_yr-1994];#CoTH<-sucttH[1+yr-2010];
     #print(c(yr,'CDRH',CDRH,'CoT',CoT,'CoTH',CoTH,1+yr-2010))
     
@@ -216,9 +221,9 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       new_I[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*f[1:(Mnage-1)]*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*f[1:(Mnage-1)]*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt + w*NI[i-1,1:(Mnage-1)]*dt
       new_NI[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
       
-      R[i,2:Mnage] = R[i-1,1:(Mnage-1)] + n*(I[i-1,1:(Mnage-1)] + NI[i-1,1:(Mnage-1)])*dt + CDR*CoT*(new_I[i,2:Mnage] + e*new_NI[i,2:Mnage]) - (r[1:(Mnage-1)] + g*lambda[i-1,1:(Mnage-1)] + u[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt 
-      I[i,2:Mnage] = I[i-1,1:(Mnage-1)] + (1 - CDR*CoT)*(new_I[i,2:Mnage]) - (n + u[1:(Mnage-1)] + ui[1:(Mnage-1)])*I[i-1,1:(Mnage-1)]*dt
-      NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + (1 - CDR*CoT)*(e*new_NI[i,2:Mnage]) - (n + u[1:(Mnage-1)] + uni[1:(Mnage-1)] + w)*NI[i-1,1:(Mnage-1)]*dt                    
+      R[i,2:Mnage] = R[i-1,1:(Mnage-1)] + n[1:(Mnage-1)]*(I[i-1,1:(Mnage-1)] + NI[i-1,1:(Mnage-1)])*dt + CDR[1:(Mnage-1)]*CoT*(new_I[i,2:Mnage] + e*new_NI[i,2:Mnage]) - (r[1:(Mnage-1)] + g*lambda[i-1,1:(Mnage-1)] + u[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt 
+      I[i,2:Mnage] = I[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(new_I[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + ui[1:(Mnage-1)])*I[i-1,1:(Mnage-1)]*dt
+      NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(e*new_NI[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + uni[1:(Mnage-1)] + w)*NI[i-1,1:(Mnage-1)]*dt                    
       
       #if(I[i,2] < I[i-1,1]){print(c(i,I[i,2],I[i-1,1],"stop",(n + u[1:13] + ui),"cdr",CDR,CoT))}
       
@@ -407,11 +412,11 @@ print("done start year")
         #print("1")
         new_NI[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:(Mnage)]*(1 - f[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
         #print("1")
-        R[i,1:Mnage] = R[i-1,1:(Mnage)] + n*(I[i-1,1:(Mnage)] + NI[i-1,1:(Mnage)])*dt + CDR*CoT*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage]) - (r[1:Mnage] + g*lambda[i-1,1:Mnage] + u[1:(Mnage)])*R[i-1,1:(Mnage)]*dt 
+        R[i,1:Mnage] = R[i-1,1:(Mnage)] + n[1:Mnage]*(I[i-1,1:(Mnage)] + NI[i-1,1:(Mnage)])*dt + CDR[1:Mnage]*CoT*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage]) - (r[1:Mnage] + g*lambda[i-1,1:Mnage] + u[1:(Mnage)])*R[i-1,1:(Mnage)]*dt 
         #print("1")
-        I[i,1:Mnage] = I[i-1,1:(Mnage)] + (1 - CDR*CoT)*(new_I[i,1:Mnage]) - (n + u[1:(Mnage)] + ui[1:Mnage])*I[i-1,1:(Mnage)]*dt
+        I[i,1:Mnage] = I[i-1,1:(Mnage)] + (1 - CDR[1:Mnage]*CoT)*(new_I[i,1:Mnage]) - (n[1:Mnage] + u[1:(Mnage)] + ui[1:Mnage])*I[i-1,1:(Mnage)]*dt
         #print("1")
-        NI[i,1:Mnage] = NI[i-1,1:(Mnage)] + (1 - CDR*CoT)*(e*new_NI[i,1:Mnage]) - (n + u[1:(Mnage)] + uni[1:Mnage] + w)*NI[i-1,1:(Mnage)]*dt                    
+        NI[i,1:Mnage] = NI[i-1,1:(Mnage)] + (1 - CDR[1:Mnage]*CoT)*(e*new_NI[i,1:Mnage]) - (n[1:Mnage] + u[1:(Mnage)] + uni[1:Mnage] + w)*NI[i-1,1:(Mnage)]*dt                    
         
         print("done nonvacc")                        
         

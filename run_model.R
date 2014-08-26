@@ -31,7 +31,7 @@ setwd(home)
   neta2<-neta # this parameter needs extra assigning for some annoying reason! 
   
   # Run the model with these parameters  
-  Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)  
+  Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)  
 
   #EOn<-Econout;h10<-hbcout
   # save in big df for plot - original one
@@ -157,7 +157,8 @@ source('#BasicPlot.R')
 typen<-3 ## Number of vaccine types
 effs<-c(40,60,80)/100
 durs<-c(20)
-combn<-length(effs)*length(durs) ## Number of efficacy and duration combinations
+cover<-c(0.3,0.5)
+combn<-length(effs)*length(durs)*length(coverage) ## Number of efficacy and duration combinations
 
 ## Which countries?
 cntry<-"China"
@@ -187,32 +188,80 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
   Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,C)  
   #EOn<-Econout;h10<-hbcout
   # save in big df for plot - original one
-#   eee<-cbind(hbcout,kkk,0,0); colnames(eee)<-c(colnames(hbcout),"fit","type","vxint")
-#   dfvx<-rbind(dfvx,eee)
+   eee<-cbind(Xn,0,0); colnames(eee)<-c(colnames(Xn),"type","vxint")
+   dfvx<-rbind(dfvx,eee)
   
   # For each type of vaccine
   #have set to 2 only as only doing vaccine type 2 and 3 at the moment
   for (nn in 2:typen){
-    # For each efficacy
-    count<-0;coms<-matrix(0,combn,2);
-    for (zz in 1:length(effs)){
+    
+    count<-0;coms<-matrix(0,combn,3);
+    #for each coverage
+    for (vv in 1:length(cover)){
+      # For each efficacy
+      for (zz in 1:length(effs)){
       # For each duration
       for (xx in 1:length(durs)){
         count<-count+1
-        coms[count,]<-c(effs[zz],durs[xx])
-        tic <- effs[zz];    toc <- durs[xx];   print(c(tic,toc))
+        coms[count,]<-c(cover[vv],effs[zz],durs[xx])
+        cov<-cover[vv]; tic <- effs[zz];    toc <- durs[xx];   print(c(cov,tic,toc))
         # Length of second input > 1 so triggers FitGo to do a vaccine scenario
-        X<-FitGo(cntry,c(nn,tic,toc),c(p0,rmort,neta2,rmortTB,CDRscale,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,C)  
+        X<-FitGo(cntry,c(nn,cov,tic,toc),c(p0,rmort,neta2,rmortTB,CDRscale,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,C)  
 #         ae<-merge(EOn,Econout,by="Year");ae<-ae[c(1:5,9:17)];
 #         ae<-ae[125:150,]
-#         # save in countries VXout for DALY calc
-#         write.table(ae,paste('E',ui,"_",nn,count,'.csv',sep=''),sep=",",row.names=FALSE)
+#         # save in countries VXout for DALY calc       
 #         # save in big df for plot
-#         eee<-cbind(hbcout,kkk,nn,count); colnames(eee)<-c(colnames(hbcout),"fit","type","vxint")
-#         dfvx<-rbind(dfvx,eee)
-      }}}
-  
+          eee<-cbind(X,nn,count); colnames(eee)<-c(colnames(X),"type","vxint")
+          dfvx<-rbind(dfvx,eee)
+      }}}}
+write.table(dfvx,'vaccine_results.csv',sep=",",row.names=FALSE)
 } # end of fits
+
+
+#y<-subset(dfvx,dfvx$count==1)
+y<-dfvx[dfvx$type==2,]
+add line of Y
+
+plot(seq(1970,2050),TBI[71:151,1], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="Total Incidence",type='l',col='orange')
+points(2010,incidence2010[1])
+segments(2010,incidence2010l[1],2010,incidence2010u[1])
+lines(seq(1970,2050),dfvx[dfvx$count==1,], col='orange',lty=2)
+lines(seq(1970,2050),dfvx[dfvx$count==2,], col='orange',lty=3)
+lines(seq(1970,2050),dfvx[dfvx$count==3,], col='orange',lty=4)
+lines(seq(1970,2050),dfvx[dfvx$count==4,], col='orange',lty=5)
+lines(seq(1970,2050),dfvx[dfvx$count==5,], col='orange',lty=6)
+lines(seq(1970,2050),dfvx[dfvx$count==6,], col='orange',lty=6, lwd=2)
+
+plot(seq(1970,2050),TBI[71:151,2], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="0-14years Incidence",type='l',col='red')
+points(2010,incidence2010[2])
+segments(2010,incidence2010l[2],2010,incidence2010u[2])
+
+plot(seq(1970,2050),TBI[71:151,3], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="15-54years Incidence",type='l',col='blue')
+points(2010,incidence2010[3])
+segments(2010,incidence2010l[3],2010,incidence2010u[3])
+
+plot(seq(1970,2050),TBI[71:151,4], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="55-64years Incidence",type='l',col='green')
+points(2010,incidence2010[4])
+segments(2010,incidence2010l[4],2010,incidence2010u[4])
+
+plot(seq(1970,2050),TBI[71:151,5], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="65+ years Incidence",type='l',col='pink')
+points(2010,incidence2010[5])
+segments(2010,incidence2010l[5],2010,incidence2010u[5])
+
+plot.new()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 setwd(paste(home,"Output/A.vx_plots",sep=''))
 
