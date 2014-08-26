@@ -101,9 +101,9 @@ segments(2010,prevalence2010l[5],2010,prevalence2010u[5])
 plot.new()
 
 
-par(mfrow=c(1,1))
-plot(seq(1900,2050,0.5),Xn[,'L'], ylab="L",xlab="year", ylim=c(0,2000000),type='l')
-lines(seq(1900,2050,0.5),Xn[,"PSIZE"], col='red')
+# par(mfrow=c(1,1))
+# plot(seq(1900,2050,0.5),Xn[,'L'], ylab="L",xlab="year", ylim=c(0,2000000),type='l')
+# lines(seq(1900,2050,0.5),Xn[,"PSIZE"], col='red')
 # points(seq(1990,2050),TBP[91:151,3],type='l',col='red')
 # points(seq(1990,2050),TBP[91:151,4],type='l',col='blue')
 # points(seq(1990,2050),TBP[91:151,5],type='l',col='green')

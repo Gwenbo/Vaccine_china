@@ -23,15 +23,16 @@ nm<-c(pararange[,1],"p0") # The parameter ranges
 setwd(home)
 
 # Simulate data 
-rrun<-10 # It can be as high as 1000 but just do a few to get a feel and for it to be quicker
-xout<-c(); eee<-c(); # Initialise all vectors to be empty
-for (kkk in 1:rrun){
-  print(kkk)
+# rrun<-10 # It can be as high as 1000 but just do a few to get a feel and for it to be quicker
+# xout<-c(); eee<-c(); # Initialise all vectors to be empty
+# for (kkk in 1:rrun){
+#   print(kkk)
   for (i in 1:length(nm)){assign(nm[i],as.numeric(para[kkk,i]))} # Assign the parameters to the correct values
   neta2<-neta # this parameter needs extra assigning for some annoying reason! 
   
   # Run the model with these parameters  
   Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)  
+
   #EOn<-Econout;h10<-hbcout
   # save in big df for plot - original one
   #eee<-cbind(hbcout,kkk); colnames(eee)<-c(colnames(hbcout),"fit");
@@ -39,7 +40,7 @@ for (kkk in 1:rrun){
   #newo<-ddply(eee,.(Year,fit),summarise,psize=Psize,tbi=100000*(negcases)/Psize,tbm=100000*(negdeaths)/Psize,tbih=100000*(poscases)/Psize,tbmh=100000*(posdeaths)/Psize)
   #newo<-ddply(eee,.(Year,fit),summarise,psize=Psize,tbi=100000*(negcases)/Psize,tbm=100000*(negdeaths)/Psize,tbih=100000*(poscases)/Psize,tbmh=100000*(posdeaths)/Psize)
   #xout<-rbind(xout,newo)
-}
+# }
 
 setwd(home)
 source('#BasicPlot.R')
@@ -153,9 +154,9 @@ source('#BasicPlot.R')
 ######******************************************* Run vaccine scenarios
 
 ## Vaccine interventions
-typen<-2 ## Number of vaccine types
+typen<-3 ## Number of vaccine types
 effs<-c(40,60,80)/100
-durs<-c(5,10,50,100)
+durs<-c(20)
 combn<-length(effs)*length(durs) ## Number of efficacy and duration combinations
 
 ## Which countries?
@@ -169,9 +170,9 @@ setwd(home);
 dfvx<-c()
 
 # Run through all fits
-for (kkk in 1:10){ # Again this could be 1000 but just do 10 for example 
+for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example 
   
-  for (i in 1:length(nm)){assign(nm[i],as.numeric(pout[kkk,i]))}
+  for (i in 1:length(nm)){assign(nm[i],as.numeric(para[kkk,i]))}
   neta2<-neta
   
   # CHECK against yyy in FITGO - usually all OK apart from neta!
@@ -184,13 +185,14 @@ for (kkk in 1:10){ # Again this could be 1000 but just do 10 for example
   # Run the model with these parameters 
   # Second input of length 1 so "no vaccine" scenario
   Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,C)  
-  EOn<-Econout;h10<-hbcout
+  #EOn<-Econout;h10<-hbcout
   # save in big df for plot - original one
-  eee<-cbind(hbcout,kkk,0,0); colnames(eee)<-c(colnames(hbcout),"fit","type","vxint")
-  dfvx<-rbind(dfvx,eee)
+#   eee<-cbind(hbcout,kkk,0,0); colnames(eee)<-c(colnames(hbcout),"fit","type","vxint")
+#   dfvx<-rbind(dfvx,eee)
   
   # For each type of vaccine
-  for (nn in 1:typen){
+  #have set to 2 only as only doing vaccine type 2 and 3 at the moment
+  for (nn in 2:typen){
     # For each efficacy
     count<-0;coms<-matrix(0,combn,2);
     for (zz in 1:length(effs)){
@@ -201,13 +203,13 @@ for (kkk in 1:10){ # Again this could be 1000 but just do 10 for example
         tic <- effs[zz];    toc <- durs[xx];   print(c(tic,toc))
         # Length of second input > 1 so triggers FitGo to do a vaccine scenario
         X<-FitGo(cntry,c(nn,tic,toc),c(p0,rmort,neta2,rmortTB,CDRscale,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,C)  
-        ae<-merge(EOn,Econout,by="Year");ae<-ae[c(1:5,9:17)];
-        ae<-ae[125:150,]
-        # save in countries VXout for DALY calc
-        write.table(ae,paste('E',ui,"_",nn,count,'.csv',sep=''),sep=",",row.names=FALSE)
-        # save in big df for plot
-        eee<-cbind(hbcout,kkk,nn,count); colnames(eee)<-c(colnames(hbcout),"fit","type","vxint")
-        dfvx<-rbind(dfvx,eee)
+#         ae<-merge(EOn,Econout,by="Year");ae<-ae[c(1:5,9:17)];
+#         ae<-ae[125:150,]
+#         # save in countries VXout for DALY calc
+#         write.table(ae,paste('E',ui,"_",nn,count,'.csv',sep=''),sep=",",row.names=FALSE)
+#         # save in big df for plot
+#         eee<-cbind(hbcout,kkk,nn,count); colnames(eee)<-c(colnames(hbcout),"fit","type","vxint")
+#         dfvx<-rbind(dfvx,eee)
       }}}
   
 } # end of fits

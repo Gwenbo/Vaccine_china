@@ -6,19 +6,19 @@ steps<-length(times)
 
 
 # Susceptible, Susceptible with HIV
-S<-matrix(0,steps,Mnage); #SH<-matrix(0,steps,Mnage)
+S<-matrix(0,steps,Mnage); SH<-matrix(0,steps,Mnage)
 # Latent, Latent with HIV
-L<-matrix(0,steps,Mnage);  #LH<-matrix(0,steps,Mnage)
+L<-matrix(0,steps,Mnage);  LH<-matrix(0,steps,Mnage)
 # Infectious, Infectious with HIV
-I<-matrix(0,steps,Mnage);  #IH<-matrix(0,steps,Mnage)
+I<-matrix(0,steps,Mnage);  IH<-matrix(0,steps,Mnage)
 # Non-Infectious, Non-Infectious with HIV
-NI<-matrix(0,steps,Mnage);  #NIH<-matrix(0,steps,Mnage)
+NI<-matrix(0,steps,Mnage);  NIH<-matrix(0,steps,Mnage)
 # Recovered, Recovered, Recovered with HIV
-R<-matrix(0,steps,Mnage);  #RH<-matrix(0,steps,Mnage)
+R<-matrix(0,steps,Mnage);  RH<-matrix(0,steps,Mnage)
 # New Infectious, New Infectious with HIV
-new_I<-matrix(0,steps,Mnage); #new_IH<-matrix(0,steps,Mnage); 
+new_I<-matrix(0,steps,Mnage); new_IH<-matrix(0,steps,Mnage); 
 # New non-Infectious, New non-Infectious with HIV
-new_NI<-matrix(0,steps,Mnage); #new_NIH<-matrix(0,steps,Mnage);
+new_NI<-matrix(0,steps,Mnage); new_NIH<-matrix(0,steps,Mnage);
 #new reactivation Infectious/non infectious
 new_I_react<-matrix(0,steps,Mnage)
 new_NI_react<-matrix(0,steps,Mnage)

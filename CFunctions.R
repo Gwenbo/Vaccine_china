@@ -4,7 +4,8 @@
 #### MAIN Function to generate model output
 # Takes in country, vaccine details, fit parameters, initial values, time for simulation, whether to plot, cluster or not
 FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
-  # Cntry <- country name; # Vx <- vector of vaccine properties. c(vxtype, efficacy, duration). If blank then no vaccine (for fit)
+  # Cntry <- country name; 
+  # Vx <- vector of vaccine properties. c(vxtype, efficacy, duration). If blank then no vaccine (for fit)
   # Fit <- 6 fit parameters
   # InitV <- vector of initial values: Run number, timestep, proportion TB initially (either 1 or four = ? )
   # TimeScale <- c(year1, yearend)
@@ -75,8 +76,10 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     assign('vaccine',Vx[1],envir = .GlobalEnv); assign('eff',Vx[2],envir = .GlobalEnv); assign('D',Vx[3],envir = .GlobalEnv)
     source("#VxGen.R")
   } else {d<-matrix(0,steps,Mnage); 
-          theta<-matrix(0,steps,Mnage);
-          vaccine<-0;thetaH<-theta;
+          thetaS<-matrix(0,steps,Mnage);
+          thetaL<-matrix(0,steps,Mnage)
+          thetaR<-matrix(0,steps,Mnage)
+          vaccine<-0;#thetaH<-theta;
           eff<-0;Dur<-0;
           }
   print("Done vacc gen")
@@ -164,6 +167,9 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     fertdrop<-1980
     e_bb<-20887
     e_pop<-984016
+#     e_bb<-20887
+#     e_pop<-984016
+    
     if (k < fertdrop){ br<-e_bb/e_pop
                       if (k == year1){B<-round(br*psize[1]); bv<-c(bv,B)}
                       else { B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);}} 
@@ -245,22 +251,22 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       ###•••••••••••••••••• Vaccine coverage and duration ••••••••••••••••
       # NUMBER OF VACCINES (column 1=infant, 2=10yos, 3=mass)
       if(vaccine == 0){VX[i,1:3]<-0}
-      if(vaccine == 1){VX[i,1]<-sum(thetaV1[i,]*(S[i,]+L[i,]+R[i,]))}
-      if(vaccine == 2){VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]) + thetaV2a[i,]*(SH[i,]+LH[i,]+RH[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]) + thetaV2m[i,]*(SH[i,]+LH[i,]+RH[i,]))}
-      if(vaccine == 3){VX[i,1]<-sum(thetaV1[i,]*(S[i,]+L[i,]+R[i,])); VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]) + thetaV2a[i,]*(SH[i,]+LH[i,]+RH[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]) + thetaV2m[i,]*(SH[i,]+LH[i,]+RH[i,]))}
+      #if(vaccine == 1){VX[i,1]<-sum(thetaV1[i,]*(S[i,]+L[i,]+R[i,]))}
+      if(vaccine == 2){VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
+      #if(vaccine == 3){VX[i,1]<-sum(thetaV1[i,]*(S[i,]+L[i,]+R[i,])); VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]) + thetaV2a[i,]*(SH[i,]+LH[i,]+RH[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]) + thetaV2m[i,]*(SH[i,]+LH[i,]+RH[i,]))}
       
       ##•••••••••••••••••• Vaccination campaign: age everyone and then implement (both vaccination and return)
-      S2 = S[i,] + Sv[i,]*(d[i,]*(1-theta[i,])) - theta[i,]*S[i,]
-      L2 = L[i,] + Lv[i,]*(d[i,]*(1-theta[i,])) - theta[i,]*L[i,]
-      R2 = R[i,] + Rv[i,]*(d[i,]*(1-theta[i,])) - theta[i,]*R[i,]
+      S2 = S[i,] + Sv[i,]*(d[i,]*(1-thetaS[i,])) - thetaS[i,]*S[i,]
+      L2 = L[i,] + Lv[i,]*(d[i,]*(1-thetaL[i,])) - thetaL[i,]*L[i,]
+      R2 = R[i,] + Rv[i,]*(d[i,]*(1-thetaR[i,])) - thetaR[i,]*R[i,]
       
       #SH2 = SH[i,] + SvH[i,]*(d[i,]*(1-theta[i,])) - thetaH[i,]*SH[i,]
       #LH2 = LH[i,] + LvH[i,]*(d[i,]*(1-theta[i,])) - thetaH[i,]*LH[i,]
       #RH2 = RH[i,] + RvH[i,]*(d[i,]*(1-theta[i,])) - thetaH[i,]*RH[i,]
       
-      Sv2 = Sv[i,] - Sv[i,]*(d[i,]*(1-theta[i,])) + theta[i,]*S[i,]
-      Lv2 = Lv[i,] - Lv[i,]*(d[i,]*(1-theta[i,])) + theta[i,]*L[i,]
-      Rv2 = Rv[i,] - Rv[i,]*(d[i,]*(1-theta[i,])) + theta[i,]*R[i,]
+      Sv2 = Sv[i,] - Sv[i,]*(d[i,]*(1-thetaS[i,])) + thetaS[i,]*S[i,]
+      Lv2 = Lv[i,] - Lv[i,]*(d[i,]*(1-thetaL[i,])) + thetaL[i,]*L[i,]
+      Rv2 = Rv[i,] - Rv[i,]*(d[i,]*(1-thetaR[i,])) + thetaR[i,]*R[i,]
       
       #SvH2 = SvH[i,] - SvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*SH[i,]
       #LvH2 = LvH[i,] - LvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*LH[i,]
@@ -331,9 +337,9 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       
       if (i==length(seq(year1,yearend,dt))){ # LAST TIME STEP
         # First is for whole population, second for HIV positives only... 
-        Out<-cbind(Deaths,psize,rowSums(S),rowSums(L),rowSums(R),rowSums(I),rowSums(NI),rowSums(Sv),rowSums(Lv),rowSums(Rv),rowSums(theta),rowSums(d),VX)
-        nms<-c("Deaths","Psz","S","L","R","I","NI","Sv","Lv","Rv","theta","d","VaccDTP3")
-        #Out<-as.data.frame(Out);colnames(Out)<-nms
+        Out<-cbind(Deaths,psize,rowSums(S),rowSums(L),rowSums(R),rowSums(I),rowSums(NI),rowSums(Sv),rowSums(Lv),rowSums(Rv),rowSums(thetaS),rowSums(thetaL),rowSums(thetaR),rowSums(d),VX)
+        nms<-c("Deaths","Psz","S","L","R","I","NI","Sv","Lv","Rv","thetaS","thetaL","thetaR","d","VaccDTP3")
+        Out<-as.data.frame(Out);colnames(Out)<-nms
         print ("done out and nms")
         
         #### FOR CE OUTPUT
@@ -433,24 +439,23 @@ print("done start year")
         ###•••••••••••••••••• Vaccine coverage and duration ••••••••••••••••
         # NUMBER OF VACCINES
         if(vaccine == 0){VX[i,1:3]<-0}
-        if(vaccine == 1){VX[i,1]<-sum(thetaV1[i,]*(S[i,]+L[i,]+R[i,]))}
-        if(vaccine == 2){VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]) + thetaV2a[i,]*(SH[i,]+LH[i,]+RH[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]) + thetaV2m[i,]*(SH[i,]+LH[i,]+RH[i,]))}
-        if(vaccine == 3){VX[i,1]<-sum(thetaV1[i,]*(S[i,]+L[i,]+R[i,])); VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]) + thetaV2a[i,]*(SH[i,]+LH[i,]+RH[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]) + thetaV2m[i,]*(SH[i,]+LH[i,]+RH[i,]))}
-        
+        #check what VX does - might want to include l and r in eqn as vaccine will be delivered, it just wont work,
+        if(vaccine == 2){VX[i,2]<-sum(thetaV2a[i,]*(S[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]))}
+        if(vaccine == 3){VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
         print("done vacc assignment")
         ####•••••••••••••••••• Vaccination and Removal of protection
         
-        S2 = S[i,] + Sv[i,]*(d[i,]*(1-theta[i,])) - theta[i,]*S[i,]  #should this theta be k???
-        L2 = L[i,] + Lv[i,]*(d[i,]*(1-theta[i,])) - theta[i,]*L[i,]
-        R2 = R[i,] + Rv[i,]*(d[i,]*(1-theta[i,])) - theta[i,]*R[i,]
+        S2 = S[i,] + Sv[i,]*(d[i,]*(1-thetaS[i,])) - thetaS[i,]*S[i,]  #should this theta be k???
+        L2 = L[i,] + Lv[i,]*(d[i,]*(1-thetaL[i,])) - thetaL[i,]*L[i,]
+        R2 = R[i,] + Rv[i,]*(d[i,]*(1-thetaR[i,])) - thetaR[i,]*R[i,]
         
         #SH2 = SH[i,] + SvH[i,]*(d[i,]*(1-theta[i,])) - thetaH[i,]*SH[i,]
         #LH2 = LH[i,] + LvH[i,]*(d[i,]*(1-theta[i,])) - thetaH[i,]*LH[i,]
         #RH2 = RH[i,] + RvH[i,]*(d[i,]*(1-theta[i,])) - thetaH[i,]*RH[i,]
         
-        Sv2 = Sv[i,] - Sv[i,]*(d[i,]*(1-theta[i,])) + theta[i,]*S[i,]
-        Lv2 = Lv[i,] - Lv[i,]*(d[i,]*(1-theta[i,])) + theta[i,]*L[i,]
-        Rv2 = Rv[i,] - Rv[i,]*(d[i,]*(1-theta[i,])) + theta[i,]*R[i,]
+        Sv2 = Sv[i,] - Sv[i,]*(d[i,]*(1-thetaS[i,])) + thetaS[i,]*S[i,]
+        Lv2 = Lv[i,] - Lv[i,]*(d[i,]*(1-thetaL[i,])) + thetaL[i,]*L[i,]
+        Rv2 = Rv[i,] - Rv[i,]*(d[i,]*(1-thetaR[i,])) + thetaR[i,]*R[i,]
         
         #SvH2 = SvH[i,] - SvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*SH[i,]
         #LvH2 = LvH[i,] - LvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*LH[i,]
@@ -555,7 +560,7 @@ print("done start year")
           TBP[(k-year1+1),5]<-100000*sum(I[i1:i2,46:60],NI[i1:i2,46:60])/mean(psize4559[i1:i2])
           TBP[(k-year1+1),6]<-100000*sum(I[i1:i2,61:Mnage],NI[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
           
-          ## (3) TB prevalence rate 
+          ## (4) TB bacteriologically positive prevalence rate 
           TBPb[(k-year1+1),1]<-100000*sum(I[i1:i2,])/mean(psize[i1:i2])
           TBPb[(k-year1+1),2]<-100000*sum(I[i1:i2,1:15])/mean(psize014[i1:i2])
           TBPb[(k-year1+1),3]<-100000*sum(I[i1:i2,16:30])/mean(psize1529[i1:i2])
@@ -564,7 +569,7 @@ print("done start year")
           TBPb[(k-year1+1),6]<-100000*sum(I[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
           
           
-          ## (4) TB mortality
+          ## (5) TB mortality
           #print(c("IH",sum(new_IH[i,],new_NIH[i,]),TBI[i,2]))
           TBM[(k-year1+1),1]<-100000*sum(TBDeaths[i1:i2,])/mean(psize[i1:i2])
           TBM[(k-year1+1),2]<-100000*sum(TBDeaths[i1:i2,1:15])/mean(psize014[i1:i2])
@@ -600,7 +605,8 @@ print("done start year")
   assign('NBirths',BIRTHS,envir=.GlobalEnv)  
 #assign('SH',SH,envir = .GlobalEnv);assign('LH',LH,envir = .GlobalEnv);#assign('IH',IH,envir = .GlobalEnv);assign('NIH',NIH,envir = .GlobalEnv);assign('RH',RH,envir = .GlobalEnv);assign('new_IH',new_IH,envir = .GlobalEnv);assign('new_NIH',new_NIH,envir = .GlobalEnv)
   assign('Sv',Sv,envir = .GlobalEnv);assign('Lv',Lv,envir = .GlobalEnv);assign('Rv',Rv,envir = .GlobalEnv);#assign('SvH',SvH,envir = .GlobalEnv);assign('LvH',LvH,envir = .GlobalEnv);assign('RvH',RvH,envir = .GlobalEnv);
-  assign('lambda',lambda,envir=.GlobalEnv);assign('theta',theta,envir=.GlobalEnv);assign('d',d,envir=.GlobalEnv);
+  assign('lambda',lambda,envir=.GlobalEnv);assign('thetaS',thetaS,envir=.GlobalEnv);assign('thetaL',thetaL,envir=.GlobalEnv);assign('thetaR',thetaR,envir=.GlobalEnv);
+assign('d',d,envir=.GlobalEnv);
   assign('TBDeaths',TBDeaths,envir=.GlobalEnv);#assign('TBDeathsH',TBDeathsH,envir=.GlobalEnv);
   #assign('AllDeathsH',AllDeathsH,envir=.GlobalEnv);
   assign('ADeaths',ADeaths,envir=.GlobalEnv);#assign('ADeathsH',ADeathsH,envir=.GlobalEnv);

@@ -54,9 +54,9 @@ ps<-pstruc[1:101,cntry] ## Remove those in the pstruc over the age of 85.... ## 
 
 ## VACCINE SPECIFICS ••••••••••••••••••  
 # Coverage varies by country. To keep index as age 
-infantcov=Cov[1,cntry]/100
+#infantcov=Cov[1,cntry]/100
 adultcov=Cov[2,cntry]/100
-mcampcov=Cov[3,cntry]/100
+#mcampcov=Cov[3,cntry]/100
 #infantcov=0.1
 #mcampcov=0.1
 #adultcov=0.1
