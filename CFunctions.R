@@ -101,14 +101,32 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     # Only start marking years after 2009 
 
     if (k <= 2010){ yr <- 2010 } else { yr <- k }
-    
+
     
     #### MORTALITY. Runs from age 1 to age 101 (equiv 0-100yo)
     # FIT: Rmort multiplies background death rates. Range [-1,1]
     #is in k loop, so generates a new u (vector of length number of ages) each year
-    if (rmort < 0) {u<-as.vector(rmort*(mort[1+yr-2010,2:102]) + mort[1+yr-2010,2:102])#;names(u)<-NULL;#print(c("neg","u",u,"rmort",rmort)) 
-    } else {u<-as.vector(rmort*(1-(mort[1+yr-2010,2:102])) + mort[1+yr-2010,2:102])#;names(u)<-NULL;#print(c("u",u,"rmort",rmort))
-    }
+    #make so mortality is higher in the past (1950s LE figures as elderly in 2010 were born latest 1945 (many before this)) and falls at same time to birthdrop
+    
+    fertdrop<-1980
+    
+    if (k < fertdrop){if (rmort < 0) {u<-as.vector(rmort*(mort[1,2:102]) + mort[1,2:102])} 
+                      else {u<-as.vector(rmort*(1-(mort[1,2:102])) + mort[1,2:102])}
+                      } 
+    else{
+        if (k < 2010) { if (rmort < 0) {u<-as.vector(rmort*(mort[2,2:102]) + mort[2,2:102])} 
+                      else {u<-as.vector(rmort*(1-(mort[2,2:102])) + mort[2,2:102])}
+                      } 
+        else { if (rmort < 0) {u<-as.vector(rmort*(mort[2+yr-2010,2:102]) + mort[2+yr-2010,2:102])} 
+               else {u<-as.vector(rmort*(1-(mort[2+yr-2010,2:102])) + mort[2+yr-2010,2:102])}
+        }
+        }
+
+    
+#     if (rmort < 0) {u<-as.vector(rmort*(mort[1+yr-2010,2:102]) + mort[1+yr-2010,2:102])#;names(u)<-NULL;#print(c("neg","u",u,"rmort",rmort)) 
+#     } else {u<-as.vector(rmort*(1-(mort[1+yr-2010,2:102])) + mort[1+yr-2010,2:102])#;names(u)<-NULL;#print(c("u",u,"rmort",rmort))
+#     }
+  
     
     #print(c("U",u,mort[1+yr-2010,2:102],rmort))
     #u<-mort[1+yr-2010,2:102]
@@ -169,20 +187,23 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     # Need to have 2010 birth RATE pre-2010 else won't get curve 
     #added in a step pre-2010 to account for chinese one-child policy impact on population structure
     #one child policy started in 1979. early numbers are 1980 population (984016) and av fertility in 1975-1980 (20887) (average number of births in the 1950-1980period would be 24000, so could go higher)
-    fertdrop<-1980
+    
     e_bb<-20887
     e_pop<-984016
 #     e_bb<-20887
 #     e_pop<-984016
     
     if (k < fertdrop){ br<-e_bb/e_pop
-                      if (k == year1){B<-round(br*psize[1]); bv<-c(bv,B)}
-                      else { B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);}} 
+                      if (k == year1){B<-round(br*psize[1]); bv<-c(bv,B);brate<-c(brate,br)}
+                      else { B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);brate<-c(brate,br)}} 
     else{
     if (k < 2010) { br<-bb[1]/(Popsize[1,cntry]);
-                    B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);
-    } else { B<-bb[1+yr-2010] }}
+                    B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);brate<-c(brate,br);
+    } else { B<-bb[1+yr-2010]; brate<-c(brate,0) }}
     
+
+
+
 #     if (k < 2010) { br<-bb[1]/(Popsize[1,cntry])
 #                 
 #                     if (k == year1){B<-round(br*psize[1]); bv<-c(bv,B)             
@@ -257,8 +278,9 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       # NUMBER OF VACCINES (column 1=infant, 2=10yos, 3=mass)
       if(vaccine == 0){VX[i,1:3]<-0}
       #if(vaccine == 1){VX[i,1]<-sum(thetaV1[i,]*(S[i,]+L[i,]+R[i,]))}
-      if(vaccine == 2){VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
-      #if(vaccine == 3){VX[i,1]<-sum(thetaV1[i,]*(S[i,]+L[i,]+R[i,])); VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]) + thetaV2a[i,]*(SH[i,]+LH[i,]+RH[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]) + thetaV2m[i,]*(SH[i,]+LH[i,]+RH[i,]))}
+      if(vaccine == 2){VX[i,1]<-(sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]))+sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,])));VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
+      if(vaccine == 3){VX[i,1]<-(sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]))+sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,])));VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
+      
       
       ##•••••••••••••••••• Vaccination campaign: age everyone and then implement (both vaccination and return)
       S2 = S[i,] + Sv[i,]*(d[i,]*(1-thetaS[i,])) - thetaS[i,]*S[i,]
@@ -291,6 +313,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       psize1554[i]<-sum(S[i,16:55],L[i,16:55],R[i,16:55],I[i,16:55],NI[i,16:55],Sv[i,16:55],Lv[i,16:55],Rv[i,16:55])
       psize5564[i]<-sum(S[i,56:65],L[i,56:65],R[i,56:65],I[i,56:65],NI[i,56:65],Sv[i,56:65],Lv[i,56:65],Rv[i,56:65])
       psize65plus[i]<-sum(S[i,66:Mnage],L[i,66:Mnage],R[i,66:Mnage],I[i,66:Mnage],NI[i,66:Mnage],Sv[i,66:Mnage],Lv[i,66:Mnage],Rv[i,66:Mnage])
+      #psize65plus[i]<-sum(S[i,66:86],L[i,66:86],R[i,66:86],I[i,66:86],NI[i,66:86],Sv[i,66:86],Lv[i,66:86],Rv[i,66:86])
+      
       #ages needed to fit to mort  and prevalence as have different groupings
       psize1559[i]<-sum(S[i,16:60],L[i,16:60],R[i,16:60],I[i,16:60],NI[i,16:60],Sv[i,16:60],Lv[i,16:60],Rv[i,16:60])
       psize1529[i]<-sum(S[i,16:30],L[i,16:30],R[i,16:30],I[i,16:30],NI[i,16:30],Sv[i,16:30],Lv[i,16:30],Rv[i,16:30])
@@ -340,12 +364,18 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       #TBRx[i,1]=CDR*(sum(new_I[i-1,])+e*sum(new_NI[i-1,]));    TBRx[i,2]=CDR*(CoT)*(sum(new_I[i-1,])+e*sum(new_NI[i-1,]))
       #TBRx[i,3]=CDRH*(sum(new_IH[i-1,])+e*sum(new_NIH[i-1,]));  TBRx[i,4]=CDRH*(CoTH)*(sum(new_IH[i-1,])+e*sum(new_NI[i-1,]))
       
-      if (i==length(seq(year1,yearend,dt))){ # LAST TIME STEP
+      if (i==(length(seq(year1,yearend,dt)))){ # LAST TIME STEP
+       
+        vaccgive<-colSums(VX)
+        
         # First is for whole population, second for HIV positives only... 
-        Out<-cbind(Deaths,psize,rowSums(S),rowSums(L),rowSums(R),rowSums(I),rowSums(NI),rowSums(Sv),rowSums(Lv),rowSums(Rv),rowSums(thetaS),rowSums(thetaL),rowSums(thetaR),rowSums(d),VX)
-        nms<-c("Deaths","Psz","S","L","R","I","NI","Sv","Lv","Rv","thetaS","thetaL","thetaR","d","VaccDTP3")
-        Out<-as.data.frame(Out);colnames(Out)<-nms
-        print ("done out and nms")
+#         Out<-cbind(Deaths,psize,rowSums(S),rowSums(L),rowSums(R),rowSums(I),rowSums(NI),rowSums(Sv),rowSums(Lv),rowSums(Rv),rowSums(thetaS),rowSums(thetaL),rowSums(thetaR),rowSums(d),VX[,1],VX[,2],VX[,3])
+#         nms<-c("Deaths","Psz","S","L","R","I","NI","Sv","Lv","Rv","thetaS","thetaL","thetaR","d","vacctot","vaccroutine","vaccmass")
+#         Out<-as.data.frame(Out);colnames(Out)<-nms
+#         print(head(Out))
+#         print ("done out and nms")
+     
+        
         
         #### FOR CE OUTPUT
         #yrcount<-seq(1,(yearend-year1)*(1/dt)+1,(1/dt))
@@ -444,9 +474,10 @@ print("done start year")
         ###•••••••••••••••••• Vaccine coverage and duration ••••••••••••••••
         # NUMBER OF VACCINES
         if(vaccine == 0){VX[i,1:3]<-0}
-        #check what VX does - might want to include l and r in eqn as vaccine will be delivered, it just wont work,
-        if(vaccine == 2){VX[i,2]<-sum(thetaV2a[i,]*(S[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]))}
-        if(vaccine == 3){VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
+        #if(vaccine == 1){VX[i,1]<-sum(thetaV1[i,]*(S[i,]+L[i,]+R[i,]))}
+        if(vaccine == 2){VX[i,1]<-(sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]))+sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,])));VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
+        if(vaccine == 3){VX[i,1]<-(sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]))+sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,])));VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
+       
         print("done vacc assignment")
         ####•••••••••••••••••• Vaccination and Removal of protection
         
@@ -481,6 +512,8 @@ print("done start year")
         psize1554[i]<-sum(S[i,16:55],L[i,16:55],R[i,16:55],I[i,16:55],NI[i,16:55],Sv[i,16:55],Lv[i,16:55],Rv[i,16:55])
         psize5564[i]<-sum(S[i,56:65],L[i,56:65],R[i,56:65],I[i,56:65],NI[i,56:65],Sv[i,56:65],Lv[i,56:65],Rv[i,56:65])
         psize65plus[i]<-sum(S[i,66:Mnage],L[i,66:Mnage],R[i,66:Mnage],I[i,66:Mnage],NI[i,66:Mnage],Sv[i,66:Mnage],Lv[i,66:Mnage],Rv[i,66:Mnage])
+        #psize65plus[i]<-sum(S[i,66:86],L[i,66:86],R[i,66:86],I[i,66:86],NI[i,66:86],Sv[i,66:86],Lv[i,66:86],Rv[i,66:86])
+        
         #inset check of pop size
         #ages needed to fit to mort  and prevalence as have different groupings
         psize1559[i]<-sum(S[i,16:60],L[i,16:60],R[i,16:60],I[i,16:60],NI[i,16:60],Sv[i,16:60],Lv[i,16:60],Rv[i,16:60])
@@ -607,7 +640,7 @@ print("done start year")
 
   ## Outputs - in R, allows output to be seen without expressly wanting it 
   assign('S',S,envir = .GlobalEnv);assign('L',L,envir = .GlobalEnv);assign('I',I,envir = .GlobalEnv);assign('NI',NI,envir = .GlobalEnv);assign('R',R,envir = .GlobalEnv);assign('new_I',new_I,envir = .GlobalEnv);assign('new_NI',new_NI,envir = .GlobalEnv)
-  assign('NBirths',BIRTHS,envir=.GlobalEnv)  
+  assign('NBirths',BIRTHS,envir=.GlobalEnv);  assign('brate',brate,envir=.GlobalEnv)  
 #assign('SH',SH,envir = .GlobalEnv);assign('LH',LH,envir = .GlobalEnv);#assign('IH',IH,envir = .GlobalEnv);assign('NIH',NIH,envir = .GlobalEnv);assign('RH',RH,envir = .GlobalEnv);assign('new_IH',new_IH,envir = .GlobalEnv);assign('new_NIH',new_NIH,envir = .GlobalEnv)
   assign('Sv',Sv,envir = .GlobalEnv);assign('Lv',Lv,envir = .GlobalEnv);assign('Rv',Rv,envir = .GlobalEnv);#assign('SvH',SvH,envir = .GlobalEnv);assign('LvH',LvH,envir = .GlobalEnv);assign('RvH',RvH,envir = .GlobalEnv);
   assign('lambda',lambda,envir=.GlobalEnv);assign('thetaS',thetaS,envir=.GlobalEnv);assign('thetaL',thetaL,envir=.GlobalEnv);assign('thetaR',thetaR,envir=.GlobalEnv);
@@ -631,6 +664,7 @@ assign('d',d,envir=.GlobalEnv);
   assign('TBPI',TBPI,envir=.GlobalEnv);assign('PSIZEy',PSIZEy,envir=.GlobalEnv);
   #assign('Econout',EconOut,envir=.GlobalEnv);
   assign('Out',Out,envir=.GlobalEnv);
+  assign('vaccgive',vaccgive,envir=.GlobalEnv);
   #assign('hbcout',hbcOut,envir=.GlobalEnv);
   
 print("done assign")

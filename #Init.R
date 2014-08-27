@@ -4,7 +4,6 @@
 times<-seq(year1,yearend,dt)
 steps<-length(times)
 
-
 # Susceptible, Susceptible with HIV
 S<-matrix(0,steps,Mnage); SH<-matrix(0,steps,Mnage)
 # Latent, Latent with HIV
@@ -102,8 +101,8 @@ lambda<-matrix(0,steps,Mnage);
 lambda[1,1:Mnage]<- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[1,1:4])/(psizematrix[1,1:4]))))))
 
 
-# Number of births
-birthsnum<-matrix(0,steps,1); bv<-c();
+# Number of births,b rate
+birthsnum<-matrix(0,steps,1); bv<-c(); brate<-c();
 
 
 ## Matrices for cost-effectiveness
@@ -112,7 +111,7 @@ ADeaths<-matrix(0,steps,Mnage); ADeathsH<-matrix(0,steps,Mnage);
 # Number of TB deaths, with HIV, all deaths with HIV, all deaths (column=total of diff types)
 TBDeaths<-matrix(0,steps,Mnage);TBDeathsH<-matrix(0,steps,Mnage);AllDeathsH<-matrix(0,steps,Mnage);Deaths<--matrix(0,steps,5);
 # Number vaccinated
-VX<--matrix(0,steps,3);
+VX<-matrix(0,steps,3); vaccgive<-matrix(0,1,3)
 # Number of TB treatments, TB Incidence, TB mortality, ?
 
 TBRx<--matrix(0,steps,2);

@@ -32,138 +32,138 @@ y1<-seq(1,lastcol,steps)
 
 #TBItot plot vxtype2
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),15], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="Total Incidence pre-exposure",type='l',col='orange')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),15], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="Total Incidence pre-exposure",type='l',col='orange')
 points(2010,incidence2010[1])
 segments(2010,incidence2010l[1],2010,incidence2010u[1])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[2]+70):(y1[2]+150),15], col='orange',lty=2)
-lines(seq(1970,2050),dfvx[(y1[3]+70):(y1[3]+150),15], col='orange',lty=3)
-lines(seq(1970,2050),dfvx[(y1[4]+70):(y1[4]+150),15], col='orange',lty=4)
-lines(seq(1970,2050),dfvx[(y1[5]+70):(y1[5]+150),15], col='orange',lty=5)
-lines(seq(1970,2050),dfvx[(y1[6]+70):(y1[6]+150),15], col='orange',lty=6)
-lines(seq(1970,2050),dfvx[(y1[7]+70):(y1[7]+150),15], col='orange',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),15], col='orange',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),15], col='orange',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),15], col='orange',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),15], col='orange',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),15], col='orange',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),15], col='orange',lty=6, lwd=2)
 
 
 #TBItot plot vxtype3
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),15], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="Total Incidence post-exp",type='l',col='orange')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),15], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="Total Incidence post-exp",type='l',col='orange')
 points(2010,incidence2010[1])
 segments(2010,incidence2010l[1],2010,incidence2010u[1])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[8]+70):(y1[8]+150),15], col='orange',lty=2)
-lines(seq(1970,2050),dfvx[(y1[9]+70):(y1[9]+150),15], col='orange',lty=3)
-lines(seq(1970,2050),dfvx[(y1[10]+70):(y1[10]+150),15], col='orange',lty=4)
-lines(seq(1970,2050),dfvx[(y1[11]+70):(y1[11]+150),15], col='orange',lty=5)
-lines(seq(1970,2050),dfvx[(y1[12]+70):(y1[12]+150),15], col='orange',lty=6)
-lines(seq(1970,2050),dfvx[(y1[13]+70):(y1[13]+150),15], col='orange',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),15], col='orange',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),15], col='orange',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),15], col='orange',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),15], col='orange',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),15], col='orange',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),15], col='orange',lty=6, lwd=2)
 
 
 
 #TBI014 plot vxtype2
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),16], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="0-14yrs Incidence  pre-exp",type='l',col='red')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),16], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,10),main="0-14yrs Incidence  pre-exp",type='l',col='red')
 points(2010,incidence2010[2])
 segments(2010,incidence2010l[2],2010,incidence2010u[2])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[2]+70):(y1[2]+150),16], col='red',lty=2)
-lines(seq(1970,2050),dfvx[(y1[3]+70):(y1[3]+150),16], col='red',lty=3)
-lines(seq(1970,2050),dfvx[(y1[4]+70):(y1[4]+150),16], col='red',lty=4)
-lines(seq(1970,2050),dfvx[(y1[5]+70):(y1[5]+150),16], col='red',lty=5)
-lines(seq(1970,2050),dfvx[(y1[6]+70):(y1[6]+150),16], col='red',lty=6)
-lines(seq(1970,2050),dfvx[(y1[7]+70):(y1[7]+150),16], col='red',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),16], col='red',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),16], col='red',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),16], col='red',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),16], col='red',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),16], col='red',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),16], col='red',lty=6, lwd=2)
 
 #TBI014 plot vxtype3
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),16], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="0-14yrs Incidence post-exp",type='l',col='red')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),16], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,10),main="0-14yrs Incidence post-exp",type='l',col='red')
 points(2010,incidence2010[2])
 segments(2010,incidence2010l[2],2010,incidence2010u[2])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[8]+70):(y1[8]+150),16], col='red',lty=2)
-lines(seq(1970,2050),dfvx[(y1[9]+70):(y1[9]+150),16], col='red',lty=3)
-lines(seq(1970,2050),dfvx[(y1[10]+70):(y1[10]+150),16], col='red',lty=4)
-lines(seq(1970,2050),dfvx[(y1[11]+70):(y1[11]+150),16], col='red',lty=5)
-lines(seq(1970,2050),dfvx[(y1[12]+70):(y1[12]+150),16], col='red',lty=6)
-lines(seq(1970,2050),dfvx[(y1[13]+70):(y1[13]+150),16], col='red',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),16], col='red',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),16], col='red',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),16], col='red',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),16], col='red',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),16], col='red',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),16], col='red',lty=6, lwd=2)
 
 
 #TBI15-54 plot vxtype2
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),17], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="15-54yrs Incidence  pre-exp",type='l',col='blue')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),17], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,100),main="15-54yrs Incidence  pre-exp",type='l',col='blue')
 points(2010,incidence2010[3])
 segments(2010,incidence2010l[3],2010,incidence2010u[3])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[2]+70):(y1[2]+150),17], col='blue',lty=2)
-lines(seq(1970,2050),dfvx[(y1[3]+70):(y1[3]+150),17], col='blue',lty=3)
-lines(seq(1970,2050),dfvx[(y1[4]+70):(y1[4]+150),17], col='blue',lty=4)
-lines(seq(1970,2050),dfvx[(y1[5]+70):(y1[5]+150),17], col='blue',lty=5)
-lines(seq(1970,2050),dfvx[(y1[6]+70):(y1[6]+150),17], col='blue',lty=6)
-lines(seq(1970,2050),dfvx[(y1[7]+70):(y1[7]+150),17], col='blue',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),17], col='blue',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),17], col='blue',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),17], col='blue',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),17], col='blue',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),17], col='blue',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),17], col='blue',lty=6, lwd=2)
 
 #TBI15-54 plot vxtype3
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),17], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="15-54yrs Incidence post-exp",type='l',col='blue')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),17], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,100),main="15-54yrs Incidence post-exp",type='l',col='blue')
 points(2010,incidence2010[3])
 segments(2010,incidence2010l[3],2010,incidence2010u[3])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[8]+70):(y1[8]+150),17], col='blue',lty=2)
-lines(seq(1970,2050),dfvx[(y1[9]+70):(y1[9]+150),17], col='blue',lty=3)
-lines(seq(1970,2050),dfvx[(y1[10]+70):(y1[10]+150),17], col='blue',lty=4)
-lines(seq(1970,2050),dfvx[(y1[11]+70):(y1[11]+150),17], col='blue',lty=5)
-lines(seq(1970,2050),dfvx[(y1[12]+70):(y1[12]+150),17], col='blue',lty=6)
-lines(seq(1970,2050),dfvx[(y1[13]+70):(y1[13]+150),17], col='blue',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),17], col='blue',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),17], col='blue',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),17], col='blue',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),17], col='blue',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),17], col='blue',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),17], col='blue',lty=6, lwd=2)
 
 
 #TBI55-64 plot vxtype2
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),18], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="55-64yrs Incidence  pre-exp",type='l',col='green')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),18], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,150),main="55-64yrs Incidence  pre-exp",type='l',col='green')
 points(2010,incidence2010[4])
 segments(2010,incidence2010l[4],2010,incidence2010u[4])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[2]+70):(y1[2]+150),18], col='green',lty=2)
-lines(seq(1970,2050),dfvx[(y1[3]+70):(y1[3]+150),18], col='green',lty=3)
-lines(seq(1970,2050),dfvx[(y1[4]+70):(y1[4]+150),18], col='green',lty=4)
-lines(seq(1970,2050),dfvx[(y1[5]+70):(y1[5]+150),18], col='green',lty=5)
-lines(seq(1970,2050),dfvx[(y1[6]+70):(y1[6]+150),18], col='green',lty=6)
-lines(seq(1970,2050),dfvx[(y1[7]+70):(y1[7]+150),18], col='green',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),18], col='green',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),18], col='green',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),18], col='green',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),18], col='green',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),18], col='green',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),18], col='green',lty=6, lwd=2)
 
 #TBI55-64 plot vxtype3
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),18], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="55-64yrs Incidence post-exp",type='l',col='green')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),18], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,150),main="55-64yrs Incidence post-exp",type='l',col='green')
 points(2010,incidence2010[4])
 segments(2010,incidence2010l[4],2010,incidence2010u[4])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[8]+70):(y1[8]+150),18], col='green',lty=2)
-lines(seq(1970,2050),dfvx[(y1[9]+70):(y1[9]+150),18], col='green',lty=3)
-lines(seq(1970,2050),dfvx[(y1[10]+70):(y1[10]+150),18], col='green',lty=4)
-lines(seq(1970,2050),dfvx[(y1[11]+70):(y1[11]+150),18], col='green',lty=5)
-lines(seq(1970,2050),dfvx[(y1[12]+70):(y1[12]+150),18], col='green',lty=6)
-lines(seq(1970,2050),dfvx[(y1[13]+70):(y1[13]+150),18], col='green',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),18], col='green',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),18], col='green',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),18], col='green',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),18], col='green',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),18], col='green',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),18], col='green',lty=6, lwd=2)
 
 #TBI65+ plot vxtype2
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),19], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="65+yrs Incidence  pre-exp",type='l',col='pink')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),19], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="65+yrs Incidence  pre-exp",type='l',col='pink')
 points(2010,incidence2010[5])
 segments(2010,incidence2010l[5],2010,incidence2010u[5])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[2]+70):(y1[2]+150),19], col='pink',lty=2)
-lines(seq(1970,2050),dfvx[(y1[3]+70):(y1[3]+150),19], col='pink',lty=3)
-lines(seq(1970,2050),dfvx[(y1[4]+70):(y1[4]+150),19], col='pink',lty=4)
-lines(seq(1970,2050),dfvx[(y1[5]+70):(y1[5]+150),19], col='pink',lty=5)
-lines(seq(1970,2050),dfvx[(y1[6]+70):(y1[6]+150),19], col='pink',lty=6)
-lines(seq(1970,2050),dfvx[(y1[7]+70):(y1[7]+150),19], col='pink',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),19], col='pink',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),19], col='pink',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),19], col='pink',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),19], col='pink',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),19], col='pink',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),19], col='pink',lty=6, lwd=2)
 
 #TBI65+ plot vxtype3
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),19], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="65+yrs Incidence post-exp",type='l',col='pink')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),19], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="65+yrs Incidence post-exp",type='l',col='pink')
 points(2010,incidence2010[5])
 segments(2010,incidence2010l[5],2010,incidence2010u[5])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[8]+70):(y1[8]+150),19], col='pink',lty=2)
-lines(seq(1970,2050),dfvx[(y1[9]+70):(y1[9]+150),19], col='pink',lty=3)
-lines(seq(1970,2050),dfvx[(y1[10]+70):(y1[10]+150),19], col='pink',lty=4)
-lines(seq(1970,2050),dfvx[(y1[11]+70):(y1[11]+150),19], col='pink',lty=5)
-lines(seq(1970,2050),dfvx[(y1[12]+70):(y1[12]+150),19], col='pink',lty=6)
-lines(seq(1970,2050),dfvx[(y1[13]+70):(y1[13]+150),19], col='pink',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),19], col='pink',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),19], col='pink',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),19], col='pink',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),19], col='pink',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),19], col='pink',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),19], col='pink',lty=6, lwd=2)
 
 
 
@@ -173,140 +173,140 @@ lines(seq(1970,2050),dfvx[(y1[13]+70):(y1[13]+150),19], col='pink',lty=6, lwd=2)
 
 #TBMtot plot vxtype2
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),20], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,300),main="Total Mortality pre-exposure",type='l',col='orange')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),20], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,10),main="Total Mortality pre-exposure",type='l',col='orange')
 points(2010,mortality2010[1])
 segments(2010,mortality2010l[1],2010,mortality2010u[1])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[2]+70):(y1[2]+150),20], col='orange',lty=2)
-lines(seq(1970,2050),dfvx[(y1[3]+70):(y1[3]+150),20], col='orange',lty=3)
-lines(seq(1970,2050),dfvx[(y1[4]+70):(y1[4]+150),20], col='orange',lty=4)
-lines(seq(1970,2050),dfvx[(y1[5]+70):(y1[5]+150),20], col='orange',lty=5)
-lines(seq(1970,2050),dfvx[(y1[6]+70):(y1[6]+150),20], col='orange',lty=6)
-lines(seq(1970,2050),dfvx[(y1[7]+70):(y1[7]+150),20], col='orange',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),20], col='orange',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),20], col='orange',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),20], col='orange',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),20], col='orange',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),20], col='orange',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),20], col='orange',lty=6, lwd=2)
 
 #TBMtot plot vxtype3
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),20], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,300),main="Total Mortality post-exp",type='l',col='orange')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),20], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,10),main="Total Mortality post-exp",type='l',col='orange')
 points(2010,mortality2010[1])
 segments(2010,mortality2010l[1],2010,mortality2010u[1])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[8]+70):(y1[8]+150),20], col='orange',lty=2)
-lines(seq(1970,2050),dfvx[(y1[9]+70):(y1[9]+150),20], col='orange',lty=3)
-lines(seq(1970,2050),dfvx[(y1[10]+70):(y1[10]+150),20], col='orange',lty=4)
-lines(seq(1970,2050),dfvx[(y1[11]+70):(y1[11]+150),20], col='orange',lty=5)
-lines(seq(1970,2050),dfvx[(y1[12]+70):(y1[12]+150),20], col='orange',lty=6)
-lines(seq(1970,2050),dfvx[(y1[13]+70):(y1[13]+150),20], col='orange',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),20], col='orange',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),20], col='orange',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),20], col='orange',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),20], col='orange',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),20], col='orange',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),20], col='orange',lty=6, lwd=2)
 
 
 
 #TBM014 plot vxtype2
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),21], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,300),main="0-14yrs Mortality  pre-exp",type='l',col='red')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),21], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,5),main="0-14yrs Mortality  pre-exp",type='l',col='red')
 points(2010,mortality2010[2])
 segments(2010,mortality2010l[2],2010,mortality2010u[2])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[2]+70):(y1[2]+150),21], col='red',lty=2)
-lines(seq(1970,2050),dfvx[(y1[3]+70):(y1[3]+150),21], col='red',lty=3)
-lines(seq(1970,2050),dfvx[(y1[4]+70):(y1[4]+150),21], col='red',lty=4)
-lines(seq(1970,2050),dfvx[(y1[5]+70):(y1[5]+150),21], col='red',lty=5)
-lines(seq(1970,2050),dfvx[(y1[6]+70):(y1[6]+150),21], col='red',lty=6)
-lines(seq(1970,2050),dfvx[(y1[7]+70):(y1[7]+150),21], col='red',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),21], col='red',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),21], col='red',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),21], col='red',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),21], col='red',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),21], col='red',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),21], col='red',lty=6, lwd=2)
 
 #TBM014 plot vxtype3
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),21], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,300),main="0-14yrs Mortality post-exp",type='l',col='red')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),21], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,5),main="0-14yrs Mortality post-exp",type='l',col='red')
 points(2010,mortality2010[2])
 segments(2010,mortality2010l[2],2010,mortality2010u[2])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[8]+70):(y1[8]+150),21], col='red',lty=2)
-lines(seq(1970,2050),dfvx[(y1[9]+70):(y1[9]+150),21], col='red',lty=3)
-lines(seq(1970,2050),dfvx[(y1[10]+70):(y1[10]+150),21], col='red',lty=4)
-lines(seq(1970,2050),dfvx[(y1[11]+70):(y1[11]+150),21], col='red',lty=5)
-lines(seq(1970,2050),dfvx[(y1[12]+70):(y1[12]+150),21], col='red',lty=6)
-lines(seq(1970,2050),dfvx[(y1[13]+70):(y1[13]+150),21], col='red',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),21], col='red',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),21], col='red',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),21], col='red',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),21], col='red',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),21], col='red',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),21], col='red',lty=6, lwd=2)
 
 
 #TBM15-59 plot vxtype2
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),22], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,300),main="15-59yrs Mortality  pre-exp",type='l',col='blue')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),22], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,5),main="15-59yrs Mortality  pre-exp",type='l',col='blue')
 points(2010,mortality2010[3])
 segments(2010,mortality2010l[3],2010,mortality2010u[3])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[2]+70):(y1[2]+150),22], col='blue',lty=2)
-lines(seq(1970,2050),dfvx[(y1[3]+70):(y1[3]+150),22], col='blue',lty=3)
-lines(seq(1970,2050),dfvx[(y1[4]+70):(y1[4]+150),22], col='blue',lty=4)
-lines(seq(1970,2050),dfvx[(y1[5]+70):(y1[5]+150),22], col='blue',lty=5)
-lines(seq(1970,2050),dfvx[(y1[6]+70):(y1[6]+150),22], col='blue',lty=6)
-lines(seq(1970,2050),dfvx[(y1[7]+70):(y1[7]+150),22], col='blue',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),22], col='blue',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),22], col='blue',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),22], col='blue',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),22], col='blue',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),22], col='blue',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),22], col='blue',lty=6, lwd=2)
 
 #TBM15-59 plot vxtype3
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),22], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,300),main="15-59yrs Mortality post-exp",type='l',col='blue')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),22], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,5),main="15-59yrs Mortality post-exp",type='l',col='blue')
 points(2010,mortality2010[3])
 segments(2010,mortality2010l[3],2010,mortality2010u[3])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[8]+70):(y1[8]+150),22], col='blue',lty=2)
-lines(seq(1970,2050),dfvx[(y1[9]+70):(y1[9]+150),22], col='blue',lty=3)
-lines(seq(1970,2050),dfvx[(y1[10]+70):(y1[10]+150),22], col='blue',lty=4)
-lines(seq(1970,2050),dfvx[(y1[11]+70):(y1[11]+150),22], col='blue',lty=5)
-lines(seq(1970,2050),dfvx[(y1[12]+70):(y1[12]+150),22], col='blue',lty=6)
-lines(seq(1970,2050),dfvx[(y1[13]+70):(y1[13]+150),22], col='blue',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),22], col='blue',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),22], col='blue',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),22], col='blue',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),22], col='blue',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),22], col='blue',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),22], col='blue',lty=6, lwd=2)
 
 
 #TBM60+ plot vxtype2
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),23], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,300),main="60+yrs Incidence  pre-exp",type='l',col='green')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),23], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,20),main="60+yrs Incidence  pre-exp",type='l',col='green')
 points(2010,mortality2010[4])
 segments(2010,mortality2010l[4],2010,mortality2010u[4])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[2]+70):(y1[2]+150),23], col='green',lty=2)
-lines(seq(1970,2050),dfvx[(y1[3]+70):(y1[3]+150),23], col='green',lty=3)
-lines(seq(1970,2050),dfvx[(y1[4]+70):(y1[4]+150),23], col='green',lty=4)
-lines(seq(1970,2050),dfvx[(y1[5]+70):(y1[5]+150),23], col='green',lty=5)
-lines(seq(1970,2050),dfvx[(y1[6]+70):(y1[6]+150),23], col='green',lty=6)
-lines(seq(1970,2050),dfvx[(y1[7]+70):(y1[7]+150),23], col='green',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),23], col='green',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),23], col='green',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),23], col='green',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),23], col='green',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),23], col='green',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),23], col='green',lty=6, lwd=2)
 
 #TBM60+ plot vxtype3
 #baseline
-plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),23], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,300),main="60+yrs Mortality post-exp",type='l',col='green')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),23], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,20),main="60+yrs Mortality post-exp",type='l',col='green')
 points(2010,mortality2010[4])
 segments(2010,mortality2010l[4],2010,mortality2010u[4])
 #vx2 40ve,30cov
-lines(seq(1970,2050),dfvx[(y1[8]+70):(y1[8]+150),23], col='green',lty=2)
-lines(seq(1970,2050),dfvx[(y1[9]+70):(y1[9]+150),23], col='green',lty=3)
-lines(seq(1970,2050),dfvx[(y1[10]+70):(y1[10]+150),23], col='green',lty=4)
-lines(seq(1970,2050),dfvx[(y1[11]+70):(y1[11]+150),23], col='green',lty=5)
-lines(seq(1970,2050),dfvx[(y1[12]+70):(y1[12]+150),23], col='green',lty=6)
-lines(seq(1970,2050),dfvx[(y1[13]+70):(y1[13]+150),23], col='green',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),23], col='green',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),23], col='green',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),23], col='green',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),23], col='green',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),23], col='green',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),23], col='green',lty=6, lwd=2)
 
 
 ######  cumulative plots)
 
-rownames(cumulvx)<-c("baseline","pre4030","pre6030","pre8030","pre4070","pre6070","pre8070","post4030","post6030","post8030","post4070","post6070","pre8070")
-namec<-c("baseline","pre4030","pre6030","pre8030","pre4070","pre6070","pre8070","post4030","post6030","post8030","post4070","post6070","pre8070")
-
-plot(cumulvx[1:13,1],xlab="Run", ylab="Cumulative mortality (thousands)", main='All ages cumulative mortality')
-plot(cumulvx[1:13,2],xlab="Run", ylab="Cumulative mortality (thousands)",main='0-14yrs cumulative mortality')
-plot(cumulvx[1:13,3],xlab="Run", ylab="Cumulative mortality (thousands)",main='15-54yrs cumulative mortality')
-plot(cumulvx[1:13,4],xlab="Run", ylab="Cumulative mortality (thousands)",main='55-64yrs cumulative mortality')
-plot(cumulvx[1:13,5],xlab="Run", ylab="Cumulative mortality (thousands)",main='65+ yrs cumulative mortality')
-
-plot(cumulvx[1:13,8],xlab="Run", ylab="Cumulative incidence (thousands)", main='All ages cumulative incidence')
-plot(cumulvx[1:13,9],xlab="Run", ylab="Cumulative incidence (thousands)",main='0-14yrs cumulative incidence')
-plot(cumulvx[1:13,10],xlab="Run", ylab="Cumulative incidence (thousands)",main='15-54yrs cumulative incidence')
-plot(cumulvx[1:13,11],xlab="Run", ylab="Cumulative incidence (thousands)",main='55-64yrs cumulative incidence')
-plot(cumulvx[1:13,12],xlab="Run", ylab="Cumulative incidence (thousands)",main='65+ yrs cumulative incidence')
-
-redu<-1000*rbind((cumulvx[1,]-cumulvx[2,]),(cumulvx[1,]-cumulvx[3,]),(cumulvx[1,]-cumulvx[4,]),(cumulvx[1,]-cumulvx[5,]),(cumulvx[1,]-cumulvx[6,]),(cumulvx[1,]-cumulvx[7,]),(cumulvx[1,]-cumulvx[8,]),(cumulvx[1,]-cumulvx[9,]),(cumulvx[1,]-cumulvx[10,]),(cumulvx[1,]-cumulvx[11,]),(cumulvx[1,]-cumulvx[12,]),(cumulvx[1,]-cumulvx[13,]))
-plot(redu[1:12,1],xlab="Run", ylab="Reduction in cumulative mortality", main='All ages reduction in cumulative mortality')
-plot(redu[1:12,2],xlab="Run", ylab="Reduction in cumulative mortality", main='0-14yrs reduction in cumulative mortality')
-plot(redu[1:12,3],xlab="Run", ylab="Reduction in cumulative mortality", main='15-54yrs reduction in cumulative mortality')
-plot(redu[1:12,4],xlab="Run", ylab="Reduction in cumulative mortality", main='55-64yrs reduction in cumulative mortality')
-plot(redu[1:12,5],xlab="Run", ylab="Reduction in cumulative mortality", main='65+ yrs reduction in cumulative mortality')
-
-plot(redu[1:12,8],xlab="Run", ylab="Reduction in cumulative incidence", main='all ages reduction in cumulative incidence')
-plot(redu[1:12,9],xlab="Run", ylab="Reduction in cumulative incidence", main='0-14yrs reduction in cumulative incidence')
-plot(redu[1:12,10],xlab="Run", ylab="Reduction in cumulative incidence", main='15-54yrs reduction in cumulative incidence')
-plot(redu[1:12,11],xlab="Run", ylab="Reduction in cumulative incidence", main='55-64yrs reduction in cumulative incidence')
-plot(redu[1:12,12],xlab="Run", ylab="Reduction in cumulative incidence", main='65+yrs reduction in cumulative incidence')
-
+# rownames(cumulvx)<-c("baseline","pre4030","pre6030","pre8030","pre4070","pre6070","pre8070","post4030","post6030","post8030","post4070","post6070","pre8070")
+# namec<-c("baseline","pre4030","pre6030","pre8030","pre4070","pre6070","pre8070","post4030","post6030","post8030","post4070","post6070","pre8070")
+# 
+# plot(cumulvx[1:13,1],xlab="Run", ylab="Cumulative mortality (thousands)", main='All ages cumulative mortality')
+# plot(cumulvx[1:13,2],xlab="Run", ylab="Cumulative mortality (thousands)",main='0-14yrs cumulative mortality')
+# plot(cumulvx[1:13,3],xlab="Run", ylab="Cumulative mortality (thousands)",main='15-54yrs cumulative mortality')
+# plot(cumulvx[1:13,4],xlab="Run", ylab="Cumulative mortality (thousands)",main='55-64yrs cumulative mortality')
+# plot(cumulvx[1:13,5],xlab="Run", ylab="Cumulative mortality (thousands)",main='65+ yrs cumulative mortality')
+# 
+# plot(cumulvx[1:13,8],xlab="Run", ylab="Cumulative incidence (thousands)", main='All ages cumulative incidence')
+# plot(cumulvx[1:13,9],xlab="Run", ylab="Cumulative incidence (thousands)",main='0-14yrs cumulative incidence')
+# plot(cumulvx[1:13,10],xlab="Run", ylab="Cumulative incidence (thousands)",main='15-54yrs cumulative incidence')
+# plot(cumulvx[1:13,11],xlab="Run", ylab="Cumulative incidence (thousands)",main='55-64yrs cumulative incidence')
+# plot(cumulvx[1:13,12],xlab="Run", ylab="Cumulative incidence (thousands)",main='65+ yrs cumulative incidence')
+# 
+# redu<-1000*rbind((cumulvx[1,]-cumulvx[2,]),(cumulvx[1,]-cumulvx[3,]),(cumulvx[1,]-cumulvx[4,]),(cumulvx[1,]-cumulvx[5,]),(cumulvx[1,]-cumulvx[6,]),(cumulvx[1,]-cumulvx[7,]),(cumulvx[1,]-cumulvx[8,]),(cumulvx[1,]-cumulvx[9,]),(cumulvx[1,]-cumulvx[10,]),(cumulvx[1,]-cumulvx[11,]),(cumulvx[1,]-cumulvx[12,]),(cumulvx[1,]-cumulvx[13,]))
+# plot(redu[1:12,1],xlab="Run", ylab="Reduction in cumulative mortality", main='All ages reduction in cumulative mortality')
+# plot(redu[1:12,2],xlab="Run", ylab="Reduction in cumulative mortality", main='0-14yrs reduction in cumulative mortality')
+# plot(redu[1:12,3],xlab="Run", ylab="Reduction in cumulative mortality", main='15-54yrs reduction in cumulative mortality')
+# plot(redu[1:12,4],xlab="Run", ylab="Reduction in cumulative mortality", main='55-64yrs reduction in cumulative mortality')
+# plot(redu[1:12,5],xlab="Run", ylab="Reduction in cumulative mortality", main='65+ yrs reduction in cumulative mortality')
+# 
+# plot(redu[1:12,8],xlab="Run", ylab="Reduction in cumulative incidence", main='all ages reduction in cumulative incidence')
+# plot(redu[1:12,9],xlab="Run", ylab="Reduction in cumulative incidence", main='0-14yrs reduction in cumulative incidence')
+# plot(redu[1:12,10],xlab="Run", ylab="Reduction in cumulative incidence", main='15-54yrs reduction in cumulative incidence')
+# plot(redu[1:12,11],xlab="Run", ylab="Reduction in cumulative incidence", main='55-64yrs reduction in cumulative incidence')
+# plot(redu[1:12,12],xlab="Run", ylab="Reduction in cumulative incidence", main='65+yrs reduction in cumulative incidence')
+# 

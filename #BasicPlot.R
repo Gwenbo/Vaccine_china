@@ -137,7 +137,7 @@ plot(seq(1970,2050),TBPI[71:151,5], ylab="Prevalence of Infection (%)",xlab="yea
 
 ##population plot
 par(mfrow=c(2,3))
-plot(seq(1970,2050),PSIZEy[71:151,1], ylab="Population (thousands)",xlab="year", ylim=c(0,4000000),main="Total Population",type='l',col='orange')
+plot(seq(1900,2050),PSIZEy[1:151,1], ylab="Population (thousands)",xlab="year", ylim=c(0,4000000),main="Total Population",type='l',col='orange')
 points(2050,population2050[1])
 points(2010,population2010[1])
 segments(2050,population2050l[1],2050,population2050u[1])
@@ -153,7 +153,7 @@ plot(seq(1970,2050),PSIZEy[71:151,4], ylab="Population (thousands)",xlab="year",
 points(2050,population2050[4])
 points(2010,population2010[4])
 segments(2050,population2050l[4],2050,population2050u[4])
-plot(seq(1970,2050),PSIZEy[71:151,5], ylab="Population (thousands)",xlab="year", ylim=c(0,1000000),main="65+ years Population",type='l',col='pink')
+plot(seq(1900,2050),PSIZEy[1:151,5], ylab="Population (thousands)",xlab="year", ylim=c(0,1000000),main="65+ years Population",type='l',col='pink')
 points(2050,population2050[5])
 points(2010,population2010[5])
 segments(2050,population2050l[5],2050,population2050u[5])

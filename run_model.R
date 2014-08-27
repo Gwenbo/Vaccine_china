@@ -45,6 +45,8 @@ setwd(home)
 setwd(home)
 source('#BasicPlot.R')
 
+par(mfrow=c(1,1))
+plot(seq(1900,2050),brate, ylab="birth rate",xlab="year", ylim=c(0,0.05),main="birthrate",type='l',col='red')
 
 
 # #### DATA - what it was fitted to 
@@ -170,6 +172,7 @@ setwd(home);
 # Storage df
 dfvx<-c()
 cumulvx<-c()
+vaxgive<-c()
 
 # Run through all fits
 for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example 
@@ -222,10 +225,17 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
           ggg<-cbind(cumulout,nn,count); colnames(ggg)<-c(colnames(cumulout),"type","vxint")
           cumulvx<-rbind(cumulvx,ggg)
           cumulvx<-as.matrix(cumulvx)
+
+          #hhh<-cbind(vaccgive,nn,count);colnames(hhh)<-c("vaxtot","vaxroutine","vaxmass","type","vxint")
+          vaxgive<-rbind(vaxgive,vaccgive);colnames(vaxgive)<-c("vaxtot","vaxroutine","vaxmass")
+          vaxgive<-as.matrix(vaxgive)
+
       }}}}
 assign('dfvx',dfvx,envir=.GlobalEnv)
+assign('vaxgive',vaxgive,envir=.GlobalEnv)
 write.table(dfvx,'vaccine_results.csv',sep=",",row.names=FALSE)
 write.table(cumulvx,'cumulative_vax_results.csv',sep=",",row.names=FALSE)
+write.table(vaxgive,'vaccines_given.csv',sep=",",row.names=FALSE)
 
 } # end of fits
 
