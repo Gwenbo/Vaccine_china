@@ -157,7 +157,7 @@ source('#BasicPlot.R')
 typen<-3 ## Number of vaccine types
 effs<-c(40,60,80)/100
 durs<-c(20)
-cover<-c(0.3,0.5)
+cover<-c(0.3,0.7)
 combn<-length(effs)*length(durs)*length(cover) ## Number of efficacy and duration combinations
 
 ## Which countries?
@@ -169,6 +169,7 @@ setwd(home);
 
 # Storage df
 dfvx<-c()
+cumulvx<-c()
 
 # Run through all fits
 for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example 
@@ -190,6 +191,9 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
   # save in big df for plot - original one
    eee<-cbind(Xn,0,0); colnames(eee)<-c(colnames(Xn),"type","vxint")
    dfvx<-rbind(dfvx,eee)
+    ggg<-cbind(cumulout,0,0); colnames(ggg)<-c(colnames(cumulout),"type","vxint")
+    cumulvx<-rbind(cumulvx,ggg)
+    cumulvx<-as.matrix(cumulvx)
   
   # For each type of vaccine
   #have set to 2 only as only doing vaccine type 2 and 3 at the moment
@@ -214,13 +218,20 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
           eee<-cbind(X,nn,count); colnames(eee)<-c(colnames(X),"type","vxint")
           dfvx<-rbind(dfvx,eee)
           dfvx<-as.matrix(dfvx)
+
+          ggg<-cbind(cumulout,nn,count); colnames(ggg)<-c(colnames(cumulout),"type","vxint")
+          cumulvx<-rbind(cumulvx,ggg)
+          cumulvx<-as.matrix(cumulvx)
       }}}}
 assign('dfvx',dfvx,envir=.GlobalEnv)
 write.table(dfvx,'vaccine_results.csv',sep=",",row.names=FALSE)
+write.table(cumulvx,'cumulative_vax_results.csv',sep=",",row.names=FALSE)
+
 } # end of fits
 
 setwd(home)
 source('#PlotVax.R')
+
 
 # y<-subset(dfvx,dfvx$type==1)
 # y<-subset(dfvx,dvfx[,54]==3)

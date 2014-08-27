@@ -43,6 +43,7 @@ lines(seq(1970,2050),dfvx[(y1[5]+70):(y1[5]+150),15], col='orange',lty=5)
 lines(seq(1970,2050),dfvx[(y1[6]+70):(y1[6]+150),15], col='orange',lty=6)
 lines(seq(1970,2050),dfvx[(y1[7]+70):(y1[7]+150),15], col='orange',lty=6, lwd=2)
 
+
 #TBItot plot vxtype3
 #baseline
 plot(seq(1970,2050),dfvx[(y1[1]+70):(y1[1]+150),15], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="Total Incidence post-exp",type='l',col='orange')
@@ -277,4 +278,35 @@ lines(seq(1970,2050),dfvx[(y1[10]+70):(y1[10]+150),23], col='green',lty=4)
 lines(seq(1970,2050),dfvx[(y1[11]+70):(y1[11]+150),23], col='green',lty=5)
 lines(seq(1970,2050),dfvx[(y1[12]+70):(y1[12]+150),23], col='green',lty=6)
 lines(seq(1970,2050),dfvx[(y1[13]+70):(y1[13]+150),23], col='green',lty=6, lwd=2)
+
+
+######  cumulative plots)
+
+rownames(cumulvx)<-c("baseline","pre4030","pre6030","pre8030","pre4070","pre6070","pre8070","post4030","post6030","post8030","post4070","post6070","pre8070")
+namec<-c("baseline","pre4030","pre6030","pre8030","pre4070","pre6070","pre8070","post4030","post6030","post8030","post4070","post6070","pre8070")
+
+plot(cumulvx[1:13,1],xlab="Run", ylab="Cumulative mortality (thousands)", main='All ages cumulative mortality')
+plot(cumulvx[1:13,2],xlab="Run", ylab="Cumulative mortality (thousands)",main='0-14yrs cumulative mortality')
+plot(cumulvx[1:13,3],xlab="Run", ylab="Cumulative mortality (thousands)",main='15-54yrs cumulative mortality')
+plot(cumulvx[1:13,4],xlab="Run", ylab="Cumulative mortality (thousands)",main='55-64yrs cumulative mortality')
+plot(cumulvx[1:13,5],xlab="Run", ylab="Cumulative mortality (thousands)",main='65+ yrs cumulative mortality')
+
+plot(cumulvx[1:13,8],xlab="Run", ylab="Cumulative incidence (thousands)", main='All ages cumulative incidence')
+plot(cumulvx[1:13,9],xlab="Run", ylab="Cumulative incidence (thousands)",main='0-14yrs cumulative incidence')
+plot(cumulvx[1:13,10],xlab="Run", ylab="Cumulative incidence (thousands)",main='15-54yrs cumulative incidence')
+plot(cumulvx[1:13,11],xlab="Run", ylab="Cumulative incidence (thousands)",main='55-64yrs cumulative incidence')
+plot(cumulvx[1:13,12],xlab="Run", ylab="Cumulative incidence (thousands)",main='65+ yrs cumulative incidence')
+
+redu<-1000*rbind((cumulvx[1,]-cumulvx[2,]),(cumulvx[1,]-cumulvx[3,]),(cumulvx[1,]-cumulvx[4,]),(cumulvx[1,]-cumulvx[5,]),(cumulvx[1,]-cumulvx[6,]),(cumulvx[1,]-cumulvx[7,]),(cumulvx[1,]-cumulvx[8,]),(cumulvx[1,]-cumulvx[9,]),(cumulvx[1,]-cumulvx[10,]),(cumulvx[1,]-cumulvx[11,]),(cumulvx[1,]-cumulvx[12,]),(cumulvx[1,]-cumulvx[13,]))
+plot(redu[1:12,1],xlab="Run", ylab="Reduction in cumulative mortality", main='All ages reduction in cumulative mortality')
+plot(redu[1:12,2],xlab="Run", ylab="Reduction in cumulative mortality", main='0-14yrs reduction in cumulative mortality')
+plot(redu[1:12,3],xlab="Run", ylab="Reduction in cumulative mortality", main='15-54yrs reduction in cumulative mortality')
+plot(redu[1:12,4],xlab="Run", ylab="Reduction in cumulative mortality", main='55-64yrs reduction in cumulative mortality')
+plot(redu[1:12,5],xlab="Run", ylab="Reduction in cumulative mortality", main='65+ yrs reduction in cumulative mortality')
+
+plot(redu[1:12,8],xlab="Run", ylab="Reduction in cumulative incidence", main='all ages reduction in cumulative incidence')
+plot(redu[1:12,9],xlab="Run", ylab="Reduction in cumulative incidence", main='0-14yrs reduction in cumulative incidence')
+plot(redu[1:12,10],xlab="Run", ylab="Reduction in cumulative incidence", main='15-54yrs reduction in cumulative incidence')
+plot(redu[1:12,11],xlab="Run", ylab="Reduction in cumulative incidence", main='55-64yrs reduction in cumulative incidence')
+plot(redu[1:12,12],xlab="Run", ylab="Reduction in cumulative incidence", main='65+yrs reduction in cumulative incidence')
 

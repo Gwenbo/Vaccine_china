@@ -605,7 +605,7 @@ print("done start year")
   print("done mid year")
   } 
 
-  ## Outputs - in R, allows output to be seen without expressly wanting it - what is this??? comment out? 
+  ## Outputs - in R, allows output to be seen without expressly wanting it 
   assign('S',S,envir = .GlobalEnv);assign('L',L,envir = .GlobalEnv);assign('I',I,envir = .GlobalEnv);assign('NI',NI,envir = .GlobalEnv);assign('R',R,envir = .GlobalEnv);assign('new_I',new_I,envir = .GlobalEnv);assign('new_NI',new_NI,envir = .GlobalEnv)
   assign('NBirths',BIRTHS,envir=.GlobalEnv)  
 #assign('SH',SH,envir = .GlobalEnv);assign('LH',LH,envir = .GlobalEnv);#assign('IH',IH,envir = .GlobalEnv);assign('NIH',NIH,envir = .GlobalEnv);assign('RH',RH,envir = .GlobalEnv);assign('new_IH',new_IH,envir = .GlobalEnv);assign('new_NIH',new_NIH,envir = .GlobalEnv)
@@ -650,7 +650,14 @@ print("done assign")
   totcase[,3]<- sum(TBI[,3])
   totcase[,4]<- sum(TBI[,4])
   totcase[,5]<- sum(TBI[,5])
-  
+
+  cumulout<-cbind(totmort,totcase)
+  colnames(cumulout)<-c("All agesM", "0-14M", "15-54M", "55-64M", "65+M", "15-59M", "60+M","All agesI","0-14I", "15-54I", "55-64I", "65+I")
+  assign('cumulout',cumulout,envir=.GlobalEnv) 
+  assign('totmort',totmort,envir=.GlobalEnv) 
+  assign('totcase',totcase,envir=.GlobalEnv) 
+
+
   print("done tot case")
   colnames(TBI)<-c("All ages","0-14", "15-54", "55-64", "65+")
   colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+")
