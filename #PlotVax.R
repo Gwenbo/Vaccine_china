@@ -29,6 +29,7 @@ lastcol<-(((typen-1)*(combn))+1)*steps
 y1<-seq(1,lastcol,steps)
 
 ### TBI ####
+par(mfcol=c(2,2))
 
 #TBItot plot vxtype2
 #baseline
@@ -61,7 +62,7 @@ lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),15], col='orange',lty=6, lwd
 
 #TBI014 plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),16], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,10),main="0-14yrs Incidence  pre-exp",type='l',col='red')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),16], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="0-14yrs Incidence  pre-exp",type='l',col='red')
 points(2010,incidence2010[2])
 segments(2010,incidence2010l[2],2010,incidence2010u[2])
 #vx2 40ve,30cov
@@ -74,7 +75,7 @@ lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),16], col='red',lty=6, lwd=2)
 
 #TBI014 plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),16], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,10),main="0-14yrs Incidence post-exp",type='l',col='red')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),16], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="0-14yrs Incidence post-exp",type='l',col='red')
 points(2010,incidence2010[2])
 segments(2010,incidence2010l[2],2010,incidence2010u[2])
 #vx2 40ve,30cov
@@ -88,7 +89,7 @@ lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),16], col='red',lty=6, lwd=2)
 
 #TBI15-54 plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),17], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,100),main="15-54yrs Incidence  pre-exp",type='l',col='blue')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),17], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="15-54yrs Incidence  pre-exp",type='l',col='blue')
 points(2010,incidence2010[3])
 segments(2010,incidence2010l[3],2010,incidence2010u[3])
 #vx2 40ve,30cov
@@ -101,7 +102,7 @@ lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),17], col='blue',lty=6, lwd=2)
 
 #TBI15-54 plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),17], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,100),main="15-54yrs Incidence post-exp",type='l',col='blue')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),17], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="15-54yrs Incidence post-exp",type='l',col='blue')
 points(2010,incidence2010[3])
 segments(2010,incidence2010l[3],2010,incidence2010u[3])
 #vx2 40ve,30cov
@@ -115,7 +116,7 @@ lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),17], col='blue',lty=6, lwd=2
 
 #TBI55-64 plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),18], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,150),main="55-64yrs Incidence  pre-exp",type='l',col='green')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),18], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="55-64yrs Incidence  pre-exp",type='l',col='green')
 points(2010,incidence2010[4])
 segments(2010,incidence2010l[4],2010,incidence2010u[4])
 #vx2 40ve,30cov
@@ -128,7 +129,7 @@ lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),18], col='green',lty=6, lwd=2)
 
 #TBI55-64 plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),18], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,150),main="55-64yrs Incidence post-exp",type='l',col='green')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),18], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="55-64yrs Incidence post-exp",type='l',col='green')
 points(2010,incidence2010[4])
 segments(2010,incidence2010l[4],2010,incidence2010u[4])
 #vx2 40ve,30cov
@@ -170,10 +171,10 @@ lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),19], col='pink',lty=6, lwd=2
 
 
 ######## TBM #########
-
+par(mfcol=c(2,2))
 #TBMtot plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),20], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,10),main="Total Mortality pre-exposure",type='l',col='orange')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),20], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="Total Mortality pre-exposure",type='l',col='orange')
 points(2010,mortality2010[1])
 segments(2010,mortality2010l[1],2010,mortality2010u[1])
 #vx2 40ve,30cov
@@ -186,7 +187,7 @@ lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),20], col='orange',lty=6, lwd=2
 
 #TBMtot plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),20], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,10),main="Total Mortality post-exp",type='l',col='orange')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),20], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="Total Mortality post-exp",type='l',col='orange')
 points(2010,mortality2010[1])
 segments(2010,mortality2010l[1],2010,mortality2010u[1])
 #vx2 40ve,30cov
@@ -201,7 +202,7 @@ lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),20], col='orange',lty=6, lwd
 
 #TBM014 plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),21], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,5),main="0-14yrs Mortality  pre-exp",type='l',col='red')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),21], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="0-14yrs Mortality  pre-exp",type='l',col='red')
 points(2010,mortality2010[2])
 segments(2010,mortality2010l[2],2010,mortality2010u[2])
 #vx2 40ve,30cov
@@ -214,7 +215,7 @@ lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),21], col='red',lty=6, lwd=2)
 
 #TBM014 plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),21], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,5),main="0-14yrs Mortality post-exp",type='l',col='red')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),21], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="0-14yrs Mortality post-exp",type='l',col='red')
 points(2010,mortality2010[2])
 segments(2010,mortality2010l[2],2010,mortality2010u[2])
 #vx2 40ve,30cov
@@ -228,7 +229,7 @@ lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),21], col='red',lty=6, lwd=2)
 
 #TBM15-59 plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),22], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,5),main="15-59yrs Mortality  pre-exp",type='l',col='blue')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),22], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="15-59yrs Mortality  pre-exp",type='l',col='blue')
 points(2010,mortality2010[3])
 segments(2010,mortality2010l[3],2010,mortality2010u[3])
 #vx2 40ve,30cov
@@ -241,7 +242,7 @@ lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),22], col='blue',lty=6, lwd=2)
 
 #TBM15-59 plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),22], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,5),main="15-59yrs Mortality post-exp",type='l',col='blue')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),22], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="15-59yrs Mortality post-exp",type='l',col='blue')
 points(2010,mortality2010[3])
 segments(2010,mortality2010l[3],2010,mortality2010u[3])
 #vx2 40ve,30cov
@@ -255,7 +256,7 @@ lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),22], col='blue',lty=6, lwd=2
 
 #TBM60+ plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),23], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,20),main="60+yrs Incidence  pre-exp",type='l',col='green')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),23], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="60+yrs Incidence  pre-exp",type='l',col='green')
 points(2010,mortality2010[4])
 segments(2010,mortality2010l[4],2010,mortality2010u[4])
 #vx2 40ve,30cov
@@ -268,7 +269,7 @@ lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),23], col='green',lty=6, lwd=2)
 
 #TBM60+ plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),23], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,20),main="60+yrs Mortality post-exp",type='l',col='green')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),23], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="60+yrs Mortality post-exp",type='l',col='green')
 points(2010,mortality2010[4])
 segments(2010,mortality2010l[4],2010,mortality2010u[4])
 #vx2 40ve,30cov

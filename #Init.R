@@ -14,6 +14,8 @@ I<-matrix(0,steps,Mnage);  IH<-matrix(0,steps,Mnage)
 NI<-matrix(0,steps,Mnage);  NIH<-matrix(0,steps,Mnage)
 # Recovered, Recovered, Recovered with HIV
 R<-matrix(0,steps,Mnage);  RH<-matrix(0,steps,Mnage)
+#newly infected people
+new_infect<-matrix(0,steps,Mnage)
 # New Infectious, New Infectious with HIV
 new_I<-matrix(0,steps,Mnage); new_IH<-matrix(0,steps,Mnage); 
 # New non-Infectious, New non-Infectious with HIV
@@ -117,10 +119,13 @@ VX<-matrix(0,steps,3); vaccgive<-matrix(0,1,3)
 TBRx<--matrix(0,steps,2);
 TBI<-matrix(0,steps,5);
 TBM<-matrix(0,steps,7);
-TBP<-matrix(0,steps,6)
-TBPb<-matrix(0,steps,6)
-TBPI<-matrix(0,steps,5)
+TBP<-matrix(0,steps,6);
+TBPb<-matrix(0,steps,6);
+TBPI<-matrix(0,steps,5);
 PSIZEy<-matrix(0,steps,10);
+TBRa<-matrix(0,steps,5);
+TBRi<-matrix(0,steps,5);
+TBInew<-matrix(0,steps,5);
 
 colnames(TBI)<-c("All ages","0-14", "15-54", "55-64", "65+")
 colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+")
@@ -131,8 +136,8 @@ colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29
 
 
 #cumulative cases and deaths
-totmort<- matrix(0,1,7)
-colnames(totmort)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+")
+totmort<- matrix(0,1,2)
+colnames(totmort)<-c("All ages", "65+")
 
-totcase<- matrix(0,1,5)
-colnames(totcase)<-c("All ages","0-14", "15-54", "55-64", "65+")
+totcase<- matrix(0,1,2)
+colnames(totcase)<-c("All ages","65+")

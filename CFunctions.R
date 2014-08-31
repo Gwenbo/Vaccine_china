@@ -56,6 +56,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   } else {ui<-rmortTB*(1-ui)+ui; uni<-rmortTB*(1-uni)+uni}
   }
   # u and ui use age depandent pattern and apply to existing number
+  
   uichild<-ui*uiscaleC
   uiadult<-ui*uiscaleA
   uielderly<-ui*uiscaleE
@@ -63,9 +64,9 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   uniadult<-uni*uiscaleA
   unielderly<-uni*uiscaleE
     
-  ui=c((rep(uichild, l=chiyrs)),(rep(uiadult, l=aduyrs)),(rep(uielderly, l=eldyrs)))
-  uni=c((rep(unichild, l=chiyrs)),(rep(uniadult, l=aduyrs)),(rep(unielderly, l=eldyrs)))
-  
+  ui<-c((rep(uichild, l=chiyrs)),(rep(uiadult, l=aduyrs)),(rep(uielderly, l=eldyrs)))
+  uni<-c((rep(unichild, l=chiyrs)),(rep(uniadult, l=aduyrs)),(rep(unielderly, l=eldyrs)))
+ 
  
   
   # If don't assign CDRscale set it to 1 (i.e. use data)
@@ -108,17 +109,17 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     #is in k loop, so generates a new u (vector of length number of ages) each year
     #make so mortality is higher in the past (1950s LE figures as elderly in 2010 were born latest 1945 (many before this)) and falls at same time to birthdrop
     
-    fertdrop<-1980
+    mortdrop<-2000
     
-    if (k < fertdrop){if (rmort < 0) {u<-as.vector(rmort*(mort[1,2:102]) + mort[1,2:102])} 
+    if (k < mortdrop){if (rmort < 0) {u<-as.vector(rmort*(mort[1,2:102]) + mort[1,2:102])} 
                       else {u<-as.vector(rmort*(1-(mort[1,2:102])) + mort[1,2:102])}
                       } 
     else{
         if (k < 2010) { if (rmort < 0) {u<-as.vector(rmort*(mort[2,2:102]) + mort[2,2:102])} 
                       else {u<-as.vector(rmort*(1-(mort[2,2:102])) + mort[2,2:102])}
                       } 
-        else { if (rmort < 0) {u<-as.vector(rmort*(mort[2+yr-2010,2:102]) + mort[2+yr-2010,2:102])} 
-               else {u<-as.vector(rmort*(1-(mort[2+yr-2010,2:102])) + mort[2+yr-2010,2:102])}
+        else { if (rmort < 0) {u<-as.vector(rmort*(mort[3+yr-2010,2:102]) + mort[3+yr-2010,2:102])} 
+               else {u<-as.vector(rmort*(1-(mort[3+yr-2010,2:102])) + mort[3+yr-2010,2:102])}
         }
         }
 
@@ -193,6 +194,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 #     e_bb<-20887
 #     e_pop<-984016
     
+    fertdrop<-1990
     if (k < fertdrop){ br<-e_bb/e_pop
                       if (k == year1){B<-round(br*psize[1]); bv<-c(bv,B);brate<-c(brate,br)}
                       else { B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);brate<-c(brate,br)}} 
@@ -224,6 +226,9 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       print("pre-start lambda")
       #lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
       #1-exp turns rate->probability
+#       
+#        PAF_year=2020
+#        if (k==PAF_year) Imatrix[i-1,3]<-0
       lambda[i-1,1:Mnage] <- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[i-1,1:4])/(psizematrix[i-1,1:4]))))))
                       
       print("post-start lambda")
@@ -236,6 +241,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       S[i,2:Mnage] = S[i-1,1:(Mnage-1)] - (u[1:Mnage-1]+lambda[i-1,1:(Mnage-1)])*S[i-1,1:(Mnage-1)]*dt 
       L[i,2:Mnage] = L[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*(1 - p[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt - (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x + u[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt 
 
+      new_infect[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*S[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*(x*L[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt  
+      
       new_I_react[i,2:Mnage] = v[1:(Mnage-1)]*f[1:(Mnage-1)]*(L[i-1,1:(Mnage-1)])*dt + r[1:(Mnage-1)]*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt 
       new_NI_react[i,2:Mnage] =  v[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
       
@@ -247,8 +254,6 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(e*new_NI[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + uni[1:(Mnage-1)] + w)*NI[i-1,1:(Mnage-1)]*dt                    
       
       #if(I[i,2] < I[i-1,1]){print(c(i,I[i,2],I[i-1,1],"stop",(n + u[1:13] + ui),"cdr",CDR,CoT))}
-      
-      
       
       ####•••••••••••••••••••• TB HIV model •••••••••••••••••
       
@@ -422,6 +427,9 @@ print("done start year")
         start <- 0 # Not the start of the year
         #lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
         print("pre-post lambda")
+        
+#         PAF_year=2020
+#         if (k==PAF_year) Imatrix[i-1,3]<-0
         lambda[i-1,1:Mnage] <- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[i-1,1:4])/(psizematrix[i-1,1:4]))))))
         
         print("post-lambda")
@@ -434,6 +442,8 @@ print("done start year")
         #save(S,file="S.RData")
         L[i,1:Mnage] = L[i-1,1:Mnage] + lambda[i-1,1:Mnage]*(1 - p[1:Mnage])*(S[i-1,1:Mnage] + g*R[i-1,1:Mnage])*dt - (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*x + u[1:Mnage])*L[i-1,1:Mnage]*dt 
         #print("1")
+        new_infect[i,1:Mnage] = lambda[i-1,1:(Mnage)]*S[i-1,1:(Mnage)] + lambda[i-1,1:(Mnage)]*(x*L[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt  
+        
         new_I_react[i,1:Mnage] = v[1:Mnage]*f[1:(Mnage)]*(L[i-1,1:(Mnage)])*dt + r[1:Mnage]*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt 
         #print("1")
         new_NI_react[i,1:Mnage] =  v[1:Mnage]*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
@@ -589,6 +599,7 @@ print("done start year")
           TBI[(k-year1+1),3]<-100000*sum(new_I[i1:i2,16:55],new_NI[i1:i2,16:55])/mean(psize1554[i1:i2])
           TBI[(k-year1+1),4]<-100000*sum(new_I[i1:i2,56:65],new_NI[i1:i2,56:65])/mean(psize5564[i1:i2])
           TBI[(k-year1+1),5]<-100000*sum(new_I[i1:i2,66:Mnage],new_NI[i1:i2,66:Mnage])/mean(psize65plus[i1:i2])
+
           
           ## (3) TB prevalence rate 
           TBP[(k-year1+1),1]<-100000*sum(I[i1:i2,],NI[i1:i2,])/mean(psize[i1:i2])
@@ -607,7 +618,7 @@ print("done start year")
           TBPb[(k-year1+1),6]<-100000*sum(I[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
           
           
-          ## (5) TB mortality
+          ## (5) TB mortality rate
           #print(c("IH",sum(new_IH[i,],new_NIH[i,]),TBI[i,2]))
           TBM[(k-year1+1),1]<-100000*sum(TBDeaths[i1:i2,])/mean(psize[i1:i2])
           TBM[(k-year1+1),2]<-100000*sum(TBDeaths[i1:i2,1:15])/mean(psize014[i1:i2])
@@ -616,14 +627,38 @@ print("done start year")
           TBM[(k-year1+1),5]<-100000*sum(TBDeaths[i1:i2,66:Mnage])/mean(psize65plus[i1:i2])
           TBM[(k-year1+1),6]<-100000*sum(TBDeaths[i1:i2,16:60])/mean(psize1559[i1:i2])
           TBM[(k-year1+1),7]<-100000*sum(TBDeaths[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
+
           
-          ## (5) Prevalence of infection - in case get data to fit to. WHAT ABOUT RECOVERDS???
+          ## (6) Prevalence of infection - in case get data to fit to. WHAT ABOUT RECOVERDS???
           TBPI[(k-year1+1),1]<-100*(((sum(L[i1:i2,]))/2)/mean(psize[i1:i2]))
           TBPI[(k-year1+1),2]<-100*(((sum(L[i1:i2,1:15]))/2)/mean(psize014[i1:i2]))
           TBPI[(k-year1+1),3]<-100*(((sum(L[i1:i2,16:55]))/2)/mean(psize1554[i1:i2]))
           TBPI[(k-year1+1),4]<-100*(((sum(L[i1:i2,56:65]))/2)/mean(psize5564[i1:i2]))
           TBPI[(k-year1+1),5]<-100*(((sum(L[i1:i2,66:Mnage]))/2)/mean(psize65plus[i1:i2]))
           
+          ## (7) % reactivation
+          TBRa[(k-year1+1),1]<-100*((sum(new_I_react[i1:i2,]))/(sum(new_I[i1:i2,])))
+          TBRa[(k-year1+1),2]<-100*((sum(new_I_react[i1:i2,1:15]))/(sum(new_I[i1:i2,1:15])))
+          TBRa[(k-year1+1),3]<-100*((sum(new_I_react[i1:i2,16:55]))/(sum(new_I[i1:i2,16:55])))
+          TBRa[(k-year1+1),4]<-100*((sum(new_I_react[i1:i2,56:65]))/(sum(new_I[i1:i2,56:65])))
+          TBRa[(k-year1+1),5]<-100*((sum(new_I_react[i1:i2,66:Mnage]))/(sum(new_I[i1:i2,66:Mnage])))
+          
+          ## (8) % reinfection
+          TBRi[(k-year1+1),1]<-100-(TBRa[(k-year1+1),1])
+          TBRi[(k-year1+1),2]<-100-(TBRa[(k-year1+1),2])
+          TBRi[(k-year1+1),3]<-100-(TBRa[(k-year1+1),3])
+          TBRi[(k-year1+1),4]<-100-(TBRa[(k-year1+1),4])
+          TBRi[(k-year1+1),5]<-100-(TBRa[(k-year1+1),5])
+          
+          ## (9) number newly infected ppl
+          TBInew[(k-year1+1),1]<-sum(new_infect[i1:i2,])
+          TBInew[(k-year1+1),2]<-sum(new_infect[i1:i2,1:15])
+          TBInew[(k-year1+1),3]<-sum(new_infect[i1:i2,16:55])
+          TBInew[(k-year1+1),4]<-sum(new_infect[i1:i2,56:65])
+          TBInew[(k-year1+1),5]<-sum(new_infect[i1:i2,66:Mnage])
+          
+          
+
           #### FOR ADDITIONAL RESEARCH OUTCOMES
           
           # % of transmission due to the elderly
@@ -662,6 +697,9 @@ assign('d',d,envir=.GlobalEnv);
   assign('TBI',TBI,envir=.GlobalEnv);assign('TBM',TBM,envir=.GlobalEnv);assign('TBRx',TBRx,envir=.GlobalEnv);assign('VX',VX,envir=.GlobalEnv);
   assign('TBP',TBP,envir=.GlobalEnv);assign('TBPb',TBPb,envir=.GlobalEnv)
   assign('TBPI',TBPI,envir=.GlobalEnv);assign('PSIZEy',PSIZEy,envir=.GlobalEnv);
+  assign('TBRa',TBRa,envir=.GlobalEnv);assign('TBRi',TBRi,envir=.GlobalEnv);
+  assign('TBInew',TBInew,envir=.GlobalEnv);
+
   #assign('Econout',EconOut,envir=.GlobalEnv);
   assign('Out',Out,envir=.GlobalEnv);
   assign('vaccgive',vaccgive,envir=.GlobalEnv);
@@ -671,22 +709,16 @@ print("done assign")
 
   ## CUMULATIVE RESEARCH OUTCOMES
   
-  totmort[,1]<- sum(TBM[,1])
-  totmort[,2]<- sum(TBM[,2])
-  totmort[,3]<- sum(TBM[,3])
-  totmort[,4]<- sum(TBM[,4])
-  totmort[,5]<- sum(TBM[,5])
-  totmort[,6]<- sum(TBM[,6])
-  totmort[,7]<- sum(TBM[,7])
+
+  totmort[,1]<-sum(TBDeaths)
+  totmort[,2]<-sum(TBDeaths[,66:Mnage])
   
-  totcase[,1]<- sum(TBI[,1])
-  totcase[,2]<- sum(TBI[,2])
-  totcase[,3]<- sum(TBI[,3])
-  totcase[,4]<- sum(TBI[,4])
-  totcase[,5]<- sum(TBI[,5])
+  totcase[,1]<- sum(new_I,new_NI)
+  totcase[,2]<- sum(new_I[,66:Mnage],new_NI[,66:Mnage])
+  
 
   cumulout<-cbind(totmort,totcase)
-  colnames(cumulout)<-c("All agesM", "0-14M", "15-54M", "55-64M", "65+M", "15-59M", "60+M","All agesI","0-14I", "15-54I", "55-64I", "65+I")
+  colnames(cumulout)<-c("All agesM", "65+M","All agesI", "65+I")
   assign('cumulout',cumulout,envir=.GlobalEnv) 
   assign('totmort',totmort,envir=.GlobalEnv) 
   assign('totcase',totcase,envir=.GlobalEnv) 

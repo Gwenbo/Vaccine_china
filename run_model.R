@@ -42,6 +42,9 @@ setwd(home)
   #xout<-rbind(xout,newo)
 # }
 
+
+print(TBInew)
+
 setwd(home)
 source('#BasicPlot.R')
 
@@ -242,6 +245,13 @@ write.table(vaxgive,'vaccines_given.csv',sep=",",row.names=FALSE)
 setwd(home)
 source('#PlotVax.R')
 
+
+redu<-1000*rbind((cumulvx[1,]-cumulvx[2,]),(cumulvx[1,]-cumulvx[3,]),(cumulvx[1,]-cumulvx[4,]),(cumulvx[1,]-cumulvx[5,]),(cumulvx[1,]-cumulvx[6,]),(cumulvx[1,]-cumulvx[7,]),(cumulvx[1,]-cumulvx[8,]),(cumulvx[1,]-cumulvx[9,]),(cumulvx[1,]-cumulvx[10,]),(cumulvx[1,]-cumulvx[11,]),(cumulvx[1,]-cumulvx[12,]),(cumulvx[1,]-cumulvx[13,]))
+redu<-redu[,-6]
+redu<-redu[,-5]
+
+
+NNVm<-vaxgive[,1]/redu[,1]
 
 # y<-subset(dfvx,dfvx$type==1)
 # y<-subset(dfvx,dvfx[,54]==3)

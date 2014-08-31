@@ -90,15 +90,32 @@ dalydata<- as.matrix(drop.levels(read.csv('Dalydata_22HBC.csv',header=TRUE,check
 # rownames(cdrm)<-countries
 
 #pessimistic
+# cdrm<-matrix(0,length(countries),(2050-1990+1))
+# for (i in 1:length(countries)){
+#   cdrm[i,(1:(2012-1990+1))]<- t(cdrv[1:23,countries[i]])
+#   #cdr remains constant after 2012
+#   cdrm[i,(2013-1990+1):(2050-1990+1)]<-cdrm[i,(2012-1990+1)]
+# }
+# cdrm<-cdrm/100
+# rownames(cdrm)<-countries
+
+# ##CDRM using generalised logistic function  - deals with variation in the data and can decrease the jump likely to have been artificial
 cdrm<-matrix(0,length(countries),(2050-1990+1))
 for (i in 1:length(countries)){
-  cdrm[i,(1:(2012-1990+1))]<- t(cdrv[1:23,countries[i]])
-  #cdr remains constant after 2012
-  cdrm[i,(2013-1990+1):(2050-1990+1)]<-cdrm[i,(2012-1990+1)]
+  K<-cdrv[23,countries[i]]
+  A<-cdrv[1,countries[i]]
+  Q<-0.2
+  Qv<-0.3
+  slope<-0.12
+  inflect<-10
+  
+  cdrm[i,(1:(2050-1990+1))]<- A+((K-A)/((1+(Q*exp(-slope*(((1:(2050-1990+1))-inflect)))))^(1/Qv)))
+  
 }
 cdrm<-cdrm/100
 rownames(cdrm)<-countries
-# 
+
+
 # #optimistic
 # cdrm2<-<-matrix(0,length(countries),(2050-1990+1))
 # for (i in 1:length(countries)){
