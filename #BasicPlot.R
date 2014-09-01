@@ -6,9 +6,9 @@ population2050<- c(1384976,204187,623982,225492,331315)
 population2050u<-c(3867612,300552,722200,248041,364447)
 population2050l<-c(1153148,124968,527054,202943,298184)
 
-incidence2010<- c(73.78,3.02,74.56,120.54,165.63)
-incidence2010u<- c(83.48,3.41,84.37,136.40,187.43)
-incidence2010l<- c(64.74,2.65,65.43,105.78,145.35)
+incidence2010<- c(74.31,3.16,75.14,121.35,166.35)
+incidence2010u<- c(84.09,3.57,85.02,137.32,188.24)
+incidence2010l<- c(65.21,2.77,65.94,106.49,145.98)
 
 prevalence2000<- c(178,92,119,213,596)
 prevalence2000u<- c(163,116,146,260,698)
@@ -53,7 +53,7 @@ segments(2010,incidence2010l[3],2010,incidence2010u[3])
 plot(seq(1970,2050),TBI[71:151,4], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="55-64years Incidence",type='l',col='green')
 points(2010,incidence2010[4])
 segments(2010,incidence2010l[4],2010,incidence2010u[4])
-plot(seq(1970,2050),TBI[71:151,5], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,300),main="65+ years Incidence",type='l',col='pink')
+plot(seq(1970,2050),TBI[71:151,5], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,800),main="65+ years Incidence",type='l',col='pink')
 points(2010,incidence2010[5])
 segments(2010,incidence2010l[5],2010,incidence2010u[5])
 plot.new()
@@ -130,7 +130,7 @@ plot(seq(1970,2050),TBM[71:151,7], ylab="Mortality/100,000pop/yr",xlab="year", y
 points(2010,mortality2010[4])
 segments(2010,mortality2010l[4],2010,mortality2010u[4])
 
-## prevalence of infection plot
+# prevalence of infection plot
 par(mfrow=c(2,3))
 plot(seq(1970,2050),TBPI[71:151,1], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),main="Total Prevalence Infection",type='l',col='orange')
 plot(seq(1970,2050),TBPI[71:151,2], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),main="0-14years Prevalence Infection",type='l',col='pink')
