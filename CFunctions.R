@@ -57,18 +57,18 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   }
   # u and ui use age depandent pattern and apply to existing number
   
-#   uichild<-ui*uiscaleC
-#   uiadult<-ui*uiscaleA
-#   uielderly<-ui*uiscaleE
-#   unichild<-uni*uiscaleC
-#   uniadult<-uni*uiscaleA
-#   unielderly<-uni*uiscaleE
+  uichild<-ui*uiscaleC
+  uiadult<-ui*uiscaleA
+  uielderly<-ui*uiscaleE
+  unichild<-uni*uiscaleC
+  uniadult<-uni*uiscaleA
+  unielderly<-uni*uiscaleE
     
-#   ui<-c((rep(uichild, l=chiyrs)),(rep(uiadult, l=aduyrs)),(rep(uielderly, l=eldyrs)))
-#   uni<-c((rep(unichild, l=chiyrs)),(rep(uniadult, l=aduyrs)),(rep(unielderly, l=eldyrs)))
-ui<-c(rep(ui,l=Mnage))
-uni<-c(rep(uni,l=Mnage))
-  
+  ui<-c((rep(uichild, l=chiyrs)),(rep(uiadult, l=aduyrs)),(rep(uielderly, l=eldyrs)))
+  uni<-c((rep(unichild, l=chiyrs)),(rep(uniadult, l=aduyrs)),(rep(unielderly, l=eldyrs)))
+# ui<-c(rep(ui,l=Mnage))
+# uni<-c(rep(uni,l=Mnage))
+#   
   # If don't assign CDRscale set it to 1 (i.e. use data)
   if(length(Fit)<5){CDRscale <- 1}
   ## Generate Vaccine specific data using above eff and D if specified in input
@@ -182,12 +182,8 @@ uni<-c(rep(uni,l=Mnage))
     if (CDRscaleE<0){CDRscaledE<-CDRscaleE*(cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]} else {CDRscaledE<-CDRscaleE[1:Mnage]*(1-cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]}
 
     CDRscaleT<-cbind(CDRscaled,CDRscaledE)
-
-
-#     if (CDRscales[1:Mnage]<0){CDRscaled<-CDRscales[1:Mnage]*(cdr[,1:Mnage])+cdr[,1:Mnage]}
-#     else {CDRscaled<-CDRscales[1:Mnage]*(1-cdr[,1:Mnage])+cdr[,1:Mnage]}
-    
     CDR<-CDRscaleT[1+CDR_yr-1990,]
+
 #     CDRout[k,1:Mnage]<-CDR
 
     #CDRH<-CDRscale*cdrH[1+yr-2010];
@@ -264,7 +260,8 @@ uni<-c(rep(uni,l=Mnage))
       NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(e*new_NI[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + uni[1:(Mnage-1)] + w)*NI[i-1,1:(Mnage-1)]*dt                    
       
       #if(I[i,2] < I[i-1,1]){print(c(i,I[i,2],I[i-1,1],"stop",(n + u[1:13] + ui),"cdr",CDR,CoT))}
-      print(CDR)
+      if (k==2010) {print(CDR)}
+
       ####•••••••••••••••••••• TB HIV model •••••••••••••••••
       
       #SH[i,15:Mnage] = SH[i-1,14:(Mnage-1)] - (uH[14:(Mnage-1)] + lambda[i-1,1:Mnage])*SH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*S[i-1,14:(Mnage-1)]*dt 
