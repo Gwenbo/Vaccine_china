@@ -106,8 +106,8 @@ for (i in 1:length(countries)){
   A<-cdrv[1,countries[i]]
   Q<-0.2
   Qv<-0.3
-  slope<-0.12
-  inflect<-10
+  slope<-0.09
+  inflect<-16
   
   cdrm[i,(1:(2050-1990+1))]<- A+((K-A)/((1+(Q*exp(-slope*(((1:(2050-1990+1))-inflect)))))^(1/Qv)))
   

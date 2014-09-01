@@ -42,14 +42,25 @@ setwd(home)
   #xout<-rbind(xout,newo)
 # }
 
-
-print(TBInew)
+##for use in calculating NNV
+#print(TBInew)
 
 setwd(home)
 source('#BasicPlot.R')
 
 par(mfrow=c(1,1))
 plot(seq(1900,2050),brate, ylab="birth rate",xlab="year", ylim=c(0,0.05),main="birthrate",type='l',col='red')
+
+
+plot(seq(1900,2050,0.5),rowSums(I[1:301,1:101]), ylab="number",xlab="year", ylim=c(0,2000000),type='l',col='red')
+lines((seq(1900,2050,0.5)),rowSums(R[1:301,1:101]),type='l',col='orange')
+lines((seq(1900,2050,0.5)),rowSums(S[1:301,1:101]),type='l',col='green')
+lines((seq(1900,2050,0.5)),rowSums(NI[1:301,1:101]),type='l',col='yellow')
+lines((seq(1900,2050,0.5)),rowSums(L[1:301,1:101]),type='l',col='purple')
+
+plot(seq(1970,2050,0.5),rowSums(I[141:301,1:101]), ylab="number",xlab="year", ylim=c(0,200),type='l',col='red')
+lines((seq(1970,2050,0.5)),rowSums(TBDeaths[141:301,1:101]),type='l',col='orange')
+
 
 
 # #### DATA - what it was fitted to 

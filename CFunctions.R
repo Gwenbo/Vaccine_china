@@ -57,21 +57,20 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   }
   # u and ui use age depandent pattern and apply to existing number
   
-  uichild<-ui*uiscaleC
-  uiadult<-ui*uiscaleA
-  uielderly<-ui*uiscaleE
-  unichild<-uni*uiscaleC
-  uniadult<-uni*uiscaleA
-  unielderly<-uni*uiscaleE
+#   uichild<-ui*uiscaleC
+#   uiadult<-ui*uiscaleA
+#   uielderly<-ui*uiscaleE
+#   unichild<-uni*uiscaleC
+#   uniadult<-uni*uiscaleA
+#   unielderly<-uni*uiscaleE
     
-  ui<-c((rep(uichild, l=chiyrs)),(rep(uiadult, l=aduyrs)),(rep(uielderly, l=eldyrs)))
-  uni<-c((rep(unichild, l=chiyrs)),(rep(uniadult, l=aduyrs)),(rep(unielderly, l=eldyrs)))
- 
- 
+#   ui<-c((rep(uichild, l=chiyrs)),(rep(uiadult, l=aduyrs)),(rep(uielderly, l=eldyrs)))
+#   uni<-c((rep(unichild, l=chiyrs)),(rep(uniadult, l=aduyrs)),(rep(unielderly, l=eldyrs)))
+ui<-c(rep(ui,l=Mnage))
+uni<-c(rep(uni,l=Mnage))
   
   # If don't assign CDRscale set it to 1 (i.e. use data)
   if(length(Fit)<5){CDRscale <- 1}
-  print('cdrscale set')
   ## Generate Vaccine specific data using above eff and D if specified in input
   if(length(Vx)>1){
     assign('vaccine',Vx[1],envir = .GlobalEnv); assign('coverage',Vx[2],envir = .GlobalEnv); assign('eff',Vx[3],envir = .GlobalEnv); assign('D',Vx[4],envir = .GlobalEnv)
@@ -175,11 +174,22 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     
     #### CDR & TREATMENT SUCCESS (a proportion of cases that are found and successfully treated)
     # FIT: CDRscale multiplies the cdr value for both HIV+s and HIV-s
-  
-    CDRscales<-c((rep(CDRscale, l=chiyrs)),(rep(CDRscale, l=aduyrs)),(rep(CDRscaleE, l=eldyrs)))
-    CDRscaled<-CDRscales[1:Mnage]*cdr[,1:Mnage];
-    CDR<-CDRscaled[1+CDR_yr-1990,]
+
+    #CDRscales<-c((rep(CDRscale, l=chiyrs)),(rep(CDRscale, l=aduyrs)),(rep(CDRscaleE, l=eldyrs)))
+ 
+    if (CDRscale<0){CDRscaled<-CDRscale*(cdr[,1:(Mnage-eldyrs)])+cdr[,1:(Mnage-eldyrs)]} else {CDRscaled<-CDRscale*(1-cdr[,1:(Mnage-eldyrs)])+cdr[,1:(Mnage-eldyrs)]}
+
+    if (CDRscaleE<0){CDRscaledE<-CDRscaleE*(cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]} else {CDRscaledE<-CDRscaleE[1:Mnage]*(1-cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]}
+
+    CDRscaleT<-cbind(CDRscaled,CDRscaledE)
+
+
+#     if (CDRscales[1:Mnage]<0){CDRscaled<-CDRscales[1:Mnage]*(cdr[,1:Mnage])+cdr[,1:Mnage]}
+#     else {CDRscaled<-CDRscales[1:Mnage]*(1-cdr[,1:Mnage])+cdr[,1:Mnage]}
     
+    CDR<-CDRscaleT[1+CDR_yr-1990,]
+#     CDRout[k,1:Mnage]<-CDR
+
     #CDRH<-CDRscale*cdrH[1+yr-2010];
     CoT<-suctt[1+CoT_yr-1994];#CoTH<-sucttH[1+yr-2010];
     #print(c(yr,'CDRH',CDRH,'CoT',CoT,'CoTH',CoTH,1+yr-2010))
@@ -238,7 +248,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       j = 1; S[i,j]<-B #B is set by year by lines BIRTHS above    
       
       
-      S[i,2:Mnage] = S[i-1,1:(Mnage-1)] - (u[1:Mnage-1]+lambda[i-1,1:(Mnage-1)])*S[i-1,1:(Mnage-1)]*dt 
+      S[i,2:Mnage] = S[i-1,1:(Mnage-1)] - (u[1:(Mnage-1)]+lambda[i-1,1:(Mnage-1)])*S[i-1,1:(Mnage-1)]*dt 
       L[i,2:Mnage] = L[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*(1 - p[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt - (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x + u[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt 
 
       new_infect[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*S[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*(x*L[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt  
@@ -254,7 +264,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(e*new_NI[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + uni[1:(Mnage-1)] + w)*NI[i-1,1:(Mnage-1)]*dt                    
       
       #if(I[i,2] < I[i-1,1]){print(c(i,I[i,2],I[i-1,1],"stop",(n + u[1:13] + ui),"cdr",CDR,CoT))}
-      
+      print(CDR)
       ####•••••••••••••••••••• TB HIV model •••••••••••••••••
       
       #SH[i,15:Mnage] = SH[i-1,14:(Mnage-1)] - (uH[14:(Mnage-1)] + lambda[i-1,1:Mnage])*SH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*S[i-1,14:(Mnage-1)]*dt 
@@ -452,11 +462,11 @@ print("done start year")
         #print("1")
         new_NI[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:(Mnage)]*(1 - f[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
         #print("1")
-        R[i,1:Mnage] = R[i-1,1:(Mnage)] + n[1:Mnage]*(I[i-1,1:(Mnage)] + NI[i-1,1:(Mnage)])*dt + CDR[1:Mnage]*CoT*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage]) - (r[1:Mnage] + g*lambda[i-1,1:Mnage] + u[1:(Mnage)])*R[i-1,1:(Mnage)]*dt 
+        R[i,1:Mnage] = R[i-1,1:Mnage] + n[1:Mnage]*(I[i-1,1:(Mnage)] + NI[i-1,1:(Mnage)])*dt + CDR[1:Mnage]*CoT*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage]) - (r[1:Mnage] + g*lambda[i-1,1:Mnage] + u[1:(Mnage)])*R[i-1,1:(Mnage)]*dt 
         #print("1")
-        I[i,1:Mnage] = I[i-1,1:(Mnage)] + (1 - CDR[1:Mnage]*CoT)*(new_I[i,1:Mnage]) - (n[1:Mnage] + u[1:(Mnage)] + ui[1:Mnage])*I[i-1,1:(Mnage)]*dt
+        I[i,1:Mnage] = I[i-1,1:Mnage] + (1 - CDR[1:Mnage]*CoT)*(new_I[i,1:Mnage]) - (n[1:Mnage] + u[1:(Mnage)] + ui[1:Mnage])*I[i-1,1:Mnage]*dt
         #print("1")
-        NI[i,1:Mnage] = NI[i-1,1:(Mnage)] + (1 - CDR[1:Mnage]*CoT)*(e*new_NI[i,1:Mnage]) - (n[1:Mnage] + u[1:(Mnage)] + uni[1:Mnage] + w)*NI[i-1,1:(Mnage)]*dt                    
+        NI[i,1:Mnage] = NI[i-1,1:Mnage] + (1 - CDR[1:Mnage]*CoT)*(e*new_NI[i,1:Mnage]) - (n[1:Mnage] + u[1:Mnage] + uni[1:Mnage] + w)*NI[i-1,1:(Mnage)]*dt                    
         
         print("done nonvacc")                        
         
@@ -554,10 +564,10 @@ print("done start year")
         
         ## Death markers
         # Number of TB deaths
-        TBDeaths[i,]=dt*((ui)*I[i-1,]+(uni)*NI[i-1,]);
+        TBDeaths[i,1:Mnage]=dt*((ui[1:Mnage]*I[i-1,1:Mnage])+(uni[1:Mnage]*NI[i-1,1:Mnage]));
         
         # All deaths TB and background ##add in by age???
-        ADeaths[i,]=dt*(u*S[i-1,]+u*L[i-1,]+(u+ui)*I[i-1,]+(u+uni)*NI[i-1,]+u*R[i-1,]+u*Sv[i-1,]+u*Lv[i-1,]+u*Rv[i-1,])
+        ADeaths[i,1:Mnage]=dt*(u[1:Mnage]*S[i-1,1:Mnage]+u[1:Mnage]*L[i-1,1:Mnage]+(u[1:Mnage]+ui[1:Mnage])*I[i-1,1:Mnage]+(u[1:Mnage]+uni[1:Mnage])*NI[i-1,1:Mnage]+u[1:Mnage]*R[i-1,1:Mnage]+u[1:Mnage]*Sv[i-1,1:Mnage]+u[1:Mnage]*Lv[i-1,1:Mnage]+u[1:Mnage]*Rv[i-1,1:Mnage])
 
         # Deaths matrix holds all death indices
         # Columns: Number deaths HIV-, av age at death av. age HIV death, number HIV+ deaths, av age HIV+ death, av. age death
@@ -699,8 +709,14 @@ assign('d',d,envir=.GlobalEnv);
   assign('TBPI',TBPI,envir=.GlobalEnv);assign('PSIZEy',PSIZEy,envir=.GlobalEnv);
   assign('TBRa',TBRa,envir=.GlobalEnv);assign('TBRi',TBRi,envir=.GlobalEnv);
   assign('TBInew',TBInew,envir=.GlobalEnv);
+assign('CDR',CDR,envir=.GlobalEnv);
+#assign('CDRout',CDRout,envir=.GlobalEnv);
 
-  #assign('Econout',EconOut,envir=.GlobalEnv);
+#assign('ui',ui,envir=.GlobalEnv);
+#assign('uni',uni,envir=.GlobalEnv);
+#assign('n',n,envir=.GlobalEnv);
+
+#assign('Econout',EconOut,envir=.GlobalEnv);
   assign('Out',Out,envir=.GlobalEnv);
   assign('vaccgive',vaccgive,envir=.GlobalEnv);
   #assign('hbcout',hbcOut,envir=.GlobalEnv);
@@ -716,6 +732,7 @@ print("done assign")
   totcase[,1]<- sum(new_I,new_NI)
   totcase[,2]<- sum(new_I[,66:Mnage],new_NI[,66:Mnage])
   
+
 
   cumulout<-cbind(totmort,totcase)
   colnames(cumulout)<-c("All agesM", "65+M","All agesI", "65+I")
