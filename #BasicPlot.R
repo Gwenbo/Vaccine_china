@@ -40,6 +40,8 @@ mortality2010l<- c(4.84,0.27,1.72,14.12)
 
 
 ##incidence plot
+jpeg(filename="incidence_baseline.jpg",width=10,height=7,units="in",res=500)
+
 par(mfrow=c(2,3))
 plot(seq(1990,2050),TBI[91:151,1], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,600),main="All-Tuberculosis Incidence Rate in China",type='l',col='orange')
 points(2010,incidence2010[1])
@@ -58,6 +60,7 @@ points(2010,incidence2010[5])
 segments(2010,incidence2010l[5],2010,incidence2010u[5])
 plot.new()
 
+dev.off()
 
 # plot(seq(1990,2050),TBI[91:151,1], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),type='l')
 # points(seq(1990,2050),TBI[91:151,2],type='l',col='red')
@@ -76,6 +79,9 @@ plot.new()
 # plot(seq(1990,2050),cdrm["China",], ylab="CDR",xlab="year", ylim=c(0,1),main="CDR",type='l',col='purple')
 
 ## prevalence plot
+
+jpeg(filename="prevalence_baseline.jpg",width=10,height=7,units="in",res=500)
+
 par(mfrow=c(2,3))
 plot(seq(1990,2050),TBPb[91:151,1], ylab="Prevalence/100,000population",xlab="Year", ylim=c(0,700),main="Bacteriologically-positive tuberculosis prevalence rate in China",type='l',col='orange')
 points(2000,prevalence2000[1])
@@ -104,6 +110,7 @@ segments(2000,prevalence2000l[5],2000,prevalence2000u[5])
 segments(2010,prevalence2010l[5],2010,prevalence2010u[5])
 plot.new()
 
+dev.off()
 
 # par(mfrow=c(1,1))
 # plot(seq(1900,2050,0.5),Xn[,'L'], ylab="L",xlab="year", ylim=c(0,2000000),type='l')
@@ -116,6 +123,7 @@ plot.new()
 # points(yrplot2010b,prevalence2010)
 
 # Mortality plot
+jpeg(filename="mortality_baseline.jpg",width=10,height=7,units="in",res=500)
 par(mfrow=c(2,2))
 plot(seq(1990,2050),TBM[91:151,1], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,80),main="Tuberculosis Mortality Rate in China",type='l',col='orange')
 points(2010,mortality2010[1])
@@ -129,7 +137,7 @@ segments(2010,mortality2010l[3],2010,mortality2010u[3])
 plot(seq(1990,2050),TBM[91:151,7], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,80),main="Tuberculosis Mortality Rate: ≥60 years",type='l',col='green')
 points(2010,mortality2010[4])
 segments(2010,mortality2010l[4],2010,mortality2010u[4])
-
+dev.off()
 # # prevalence of infection plot
 # par(mfrow=c(2,3))
 # plot(seq(1970,2050),TBPI[71:151,1], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),main="Total Prevalence Infection",type='l',col='orange')
@@ -140,6 +148,7 @@ segments(2010,mortality2010l[4],2010,mortality2010u[4])
 
 
 ##population plot
+jpeg(filename="demographic_baseline.jpg",width=10,height=7,units="in",res=500)
 par(mfrow=c(2,3))
 plot(seq(1990,2050),PSIZEy[91:151,1], ylab="Population (thousands)",xlab="year", ylim=c(0,4000000),main="China Population Size",type='l',col='orange')
 points(2050,population2050[1])
@@ -162,6 +171,7 @@ points(2050,population2050[5])
 points(2010,population2010[5])
 segments(2050,population2050l[5],2050,population2050u[5])
 plot.new()
+dev.off()
 # points(seq(1990,2050),PSIZEy[91:151,2],type='l',col='red')
 # points(seq(1990,2050),PSIZEy[91:151,3],type='l',col='blue')
 # points(seq(1990,2050),PSIZEy[91:151,4],type='l',col='green')
@@ -169,6 +179,7 @@ plot.new()
 
 
 ##reinfection/reactivation plot 
+jpeg(filename="newvsreact_baseline.jpg",width=10,height=7,units="in",res=500)
 par(mfrow=c(2,3))
 plot(seq(1990,2050),TBRa[91:151,1], ylab="%",xlab="year", ylim=c(0,100),main="Total Population New Infection vs Reactivation",type='l',col='orange')
 lines(seq(1990,2050),TBRi[91:151,1],lty=5,col='orange')
@@ -180,10 +191,11 @@ plot(seq(1990,2050),TBRa[91:151,3], ylab="%",xlab="year", ylim=c(0,100),main="15
 lines(seq(1990,2050),TBRi[91:151,3],lty=5,col='blue')
 #lines(seq(1970,2050),((TBRi[71:151,3])+TBRa[71:151,3]),lty=5,col='blue')
 plot(seq(1990,2050),TBRa[91:151,4], ylab="%",xlab="year", ylim=c(0,100),main="55-64years New Infection vs Reactivation",type='l',col='purple')
-lines(seq(1990,2050),TBRi[91:151,4],lty=5,col='green')
+lines(seq(1990,2050),TBRi[91:151,4],lty=5,col='purple')
 #lines(seq(1970,2050),((TBRi[71:151,4])+TBRa[71:151,4]),lty=5,col='green')
 plot(seq(1990,2050),TBRa[91:151,5], ylab="%",xlab="year", ylim=c(0,100),main="65+ years New Infection vs Reactivation",type='l',col='green')
-lines(seq(1990,2050),TBRi[91:151,5],lty=5,col='pink')
+lines(seq(1990,2050),TBRi[91:151,5],lty=5,col='green')
 #lines(seq(1970,2050),((TBRi[71:151,5])+TBRa[71:151,5]),lty=5,col='pink')
 plot.new()
 legend("center",c("New Infection","Reactivation"), lty=c(5,1))
+dev.off()
