@@ -31,7 +31,7 @@ setwd(home)
   neta2<-neta # this parameter needs extra assigning for some annoying reason! 
   
   # Run the model with these parameters  
-  Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)  
+  Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)   
 
   #EOn<-Econout;h10<-hbcout
   # save in big df for plot - original one
@@ -169,15 +169,29 @@ lines((seq(1970,2050,0.5)),rowSums(TBDeaths[141:301,1:101]),type='l',col='orange
 # 
 ######******************************************* Run vaccine scenarios
 
+
+home<-"/Users/Rebecca/Vaccine_china" # Could also set up and output folder
+setwd(home)
+source('#DataGrab.R')
+setwd(home)
+source('CFunctions.R')
+# On cluster (C=1) or no (C=0)?
+C=0
+# What country? (For you this will always be China for now)
+cntry<-"China"
+
+## Grab parameter fits for China (these are the 1000 from the paper)
+setwd(home);setwd("Data")
+para<-read.csv(paste("paraout_",cntry,".csv",sep=''))[-1]
+nm<-c(pararange[,1],"p0") # The parameter ranges
+setwd(home)
+
 ## Vaccine interventions
 typen<-3 ## Number of vaccine types
 effs<-c(40,60,80)/100
 durs<-c(20)
 cover<-c(0.3,0.7)
 combn<-length(effs)*length(durs)*length(cover) ## Number of efficacy and duration combinations
-
-## Which countries?
-cntry<-"China"
 
 # Run Vaccines and where to store
 print("Running vaccines")
@@ -206,7 +220,10 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
   Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE, alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,C)  
   #EOn<-Econout;h10<-hbcout
   # save in big df for plot - original one
-   eee<-cbind(Xn,0,0); colnames(eee)<-c(colnames(Xn),"type","vxint")
+  setwd(home)
+  source('#BasicPlot.R')
+  
+  eee<-cbind(Xn,0,0); colnames(eee)<-c(colnames(Xn),"type","vxint")
    dfvx<-rbind(dfvx,eee)
     ggg<-cbind(cumulout,0,0); colnames(ggg)<-c(colnames(cumulout),"type","vxint")
     cumulvx<-rbind(cumulvx,ggg)
@@ -244,6 +261,7 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
           vaxgive<-rbind(vaxgive,vaccgive);colnames(vaxgive)<-c("vaxtot","vaxroutine","vaxmass")
           vaxgive<-as.matrix(vaxgive)
 
+
       }}}}
 assign('dfvx',dfvx,envir=.GlobalEnv)
 assign('vaxgive',vaxgive,envir=.GlobalEnv)
@@ -256,13 +274,16 @@ write.table(vaxgive,'vaccines_given.csv',sep=",",row.names=FALSE)
 setwd(home)
 source('#PlotVax.R')
 
-
-redu<-1000*rbind((cumulvx[1,]-cumulvx[2,]),(cumulvx[1,]-cumulvx[3,]),(cumulvx[1,]-cumulvx[4,]),(cumulvx[1,]-cumulvx[5,]),(cumulvx[1,]-cumulvx[6,]),(cumulvx[1,]-cumulvx[7,]),(cumulvx[1,]-cumulvx[8,]),(cumulvx[1,]-cumulvx[9,]),(cumulvx[1,]-cumulvx[10,]),(cumulvx[1,]-cumulvx[11,]),(cumulvx[1,]-cumulvx[12,]),(cumulvx[1,]-cumulvx[13,]))
+redu<-rbind((cumulvx[1,]-cumulvx[2,]),(cumulvx[1,]-cumulvx[3,]),(cumulvx[1,]-cumulvx[4,]),(cumulvx[1,]-cumulvx[5,]),(cumulvx[1,]-cumulvx[6,]),(cumulvx[1,]-cumulvx[7,]),(cumulvx[1,]-cumulvx[8,]),(cumulvx[1,]-cumulvx[9,]),(cumulvx[1,]-cumulvx[10,]),(cumulvx[1,]-cumulvx[11,]),(cumulvx[1,]-cumulvx[12,]),(cumulvx[1,]-cumulvx[13,]))
 redu<-redu[,-6]
 redu<-redu[,-5]
 
-
-NNVm<-vaxgive[,1]/redu[,1]
+NNV[,1]<-vaxgive[,1]/redu[,1]
+NNV[,2]<-vaxgive[,1]/redu[,2]
+NNV[,3]<-vaxgive[,1]/redu[,3]
+NNV[,4]<-vaxgive[,1]/redu[,4]
+colnames(NNV)<-c("NNVm_all","NNVm_eld","NNVi_all","NNV_eld")
+write.table(NNV,'NNV_results.csv',sep=",",row.names=FALSE)
 
 # y<-subset(dfvx,dfvx$type==1)
 # y<-subset(dfvx,dvfx[,54]==3)

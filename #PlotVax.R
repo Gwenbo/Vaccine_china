@@ -29,7 +29,7 @@ lastcol<-(((typen-1)*(combn))+1)*steps
 y1<-seq(1,lastcol,steps)
 
 ### TBI ####
-par(mfcol=c(2,2))
+par(mfcol=c(1,2))
 
 #TBItot plot vxtype2
 #baseline
@@ -43,6 +43,8 @@ lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),15], col='orange',lty=4)
 lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),15], col='orange',lty=5)
 lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),15], col='orange',lty=6)
 lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),15], col='orange',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="orange")
 
 
 #TBItot plot vxtype3
@@ -57,12 +59,14 @@ lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),15], col='orange',lty=4)
 lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),15], col='orange',lty=5)
 lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),15], col='orange',lty=6)
 lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),15], col='orange',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="orange")
 
 
 
 #TBI014 plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),16], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="0-14yrs Incidence  pre-exp",type='l',col='red')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),16], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,20),main="0-14yrs Incidence  pre-exp",type='l',col='red')
 points(2010,incidence2010[2])
 segments(2010,incidence2010l[2],2010,incidence2010u[2])
 #vx2 40ve,30cov
@@ -72,10 +76,12 @@ lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),16], col='red',lty=4)
 lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),16], col='red',lty=5)
 lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),16], col='red',lty=6)
 lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),16], col='red',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="red")
 
 #TBI014 plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),16], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="0-14yrs Incidence post-exp",type='l',col='red')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),16], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,20),main="0-14yrs Incidence post-exp",type='l',col='red')
 points(2010,incidence2010[2])
 segments(2010,incidence2010l[2],2010,incidence2010u[2])
 #vx2 40ve,30cov
@@ -85,6 +91,8 @@ lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),16], col='red',lty=4)
 lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),16], col='red',lty=5)
 lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),16], col='red',lty=6)
 lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),16], col='red',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="red")
 
 
 #TBI15-54 plot vxtype2
@@ -99,6 +107,9 @@ lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),17], col='blue',lty=4)
 lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),17], col='blue',lty=5)
 lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),17], col='blue',lty=6)
 lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),17], col='blue',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="blue")
+
 
 #TBI15-54 plot vxtype3
 #baseline
@@ -112,66 +123,75 @@ lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),17], col='blue',lty=4)
 lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),17], col='blue',lty=5)
 lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),17], col='blue',lty=6)
 lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),17], col='blue',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="blue")
 
 
 #TBI55-64 plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),18], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="55-64yrs Incidence  pre-exp",type='l',col='green')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),18], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="55-64yrs Incidence  pre-exp",type='l',col='purple')
 points(2010,incidence2010[4])
 segments(2010,incidence2010l[4],2010,incidence2010u[4])
 #vx2 40ve,30cov
-lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),18], col='green',lty=2)
-lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),18], col='green',lty=3)
-lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),18], col='green',lty=4)
-lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),18], col='green',lty=5)
-lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),18], col='green',lty=6)
-lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),18], col='green',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),18], col='purple',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),18], col='purple',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),18], col='purple',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),18], col='purple',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),18], col='purple',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),18], col='purple',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="purple")
 
 #TBI55-64 plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),18], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="55-64yrs Incidence post-exp",type='l',col='green')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),18], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="55-64yrs Incidence post-exp",type='l',col='purple')
 points(2010,incidence2010[4])
 segments(2010,incidence2010l[4],2010,incidence2010u[4])
 #vx2 40ve,30cov
-lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),18], col='green',lty=2)
-lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),18], col='green',lty=3)
-lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),18], col='green',lty=4)
-lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),18], col='green',lty=5)
-lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),18], col='green',lty=6)
-lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),18], col='green',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),18], col='purple',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),18], col='purple',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),18], col='purple',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),18], col='purple',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),18], col='purple',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),18], col='purple',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="purple")
 
 #TBI65+ plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),19], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="65+yrs Incidence  pre-exp",type='l',col='pink')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),19], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,400),main="65+yrs Incidence  pre-exp",type='l',col='green')
 points(2010,incidence2010[5])
 segments(2010,incidence2010l[5],2010,incidence2010u[5])
 #vx2 40ve,30cov
-lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),19], col='pink',lty=2)
-lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),19], col='pink',lty=3)
-lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),19], col='pink',lty=4)
-lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),19], col='pink',lty=5)
-lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),19], col='pink',lty=6)
-lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),19], col='pink',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),19], col='green',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),19], col='green',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),19], col='green',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),19], col='green',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),19], col='green',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),19], col='green',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="green")
 
 #TBI65+ plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),19], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="65+yrs Incidence post-exp",type='l',col='pink')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),19], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,400),main="65+yrs Incidence post-exp",type='l',col='green')
 points(2010,incidence2010[5])
 segments(2010,incidence2010l[5],2010,incidence2010u[5])
 #vx2 40ve,30cov
-lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),19], col='pink',lty=2)
-lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),19], col='pink',lty=3)
-lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),19], col='pink',lty=4)
-lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),19], col='pink',lty=5)
-lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),19], col='pink',lty=6)
-lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),19], col='pink',lty=6, lwd=2)
-
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),19], col='green',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),19], col='green',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),19], col='green',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),19], col='green',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),19], col='green',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),19], col='green',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="green")
 
 
 
 
 ######## TBM #########
-par(mfcol=c(2,2))
+par(mfcol=c(1,2))
 #TBMtot plot vxtype2
 #baseline
 plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),20], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="Total Mortality pre-exposure",type='l',col='orange')
@@ -256,7 +276,7 @@ lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),22], col='blue',lty=6, lwd=2
 
 #TBM60+ plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),23], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="60+yrs Incidence  pre-exp",type='l',col='green')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),23], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="60+yrs Mortality  pre-exp",type='l',col='green')
 points(2010,mortality2010[4])
 segments(2010,mortality2010l[4],2010,mortality2010u[4])
 #vx2 40ve,30cov

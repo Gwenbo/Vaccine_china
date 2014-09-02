@@ -114,6 +114,7 @@ ADeaths<-matrix(0,steps,Mnage); ADeathsH<-matrix(0,steps,Mnage);
 TBDeaths<-matrix(0,steps,Mnage);TBDeathsH<-matrix(0,steps,Mnage);AllDeathsH<-matrix(0,steps,Mnage);Deaths<--matrix(0,steps,5);
 # Number vaccinated
 VX<-matrix(0,steps,3); vaccgive<-matrix(0,1,3)
+NNV<-matrix(0,12,4)
 # Number of TB treatments, TB Incidence, TB mortality, ?
 
 TBRx<--matrix(0,steps,2);

@@ -66,6 +66,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     
   ui<-c((rep(uichild, l=chiyrs)),(rep(uiadult, l=aduyrs)),(rep(uielderly, l=eldyrs)))
   uni<-c((rep(unichild, l=chiyrs)),(rep(uniadult, l=aduyrs)),(rep(unielderly, l=eldyrs)))
+  
+  print(ui)
 # ui<-c(rep(ui,l=Mnage))
 # uni<-c(rep(uni,l=Mnage))
 #   
@@ -185,7 +187,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
     CDR<-CDRscaleT[1+CDR_yr-1990,]
 
 #     CDRout[k,1:Mnage]<-CDR
-
+if (k==2010){print(CDR)}
     #CDRH<-CDRscale*cdrH[1+yr-2010];
     CoT<-suctt[1+CoT_yr-1994];#CoTH<-sucttH[1+yr-2010];
     #print(c(yr,'CDRH',CDRH,'CoT',CoT,'CoTH',CoTH,1+yr-2010))
@@ -720,14 +722,14 @@ assign('CDR',CDR,envir=.GlobalEnv);
   
 print("done assign")
 
-  ## CUMULATIVE RESEARCH OUTCOMES
+  ## CUMULATIVE RESEARCH OUTCOMES 2025-2050
   
 
-  totmort[,1]<-sum(TBDeaths)
-  totmort[,2]<-sum(TBDeaths[,66:Mnage])
+  totmort[,1]<-sum(TBDeaths[251:301,])
+  totmort[,2]<-sum(TBDeaths[251:301,66:Mnage])
   
-  totcase[,1]<- sum(new_I,new_NI)
-  totcase[,2]<- sum(new_I[,66:Mnage],new_NI[,66:Mnage])
+  totcase[,1]<- sum(new_I[251:301,],new_NI[251:301,])
+  totcase[,2]<- sum(new_I[251:301,66:Mnage],new_NI[251:301,66:Mnage])
   
 
 
