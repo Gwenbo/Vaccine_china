@@ -48,6 +48,7 @@ mortality2010l<- c(4.84,0.27,1.72,14.12)
 par(mfrow=c(2,3))
 plot(seq(1990,2050),TBI[91:151,1], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='orange')
 points(2010,incidence2010[1])
+points(2050,TBI[151,1])
 segments(2010,incidence2010l[1],2010,incidence2010u[1])
 plot(seq(1990,2050),TBI[91:151,2], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='red')
 points(2010,incidence2010[2])
@@ -59,8 +60,8 @@ plot(seq(1990,2050),TBI[91:151,4], ylab="Incidence/100,000pop/yr",xlab="Year", y
 points(2010,incidence2010[4])
 segments(2010,incidence2010l[4],2010,incidence2010u[4])
 plot(seq(1990,2050),TBI[91:151,5], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='green')
-points(2010,incidence2010[5])
-segments(2010,incidence2010l[5],2010,incidence2010u[5])
+#points(2010,incidence2010[5])
+#segments(2010,incidence2010l[5],2010,incidence2010u[5])
 plot.new()
 legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 years"), lty=1,col=c("orange","red","blue","purple","green"))
 
@@ -82,7 +83,6 @@ legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 year
 # plot(seq(1990,2050),cdrm["China",], ylab="CDR",xlab="year", ylim=c(0,1),main="CDR",type='l',col='purple')
 
 ## prevalence plot
-
 
 par(mfrow=c(2,3))
 plot(seq(1990,2050),TBPb[91:151,1], ylab="Prevalence/100,000population",xlab="Year", ylim=c(0,700),type='l',col='orange')
@@ -144,12 +144,14 @@ legend("top",c("Overall","0-14 years","15-59 years","≥60 years"), lty=1,col=c(
 
 
 # # prevalence of infection plot
-# par(mfrow=c(2,3))
-# plot(seq(1970,2050),TBPI[71:151,1], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),main="Total Prevalence Infection",type='l',col='orange')
-# plot(seq(1970,2050),TBPI[71:151,2], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),main="0-14years Prevalence Infection",type='l',col='pink')
-# plot(seq(1970,2050),TBPI[71:151,3], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),main="15-54years Prevalence Infection",type='l',col='red')
-# plot(seq(1970,2050),TBPI[71:151,4], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),main="55-64years Prevalence Infection",type='l',col='blue')
-# plot(seq(1970,2050),TBPI[71:151,5], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),main="65+ years Prevalence Infection",type='l',col='green')
+par(mfrow=c(2,3))
+plot(seq(1990,2050),TBPI[91:151,1], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='orange')
+plot(seq(1990,2050),TBPI[91:151,2], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='red')
+plot(seq(1990,2050),TBPI[91:151,3], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='blue')
+plot(seq(1990,2050),TBPI[91:151,4], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='purple')
+plot(seq(1990,2050),TBPI[91:151,5], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='green')
+plot.new()
+legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 years"), lty=1,col=c("orange","red","blue","purple","green"))
 
 
 ##population plot

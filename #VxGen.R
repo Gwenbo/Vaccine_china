@@ -11,7 +11,7 @@ yrintro = 2025
 # dont need midyear for adult/elderly
 #midyear <- round((1/dt)/2)
 
-times<-seq(year1,yearend,dt)
+times<-seq(year1,(yearend+(1-dt)),dt)
 steps<-length(times)
 
 # Generate matrix of exiting vaccine strata

@@ -52,14 +52,14 @@ par(mfrow=c(1,1))
 plot(seq(1900,2050),brate, ylab="birth rate",xlab="year", ylim=c(0,0.05),main="birthrate",type='l',col='red')
 
 
-plot(seq(1900,2050,0.5),rowSums(I[1:301,1:101]), ylab="number",xlab="year", ylim=c(0,2000000),type='l',col='red')
-lines((seq(1900,2050,0.5)),rowSums(R[1:301,1:101]),type='l',col='orange')
-lines((seq(1900,2050,0.5)),rowSums(S[1:301,1:101]),type='l',col='green')
-lines((seq(1900,2050,0.5)),rowSums(NI[1:301,1:101]),type='l',col='yellow')
-lines((seq(1900,2050,0.5)),rowSums(L[1:301,1:101]),type='l',col='purple')
+plot(seq(1900,2050.5,0.5),rowSums(I[1:302,1:101]), ylab="number",xlab="year", ylim=c(0,2000000),type='l',col='red')
+lines((seq(1900,2050.5,0.5)),rowSums(R[1:302,1:101]),type='l',col='orange')
+lines((seq(1900,2050.5,0.5)),rowSums(S[1:302,1:101]),type='l',col='green')
+lines((seq(1900,2050.5,0.5)),rowSums(NI[1:302,1:101]),type='l',col='yellow')
+lines((seq(1900,2050.5,0.5)),rowSums(L[1:302,1:101]),type='l',col='purple')
 
-plot(seq(1970,2050,0.5),rowSums(I[141:301,1:101]), ylab="number",xlab="year", ylim=c(0,200),type='l',col='red')
-lines((seq(1970,2050,0.5)),rowSums(TBDeaths[141:301,1:101]),type='l',col='orange')
+plot(seq(1970,2050.5,0.5),rowSums(I[141:302,1:101]), ylab="number",xlab="year", ylim=c(0,200),type='l',col='red')
+lines((seq(1970,2050.5,0.5)),rowSums(TBDeaths[141:302,1:101]),type='l',col='orange')
 
 
 
@@ -201,6 +201,9 @@ setwd(home);
 dfvx<-c()
 cumulvx<-c()
 vaxgive<-c()
+vaxgiveyr<-c()
+cumulvxyrM<-c()
+cumulvxyrI<-c()
 
 # Run through all fits
 for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example 
@@ -228,7 +231,10 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
     ggg<-cbind(cumulout,0,0); colnames(ggg)<-c(colnames(cumulout),"type","vxint")
     cumulvx<-rbind(cumulvx,ggg)
     cumulvx<-as.matrix(cumulvx)
-  
+    cumulvxyrM<-cbind(cumulvxyrM,cumuloutyr[,1])
+    cumulvxyrM<-as.matrix(cumulvxyrM)
+    cumulvxyrI<-cbind(cumulvxyrI,cumuloutyr[,3])
+    cumulvxyrI<-as.matrix(cumulvxyrI)
   # For each type of vaccine
   #have set to 2 only as only doing vaccine type 2 and 3 at the moment
   for (nn in 2:typen){
@@ -257,18 +263,27 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
           cumulvx<-rbind(cumulvx,ggg)
           cumulvx<-as.matrix(cumulvx)
 
-          #hhh<-cbind(vaccgive,nn,count);colnames(hhh)<-c("vaxtot","vaxroutine","vaxmass","type","vxint")
-          vaxgive<-rbind(vaxgive,vaccgive);colnames(vaxgive)<-c("vaxtot","vaxroutine","vaxmass")
+          #colnames(hhh)<-c("vaxtot","vaxroutine","vaxmass","type","vxint")
+          vaccgive[4]<-nn
+          vaccgive[5]<-count
+          vaxgive<-rbind(vaxgive,vaccgive);#colnames(vaxgive)<-c("vaxtot","vaxroutine","vaxmass","type","vxint")
           vaxgive<-as.matrix(vaxgive)
 
+          #look at yrly NNV to see if reason is higher with higher coverage is because the incidence drops so although NNV starts lower it becomes higher long term.
+          vaxgiveyr<-rbind(vaxgiveyr,vaccgiveyr[1,])
+          vaxgiveyr<-as.matrix(vaxgiveyr)
 
+          cumulvxyrM<-cbind(cumulvxyrM,cumuloutyr[,1])
+          cumulvxyrM<-as.matrix(cumulvxyrM)
+          cumulvxyrI<-cbind(cumulvxyrI,cumuloutyr[,3])
+          cumulvxyrI<-as.matrix(cumulvxyrI)
       }}}}
 assign('dfvx',dfvx,envir=.GlobalEnv)
 assign('vaxgive',vaxgive,envir=.GlobalEnv)
 write.table(dfvx,'vaccine_results.csv',sep=",",row.names=FALSE)
 write.table(cumulvx,'cumulative_vax_results.csv',sep=",",row.names=FALSE)
 write.table(vaxgive,'vaccines_given.csv',sep=",",row.names=FALSE)
-
+write.table(vaxgiveyr,'vaccines_given_annual.csv',sep=",",row.names=FALSE)
 } # end of fits
 
 setwd(home)
@@ -284,6 +299,33 @@ NNV[,3]<-vaxgive[,1]/redu[,3]
 NNV[,4]<-vaxgive[,1]/redu[,4]
 colnames(NNV)<-c("NNVm_all","NNVm_eld","NNVi_all","NNV_eld")
 write.table(NNV,'NNV_results.csv',sep=",",row.names=FALSE)
+
+cumulvxyrI<-t(cumulvxyrI)
+cumulvxyrM<-t(cumulvxyrM)
+vaxgiveyr<-vaxgiveyr[,126:151]
+cumulvxyrI<-cumulvxyrI[,126:151]
+cumulvxyrM<-cumulvxyrM[,126:151]
+reduyrI<-rbind((cumulvxyrI[1,]-cumulvxyrI[2,]),(cumulvxyrI[1,]-cumulvxyrI[3,]),(cumulvxyrI[1,]-cumulvxyrI[4,]),(cumulvxyrI[1,]-cumulvxyrI[5,]),(cumulvxyrI[1,]-cumulvxyrI[6,]),(cumulvxyrI[1,]-cumulvxyrI[7,]),(cumulvxyrI[1,]-cumulvxyrI[8,]),(cumulvxyrI[1,]-cumulvxyrI[9,]),(cumulvxyrI[1,]-cumulvxyrI[10,]),(cumulvxyrI[1,]-cumulvxyrI[11,]),(cumulvxyrI[1,]-cumulvxyrI[12,]),(cumulvxyrI[1,]-cumulvxyrI[13,]))
+reduyrM<-rbind((cumulvxyrM[1,]-cumulvxyrM[2,]),(cumulvxyrM[1,]-cumulvxyrM[3,]),(cumulvxyrM[1,]-cumulvxyrM[4,]),(cumulvxyrM[1,]-cumulvxyrM[5,]),(cumulvxyrM[1,]-cumulvxyrM[6,]),(cumulvxyrM[1,]-cumulvxyrM[7,]),(cumulvxyrM[1,]-cumulvxyrM[8,]),(cumulvxyrM[1,]-cumulvxyrM[9,]),(cumulvxyrM[1,]-cumulvxyrM[10,]),(cumulvxyrM[1,]-cumulvxyrM[11,]),(cumulvxyrM[1,]-cumulvxyrM[12,]),(cumulvxyrM[1,]-cumulvxyrM[13,]))
+
+NNVi<-vaxgiveyr/reduyrI
+NNVi<-t(NNVi)
+NNVm<-vaxgiveyr/reduyrM
+NNVm<-t(NNVm)
+par(mfrow=c(1,1))
+plot(seq(2025,2050),NNVi[,1],ylab='NNV',xlab='yr', type='l')
+lines(seq(2025,2050),NNVi[,2], lty=1,col='red')
+lines(seq(2025,2050),NNVi[,3], lty=1,col='orange')
+lines(seq(2025,2050),NNVi[,4], lty=1,col='yellow')
+lines(seq(2025,2050),NNVi[,5], lty=1,col='green')
+lines(seq(2025,2050),NNVi[,6], lty=1,col='purple')
+lines(seq(2025,2050),NNVi[,7], lty=5,col='black')
+lines(seq(2025,2050),NNVi[,8], lty=5,col='red')
+lines(seq(2025,2050),NNVi[,9], lty=5,col='orange')
+lines(seq(2025,2050),NNVi[,10], lty=5,col='yellow')
+lines(seq(2025,2050),NNVi[,11], lty=5,col='green')
+lines(seq(2025,2050),NNVi[,12], lty=5,col='purple')
+
 
 # y<-subset(dfvx,dfvx$type==1)
 # y<-subset(dfvx,dvfx[,54]==3)

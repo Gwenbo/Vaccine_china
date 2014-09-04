@@ -1,7 +1,7 @@
 ## INITIALISING
 # Builds all matrices and initialises (both indicating matrices and output ones)
 
-times<-seq(year1,yearend,dt)
+times<-seq(year1,(yearend+(1-dt)),dt)
 steps<-length(times)
 
 # Susceptible, Susceptible with HIV
@@ -113,7 +113,8 @@ ADeaths<-matrix(0,steps,Mnage); ADeathsH<-matrix(0,steps,Mnage);
 # Number of TB deaths, with HIV, all deaths with HIV, all deaths (column=total of diff types)
 TBDeaths<-matrix(0,steps,Mnage);TBDeathsH<-matrix(0,steps,Mnage);AllDeathsH<-matrix(0,steps,Mnage);Deaths<--matrix(0,steps,5);
 # Number vaccinated
-VX<-matrix(0,steps,3); vaccgive<-matrix(0,1,3)
+VX<-matrix(0,steps,3); vaccgive<-matrix(0,1,5); 
+vaccgiveyr<-matrix(0,1,steps*dt);
 NNV<-matrix(0,12,4)
 # Number of TB treatments, TB Incidence, TB mortality, ?
 
@@ -138,7 +139,11 @@ colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29
 
 #cumulative cases and deaths
 totmort<- matrix(0,1,2)
+totmortyr<- matrix(0,(steps*dt),2)
 colnames(totmort)<-c("All ages", "65+")
 
 totcase<- matrix(0,1,2)
+totcaseyr<- matrix(0,(steps*dt),2)
 colnames(totcase)<-c("All ages","65+")
+
+cumuloutyr<- matrix(0,(steps*dt),4)

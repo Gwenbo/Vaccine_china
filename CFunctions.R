@@ -43,7 +43,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   print("doneeldyears")
   
   # Timesteps with inputted start end and timestep
-  times<-seq(year1,yearend,dt);steps<-length(times);
+  times<-seq(year1,(yearend+(1-dt)),dt);steps<-length(times);
   
   # Country data (may be overruled by FIT values)
   source("#CountryCalc.R")
@@ -378,60 +378,14 @@ if (k==2010){print(CDR)}
       #TBRx[i,1]=CDR*(sum(new_I[i-1,])+e*sum(new_NI[i-1,]));    TBRx[i,2]=CDR*(CoT)*(sum(new_I[i-1,])+e*sum(new_NI[i-1,]))
       #TBRx[i,3]=CDRH*(sum(new_IH[i-1,])+e*sum(new_NIH[i-1,]));  TBRx[i,4]=CDRH*(CoTH)*(sum(new_IH[i-1,])+e*sum(new_NI[i-1,]))
       
-      if (i==(length(seq(year1,yearend,dt)))){ # LAST TIME STEP
-       
-        vaccgive<-colSums(VX)
-        
-        # First is for whole population, second for HIV positives only... 
-#         Out<-cbind(Deaths,psize,rowSums(S),rowSums(L),rowSums(R),rowSums(I),rowSums(NI),rowSums(Sv),rowSums(Lv),rowSums(Rv),rowSums(thetaS),rowSums(thetaL),rowSums(thetaR),rowSums(d),VX[,1],VX[,2],VX[,3])
-#         nms<-c("Deaths","Psz","S","L","R","I","NI","Sv","Lv","Rv","thetaS","thetaL","thetaR","d","vacctot","vaccroutine","vaccmass")
-#         Out<-as.data.frame(Out);colnames(Out)<-nms
-#         print(head(Out))
-#         print ("done out and nms")
-     
-        
-        
-        #### FOR CE OUTPUT
-        #yrcount<-seq(1,(yearend-year1)*(1/dt)+1,(1/dt))
-        
-        #print ("done year count")
-        #EconOut<-matrix(0,length(yrcount)-1,9)
-        #EconOut[,1]<-seq(year1,yearend-1)
-        #nns<-c("Year","HIV-cases","HIV+cases","TBDeaths","AvAgeD","VaccDTP3","Vacc10","VaccMass","Treatments")
-        #EconOut<-as.data.frame(EconOut); colnames(EconOut)<-nns
-        
-        #hbcOut<-matrix(0,length(yrcount)-1,6)
-        #hbcOut[,1]<-seq(year1,yearend-1)
-        #nns2<-c("Year","Psize","negcases","poscases","negdeaths","posdeaths")
-        #hbcOut<-as.data.frame(hbcOut); colnames(hbcOut)<-nns2
-        
-        # Calculate that years average
-        
-       # for (i in 1:(length(yrcount)-1)){
-          #gives first and last timestep of a year??? no as first timestep of year runs. so why need??? calcs for the last year
-#           #i1<-yrcount[i]; i2<-yrcount[i+1]-1
-#           #EconOut[i,"AvAgeD"]=sum(colSums(ADeathsH[i1:i2,]+ADeaths[i1:i2,])*seq(1:Mnage))/sum(ADeathsH[i1:i2,]+ADeaths[i1:i2,])
-#           #EconOut[i,"TBDeaths"]=sum(TBDeaths[i1:i2,]+TBDeathsH[i1:i2,])
-#           #EconOut[i,"HIV-cases"]=sum(new_I[i1:i2,]+new_NI[i1:i2,])
-#          # EconOut[i,"HIV+cases"]=sum(new_IH[i1:i2,]+new_NIH[i1:i2,])
-#           EconOut[i,"VaccDTP3"]=sum(VX[i1:i2,1])
-#           EconOut[i,"Vacc10"]=sum(VX[i1:i2,2])
-#           EconOut[i,"VaccMass"]=sum(VX[i1:i2,3])
-#           EconOut[i,"Treatments"]=sum(TBRx[i1:i2,1]+TBRx[i1:i2,3])
-#           
-#           hbcOut[i,"Psize"] = mean(psize[i1:i2])
-#           hbcOut[i,"negcases"] = sum(new_I[i1:i2,]+new_NI[i1:i2,])
-#           #hbcOut[i,"poscases"] = sum(new_IH[i1:i2,]+new_NIH[i1:i2,])
-#           hbcOut[i,"negdeaths"] =sum(TBDeaths[i1:i2,])
-#           #hbcOut[i,"posdeaths"] = sum(TBDeathsH[i1:i2,])
-        }
+
       #} 
     } ####•••••••••••••••••• END OF START OF YEAR RUNS
     
 print("done start year")
 
     ####•••••••••••••••••• MIDDLE OF YEAR RUNS
-    if (k < yearend){ 
+    
       for (i in (2+(1/dt)*(k-year1)):((1/dt)*(k-year1)+1/dt)){
         start <- 0 # Not the start of the year
         #lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
@@ -667,18 +621,70 @@ print("done start year")
           TBInew[(k-year1+1),5]<-sum(new_infect[i1:i2,66:Mnage])
           
           
-
-          #### FOR ADDITIONAL RESEARCH OUTCOMES
+          #to be able to do NNV by yr
+          if (k>=2025) {
+          vaccgiveyr[,(k-year1+1)]<-sum(VX[i1:i2,1])
+          totmortyr[(k-year1+1),1]<-sum(TBDeaths[251:i,])
+          totmortyr[(k-year1+1),2]<-sum(TBDeaths[251:i,66:Mnage])
           
-          # % of transmission due to the elderly
-          ##worried this wont sum across the right things, as want to sum across the i's cycled through the j's??? play with mock vectors. suceptibles on top and bottom? terms form eqns Do I need to loop one of them?
-          #haven't updated lambda
-          #eldtrans[(k-year1+1)]<- 100* (sum(lambda[i1:i2,66:Mnage] * I[i1:i2,66:Mnage])/(i1-i2)) / (sum(lambda[i1:i2,] * I[i1:i2,])/(i1-i2))
+          totcaseyr[(k-year1+1),1]<- sum(new_I[251:i,],new_NI[251:i,])
+          totcaseyr[(k-year1+1),2]<- sum(new_I[251:i,66:Mnage],new_NI[251:i,66:Mnage])
           
+          cumuloutyr[(k-year1+1),]<-c(totmortyr[(k-year1+1),],totcaseyr[(k-year1+1),])
+          }
+          
+          #for last time step of the model calc number of vaccines delivered
+          if (i==(length(seq(year1,(yearend+(1-dt)),dt)))){ # LAST TIME STEP of the model
+            
+            vaccgive<-colSums(VX)
+            
+            # First is for whole population, second for HIV positives only... 
+            #         Out<-cbind(Deaths,psize,rowSums(S),rowSums(L),rowSums(R),rowSums(I),rowSums(NI),rowSums(Sv),rowSums(Lv),rowSums(Rv),rowSums(thetaS),rowSums(thetaL),rowSums(thetaR),rowSums(d),VX[,1],VX[,2],VX[,3])
+            #         nms<-c("Deaths","Psz","S","L","R","I","NI","Sv","Lv","Rv","thetaS","thetaL","thetaR","d","vacctot","vaccroutine","vaccmass")
+            #         Out<-as.data.frame(Out);colnames(Out)<-nms
+            #         print(head(Out))
+            #         print ("done out and nms")
+            
+            
+            
+            #### FOR CE OUTPUT
+            #yrcount<-seq(1,(yearend-year1)*(1/dt)+1,(1/dt))
+            
+            #print ("done year count")
+            #EconOut<-matrix(0,length(yrcount)-1,9)
+            #EconOut[,1]<-seq(year1,yearend-1)
+            #nns<-c("Year","HIV-cases","HIV+cases","TBDeaths","AvAgeD","VaccDTP3","Vacc10","VaccMass","Treatments")
+            #EconOut<-as.data.frame(EconOut); colnames(EconOut)<-nns
+            
+            #hbcOut<-matrix(0,length(yrcount)-1,6)
+            #hbcOut[,1]<-seq(year1,yearend-1)
+            #nns2<-c("Year","Psize","negcases","poscases","negdeaths","posdeaths")
+            #hbcOut<-as.data.frame(hbcOut); colnames(hbcOut)<-nns2
+            
+            # Calculate that years average
+            
+            # for (i in 1:(length(yrcount)-1)){
+            #gives first and last timestep of a year??? no as first timestep of year runs. so why need??? calcs for the last year
+            #           #i1<-yrcount[i]; i2<-yrcount[i+1]-1
+            #           #EconOut[i,"AvAgeD"]=sum(colSums(ADeathsH[i1:i2,]+ADeaths[i1:i2,])*seq(1:Mnage))/sum(ADeathsH[i1:i2,]+ADeaths[i1:i2,])
+            #           #EconOut[i,"TBDeaths"]=sum(TBDeaths[i1:i2,]+TBDeathsH[i1:i2,])
+            #           #EconOut[i,"HIV-cases"]=sum(new_I[i1:i2,]+new_NI[i1:i2,])
+            #          # EconOut[i,"HIV+cases"]=sum(new_IH[i1:i2,]+new_NIH[i1:i2,])
+            #           EconOut[i,"VaccDTP3"]=sum(VX[i1:i2,1])
+            #           EconOut[i,"Vacc10"]=sum(VX[i1:i2,2])
+            #           EconOut[i,"VaccMass"]=sum(VX[i1:i2,3])
+            #           EconOut[i,"Treatments"]=sum(TBRx[i1:i2,1]+TBRx[i1:i2,3])
+            #           
+            #           hbcOut[i,"Psize"] = mean(psize[i1:i2])
+            #           hbcOut[i,"negcases"] = sum(new_I[i1:i2,]+new_NI[i1:i2,])
+            #           #hbcOut[i,"poscases"] = sum(new_IH[i1:i2,]+new_NIH[i1:i2,])
+            #           hbcOut[i,"negdeaths"] =sum(TBDeaths[i1:i2,])
+            #           #hbcOut[i,"posdeaths"] = sum(TBDeathsH[i1:i2,])
+          }
         }
         ####••••••••••••••••• END OF MIDDLE YEAR RUNS
       }
-    }
+    
   print("done mid year")
   } 
 
@@ -718,6 +724,8 @@ assign('CDR',CDR,envir=.GlobalEnv);
 #assign('Econout',EconOut,envir=.GlobalEnv);
   assign('Out',Out,envir=.GlobalEnv);
   assign('vaccgive',vaccgive,envir=.GlobalEnv);
+  assign('vaccgiveyr',vaccgiveyr,envir=.GlobalEnv);
+
   #assign('hbcout',hbcOut,envir=.GlobalEnv);
   
 print("done assign")
@@ -725,11 +733,11 @@ print("done assign")
   ## CUMULATIVE RESEARCH OUTCOMES 2025-2050
   
 
-  totmort[,1]<-sum(TBDeaths[251:301,])
-  totmort[,2]<-sum(TBDeaths[251:301,66:Mnage])
+  totmort[,1]<-sum(TBDeaths[251:302,])
+  totmort[,2]<-sum(TBDeaths[251:302,66:Mnage])
   
-  totcase[,1]<- sum(new_I[251:301,],new_NI[251:301,])
-  totcase[,2]<- sum(new_I[251:301,66:Mnage],new_NI[251:301,66:Mnage])
+  totcase[,1]<- sum(new_I[251:302,],new_NI[251:302,])
+  totcase[,2]<- sum(new_I[251:302,66:Mnage],new_NI[251:302,66:Mnage])
   
 
 
@@ -738,6 +746,7 @@ print("done assign")
   assign('cumulout',cumulout,envir=.GlobalEnv) 
   assign('totmort',totmort,envir=.GlobalEnv) 
   assign('totcase',totcase,envir=.GlobalEnv) 
+  assign('cumuloutyr',cumuloutyr,envir=.GlobalEnv) 
 
 
   print("done tot case")
