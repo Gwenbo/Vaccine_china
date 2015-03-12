@@ -18,6 +18,7 @@ steps<-length(times)
 #dV1<-matrix(0,steps,Mnage); 
 dV2<-matrix(0,steps,Mnage); 
 #dV3<-matrix(0,steps,Mnage);
+dV4<-matrix(0,steps,Mnage); 
 
 # Generate matrix of entering vaccine strata
 #thetaV1<-matrix(0,steps,Mnage);
@@ -26,6 +27,9 @@ thetaV2a<-matrix(0,steps,Mnage);
 thetaV2m<-matrix(0,steps,Mnage);
 thetablank<-matrix(0,steps,Mnage);
 #thetaV3<-matrix(0,steps,Mnage);
+thetaV4<-matrix(0,steps,Mnage); 
+thetaV4a<-matrix(0,steps,Mnage); 
+thetaV4m<-matrix(0,steps,Mnage);
 
 # If introduce before the end of the simulation
 if (yrintro < yearend){
@@ -52,6 +56,7 @@ if (yrintro < yearend){
 #     if (any(midyr==i)){
 #       thetaV1[i,1]<-infantcov 
 #     }
+    ###elderly vaccine
     # If any step is the start of the year then vaccinate 55yos
     if (any(startyr==i)){
       thetaV2a[i,56]<-coverage # Because of this at the start of the year theta[i,j]*X[i-1,j-1]. As the j-1 have just hit 10yo and are immediately vaccinated
@@ -60,12 +65,26 @@ if (yrintro < yearend){
     if (any(masscampyr==i)){
       thetaV2m[i,57:65]<-coverage/3
     }
+    
+    ### ado/adolescent vaccine (V4 because V3 is the combo)
+    if (any(startyr==i)){
+      thetaV4a[i,16]<-coverage # Because of this at the start of the year theta[i,j]*X[i-1,j-1]. As the j-1 have just hit 10yo and are immediately vaccinated
+    }
+    # If a masscampyear (start of then) then get 16-24yos. Campaign over 3 yrs, so divide adult coverage by the 3 yrs of the campaign
+    if (any(masscampyr==i)){
+      thetaV4m[i,17:25]<-coverage/3
+    }
+    
   }
   
-  # Type 2 is both adults and mass campaigns
+  # Type 2 is both older adults and mass campaigns
   thetaV2<-thetaV2a+thetaV2m
-  # Type 3 is a combination
-  #thetaV3<-thetaV1+thetaV2
+  # Type 4 is young ado/adults and mass campaign
+  thetaV4<-thetaV4a+thetaV4m
+# Type 3 is a combination of ado and elderly
+  #thetaV3<-thetaV4+thetaV2
+
+
   
   if (D < 100){ ## D <- 100 if lifelong protection. Then none leave vaccine category. 
     for (i in 1:steps){
@@ -83,6 +102,15 @@ if (yrintro < yearend){
         dV2[i,(c(57:(57+D-1)))]<-0.05
       }
       
+      ##ado/adult wane as gaussian
+###NEED TO DO      
+      #vaccine waning gaussian throughout duration of protection
+      #need to replace number with a matrix/vector of amt waning at each age
+      if (any((startyr[c(1:length(startyr))])==i)){
+        dV4[i,(c(57:(57+D-1)))]<-0.05
+      }
+      
+      
       # Adult - remove those mass vaccinated = anyone aged 11+D and over (couldn't have been vaccinated any other way)
       # dont need mass campaign as vaccine does not last past age 75yrs
 #       if (any((masscampyr+D*(1/dt)-1)==i)){
@@ -94,9 +122,19 @@ if (yrintro < yearend){
 }
 
 # Depending on type, theta is theta# (coverage) times efficacy, d is dv#
+#vacc1=kids
+#vacc2=elderly pre-infection
+#vacc3=elderly mixed effects (pre or post infection, not active)
+#vacc4=elderly latent only
+#vacc5=ado/adult pre-infection
+#vacc6=ado/adult mixed effects (pre or post infection, not active)
+#vacc7=ado/adult latent only
+
+
+
 if (vaccine == 1){
   theta<-thetaV1*eff
-  thetaH<-matrix(0,steps,Mnage); # NO HIV positive babies
+  #thetaH<-matrix(0,steps,Mnage); # NO HIV positive babies
   d<-dV1
 } else if (vaccine == 2){
   theta<-thetaV2*eff
@@ -113,9 +151,36 @@ if (vaccine == 1){
   thetaL<-theta
   thetaR<-theta
   d<-dV2
+} else if (vaccine == 4){
+  theta<-thetaV2*eff
+  thetaS<-thetablank
+  thetaL<-theta
+  thetaR<-theta
+  d<-dV2 
+  #where else is this vaccine number does it need updating??
+} else if (vaccine == 5){
+  theta<-thetaV4*eff
+  thetaS<-theta
+  thetaL<-thetablank
+  thetaR<-thetablank
+  d<-dV4
+} else if (vaccine == 6){
+  theta<-thetaV4*eff
+  thetaS<-theta
+  thetaL<-theta
+  thetaR<-theta
+  d<-dV4
+} else if (vaccine == 7){
+  theta<-thetaV4*eff
+  thetaS<-thetablank
+  thetaL<-theta
+  thetaR<-theta
+  d<-dV4
 }
 
 # For checking output
 #assign('thetaV1',thetaV1,envir=.GlobalEnv);
 assign('thetaV2a',thetaV2a,envir=.GlobalEnv);
 assign('thetaV2m',thetaV2m,envir=.GlobalEnv);
+assign('thetaV4a',thetaV2a,envir=.GlobalEnv);
+assign('thetaV4m',thetaV2m,envir=.GlobalEnv);

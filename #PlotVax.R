@@ -1,4 +1,4 @@
-###VACXCINE PLOTS
+###VACCINE PLOTS
 
 population2010<- c(1359822,246707,863710,135859,113546)
 population2050<- c(1384976,204187,623982,225492,331315)
@@ -8,6 +8,11 @@ population2050l<-c(1153148,124968,527054,202943,298184)
 incidence2010<- c(73.78,3.02,74.56,120.54,165.63)
 incidence2010u<- c(83.48,3.41,84.37,136.40,187.43)
 incidence2010l<- c(64.74,2.65,65.43,105.78,145.35)
+
+#noitfication lower limit is the reported notifications, notification upper limit assumes that all from private hospitals are missed from notification reporting (80% of cases reported to CDC, 20% private hospital)  
+notif2010 <- c()
+notif2010u<- c(63.91,2.72,64.62,104.36,143.07)*(100/80)
+notif2010l<- c(63.91,2.72,64.62,104.36,143.07)
 
 prevalence2000<- c(178,92,119,213,596)
 prevalence2000u<- c(163,116,146,260,698)
@@ -28,8 +33,8 @@ par(mfrow=c(1,1))
 lastcol<-(((typen-1)*(combn))+1)*steps
 y1<-seq(1,lastcol,steps)
 
-### TBI ####
-par(mfcol=c(1,2))
+###### TBI ########
+par(mfcol=c(2,2))
 
 #TBItot plot vxtype2
 #baseline
@@ -59,6 +64,21 @@ lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),15], col='orange',lty=4)
 lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),15], col='orange',lty=5)
 lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),15], col='orange',lty=6)
 lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),15], col='orange',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="orange")
+
+#TBItot plot vxtype4
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),15], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="Total Incidence Latency vacc",type='l',col='orange')
+points(2010,incidence2010[1])
+segments(2010,incidence2010l[1],2010,incidence2010u[1])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[14]+100):(y1[14]+150),15], col='orange',lty=2)
+lines(seq(2000,2050),dfvx[(y1[15]+100):(y1[15]+150),15], col='orange',lty=3)
+lines(seq(2000,2050),dfvx[(y1[16]+100):(y1[16]+150),15], col='orange',lty=4)
+lines(seq(2000,2050),dfvx[(y1[17]+100):(y1[17]+150),15], col='orange',lty=5)
+lines(seq(2000,2050),dfvx[(y1[18]+100):(y1[18]+150),15], col='orange',lty=6)
+lines(seq(2000,2050),dfvx[(y1[19]+100):(y1[19]+150),15], col='orange',lty=6, lwd=2)
 plot.new()
 legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="orange")
 
@@ -190,115 +210,359 @@ legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30
 
 
 
+
+###### TBN ########
+par(mfcol=c(2,2))
+
+#TBNtot plot vxtype2
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),22], ylab="Notifications/100,000pop/yr",xlab="year", ylim=c(0,100),main="Total Notifications Pre-exposure",type='l',col='orange')
+#points(2010,incidence2010[1])
+segments(2010,notif2010l[1],2010,notif2010u[1])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),22], col='orange',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),22], col='orange',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),22], col='orange',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),22], col='orange',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),22], col='orange',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),22], col='orange',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="orange")
+
+
+#TBNtot plot vxtype3
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),22], ylab="Notifications/100,000pop/yr",xlab="year", ylim=c(0,100),main="Total Notifications Post-exp",type='l',col='orange')
+#points(2010,notif2010[1])
+segments(2010,notif2010l[1],2010,notif2010u[1])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),22], col='orange',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),22], col='orange',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),22], col='orange',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),22], col='orange',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),22], col='orange',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),22], col='orange',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="orange")
+
+#TBNtot plot vxtype4
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),22], ylab="Notifications/100,000pop/yr",xlab="year", ylim=c(0,100),main="Total Notifications Latency vacc",type='l',col='orange')
+#points(2010,notif2010[1])
+segments(2010,notif2010l[1],2010,notif2010u[1])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[14]+100):(y1[14]+150),22], col='orange',lty=2)
+lines(seq(2000,2050),dfvx[(y1[15]+100):(y1[15]+150),22], col='orange',lty=3)
+lines(seq(2000,2050),dfvx[(y1[16]+100):(y1[16]+150),22], col='orange',lty=4)
+lines(seq(2000,2050),dfvx[(y1[17]+100):(y1[17]+150),22], col='orange',lty=5)
+lines(seq(2000,2050),dfvx[(y1[18]+100):(y1[18]+150),22], col='orange',lty=6)
+lines(seq(2000,2050),dfvx[(y1[19]+100):(y1[19]+150),22], col='orange',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="orange")
+
+
+
+#TBN014 plot vxtype2
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),23], ylab="Notification/100,000pop/yr",xlab="year", ylim=c(0,20),main="0-14yrs Notification  pre-exp",type='l',col='red')
+#points(2010,notif2010[2])
+segments(2010,notif2010l[2],2010,notif2010u[2])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),23], col='red',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),23], col='red',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),23], col='red',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),23], col='red',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),23], col='red',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),23], col='red',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="red")
+
+#TBN014 plot vxtype3
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),23], ylab="Notifications/100,000pop/yr",xlab="year", ylim=c(0,20),main="0-14yrs Notification post-exp",type='l',col='red')
+#points(2010,noif2010[2])
+segments(2010,notif2010l[2],2010,notif2010u[2])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),23], col='red',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),23], col='red',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),23], col='red',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),23], col='red',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),23], col='red',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),23], col='red',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="red")
+
+
+#TBN014 plot vxtype4
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),23], ylab="Notifications/100,000pop/yr",xlab="year", ylim=c(0,20),main="0-14yrs Notification Latency vacc",type='l',col='red')
+#points(2010,notif2010[2])
+segments(2010,notif2010l[2],2010,notif2010u[2])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[14]+100):(y1[14]+150),23], col='red',lty=2)
+lines(seq(2000,2050),dfvx[(y1[15]+100):(y1[15]+150),23], col='red',lty=3)
+lines(seq(2000,2050),dfvx[(y1[16]+100):(y1[16]+150),23], col='red',lty=4)
+lines(seq(2000,2050),dfvx[(y1[17]+100):(y1[17]+150),23], col='red',lty=5)
+lines(seq(2000,2050),dfvx[(y1[18]+100):(y1[18]+150),23], col='red',lty=6)
+lines(seq(2000,2050),dfvx[(y1[19]+100):(y1[19]+150),23], col='red',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="red")
+
+
+
+#TBN15-54 plot vxtype2
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),24], ylab="Notification/100,000pop/yr",xlab="year", ylim=c(0,100),main="15-54yrs Notification  pre-exp",type='l',col='blue')
+#points(2010,notif2010[3])
+segments(2010,notif2010l[3],2010,notif2010u[3])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),24], col='blue',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),24], col='blue',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),24], col='blue',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),24], col='blue',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),24], col='blue',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),24], col='blue',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="blue")
+
+
+#TBN15-54 plot vxtype3
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),24], ylab="Notification/100,000pop/yr",xlab="year", ylim=c(0,100),main="15-54yrs Notification post-exp",type='l',col='blue')
+#points(2010,notif2010[3])
+segments(2010,notif2010l[3],2010,notif2010u[3])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),24], col='blue',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),24], col='blue',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),24], col='blue',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),24], col='blue',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),24], col='blue',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),24], col='blue',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="blue")
+
+#TBN15-54 plot vxtype4
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),24], ylab="Notification/100,000pop/yr",xlab="year", ylim=c(0,100),main="15-54yrs Notification Latency Vaccine",type='l',col='blue')
+#points(2010,notif2010[3])
+segments(2010,notif2010l[3],2010,notif2010u[3])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[14]+100):(y1[14]+150),24], col='blue',lty=2)
+lines(seq(2000,2050),dfvx[(y1[15]+100):(y1[15]+150),24], col='blue',lty=3)
+lines(seq(2000,2050),dfvx[(y1[16]+100):(y1[16]+150),24], col='blue',lty=4)
+lines(seq(2000,2050),dfvx[(y1[17]+100):(y1[17]+150),24], col='blue',lty=5)
+lines(seq(2000,2050),dfvx[(y1[18]+100):(y1[18]+150),24], col='blue',lty=6)
+lines(seq(2000,2050),dfvx[(y1[19]+100):(y1[19]+150),24], col='blue',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="blue")
+
+
+#TBN55-64 plot vxtype2
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),25], ylab="Notification/100,000pop/yr",xlab="year", ylim=c(0,100),main="55-64yrs Notification  pre-exp",type='l',col='purple')
+#points(2010, notif2010[4])
+segments(2010,notif2010l[4],2010,notif2010u[4])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),25], col='purple',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),25], col='purple',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),25], col='purple',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),25], col='purple',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),25], col='purple',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),25], col='purple',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="purple")
+
+#TBN55-64 plot vxtype3
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),25], ylab="Notification/100,000pop/yr",xlab="year", ylim=c(0,100),main="55-64yrs Notification post-exp",type='l',col='purple')
+#points(2010,notif2010[4])
+segments(2010,notif2010l[4],2010,notif2010u[4])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),25], col='purple',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),25], col='purple',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),25], col='purple',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),25], col='purple',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),25], col='purple',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),25], col='purple',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="purple")
+
+#TBN55-64 plot vxtype4
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),25], ylab="Notification/100,000pop/yr",xlab="year", ylim=c(0,100),main="55-64yrs Notification Latency Vacc",type='l',col='purple')
+#points(2010,notif2010[4])
+segments(2010,notif2010l[4],2010,notif2010u[4])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[14]+100):(y1[14]+150),25], col='purple',lty=2)
+lines(seq(2000,2050),dfvx[(y1[15]+100):(y1[15]+150),25], col='purple',lty=3)
+lines(seq(2000,2050),dfvx[(y1[16]+100):(y1[16]+150),25], col='purple',lty=4)
+lines(seq(2000,2050),dfvx[(y1[17]+100):(y1[17]+150),25], col='purple',lty=5)
+lines(seq(2000,2050),dfvx[(y1[18]+100):(y1[18]+150),25], col='purple',lty=6)
+lines(seq(2000,2050),dfvx[(y1[19]+100):(y1[19]+150),25], col='purple',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="purple")
+
+
+#TBN65+ plot vxtype2
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),26], ylab="Notification/100,000pop/yr",xlab="year", ylim=c(0,200),main="65+yrs Notification  pre-exp",type='l',col='green')
+#points(2010,notif2010[5])
+segments(2010,notif2010l[5],2010,notif2010u[5])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),26], col='green',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),26], col='green',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),26], col='green',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),26], col='green',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),26], col='green',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),26], col='green',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="green")
+
+#TBN65+ plot vxtype3
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),26], ylab="Notification/100,000pop/yr",xlab="year", ylim=c(0,200),main="65+yrs Notification post-exp",type='l',col='green')
+#points(2010,notif2010[5])
+segments(2010,notif2010l[5],2010,notif2010u[5])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),26], col='green',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),26], col='green',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),26], col='green',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),26], col='green',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),26], col='green',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),26], col='green',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="green")
+
+
+#TBN65+ plot vxtype4
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),26], ylab="Notification/100,000pop/yr",xlab="year", ylim=c(0,200),main="65+yrs Notification Latency Vacc",type='l',col='green')
+#points(2010,notif2010[5])
+segments(2010,notif2010l[5],2010,notif2010u[5])
+#vx4 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[14]+100):(y1[14]+150),26], col='green',lty=2)
+lines(seq(2000,2050),dfvx[(y1[15]+100):(y1[15]+150),26], col='green',lty=3)
+lines(seq(2000,2050),dfvx[(y1[16]+100):(y1[16]+150),26], col='green',lty=4)
+lines(seq(2000,2050),dfvx[(y1[17]+100):(y1[17]+150),26], col='green',lty=5)
+lines(seq(2000,2050),dfvx[(y1[18]+100):(y1[18]+150),26], col='green',lty=6)
+lines(seq(2000,2050),dfvx[(y1[19]+100):(y1[19]+150),26], col='green',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="green")
+
+
+
+
+
 ######## TBM #########
+
 par(mfcol=c(1,2))
 #TBMtot plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),20], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="Total Mortality pre-exposure",type='l',col='orange')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),29], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="Total Mortality pre-exposure",type='l',col='orange')
 points(2010,mortality2010[1])
 segments(2010,mortality2010l[1],2010,mortality2010u[1])
 #vx2 40ve,30cov
-lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),20], col='orange',lty=2)
-lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),20], col='orange',lty=3)
-lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),20], col='orange',lty=4)
-lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),20], col='orange',lty=5)
-lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),20], col='orange',lty=6)
-lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),20], col='orange',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),29], col='orange',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),29], col='orange',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),29], col='orange',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),29], col='orange',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),29], col='orange',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),29], col='orange',lty=6, lwd=2)
 
 #TBMtot plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),20], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="Total Mortality post-exp",type='l',col='orange')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),29], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="Total Mortality post-exp",type='l',col='orange')
 points(2010,mortality2010[1])
 segments(2010,mortality2010l[1],2010,mortality2010u[1])
 #vx2 40ve,30cov
-lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),20], col='orange',lty=2)
-lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),20], col='orange',lty=3)
-lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),20], col='orange',lty=4)
-lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),20], col='orange',lty=5)
-lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),20], col='orange',lty=6)
-lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),20], col='orange',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),29], col='orange',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),29], col='orange',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),29], col='orange',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),29], col='orange',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),29], col='orange',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),29], col='orange',lty=6, lwd=2)
 
 
 
 #TBM014 plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),21], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="0-14yrs Mortality  pre-exp",type='l',col='red')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),30], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="0-14yrs Mortality  pre-exp",type='l',col='red')
 points(2010,mortality2010[2])
 segments(2010,mortality2010l[2],2010,mortality2010u[2])
 #vx2 40ve,30cov
-lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),21], col='red',lty=2)
-lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),21], col='red',lty=3)
-lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),21], col='red',lty=4)
-lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),21], col='red',lty=5)
-lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),21], col='red',lty=6)
-lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),21], col='red',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),30], col='red',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),30], col='red',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),30], col='red',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),30], col='red',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),30], col='red',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),30], col='red',lty=6, lwd=2)
 
 #TBM014 plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),21], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="0-14yrs Mortality post-exp",type='l',col='red')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),30], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="0-14yrs Mortality post-exp",type='l',col='red')
 points(2010,mortality2010[2])
 segments(2010,mortality2010l[2],2010,mortality2010u[2])
 #vx2 40ve,30cov
-lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),21], col='red',lty=2)
-lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),21], col='red',lty=3)
-lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),21], col='red',lty=4)
-lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),21], col='red',lty=5)
-lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),21], col='red',lty=6)
-lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),21], col='red',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),30], col='red',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),30], col='red',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),30], col='red',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),30], col='red',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),30], col='red',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),30], col='red',lty=6, lwd=2)
 
 
 #TBM15-59 plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),22], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="15-59yrs Mortality  pre-exp",type='l',col='blue')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),31], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="15-59yrs Mortality  pre-exp",type='l',col='blue')
 points(2010,mortality2010[3])
 segments(2010,mortality2010l[3],2010,mortality2010u[3])
 #vx2 40ve,30cov
-lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),22], col='blue',lty=2)
-lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),22], col='blue',lty=3)
-lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),22], col='blue',lty=4)
-lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),22], col='blue',lty=5)
-lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),22], col='blue',lty=6)
-lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),22], col='blue',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),31], col='blue',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),31], col='blue',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),31], col='blue',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),31], col='blue',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),31], col='blue',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),31], col='blue',lty=6, lwd=2)
 
 #TBM15-59 plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),22], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="15-59yrs Mortality post-exp",type='l',col='blue')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),31], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="15-59yrs Mortality post-exp",type='l',col='blue')
 points(2010,mortality2010[3])
 segments(2010,mortality2010l[3],2010,mortality2010u[3])
 #vx2 40ve,30cov
-lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),22], col='blue',lty=2)
-lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),22], col='blue',lty=3)
-lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),22], col='blue',lty=4)
-lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),22], col='blue',lty=5)
-lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),22], col='blue',lty=6)
-lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),22], col='blue',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),31], col='blue',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),31], col='blue',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),31], col='blue',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),31], col='blue',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),31], col='blue',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),31], col='blue',lty=6, lwd=2)
 
 
 #TBM60+ plot vxtype2
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),23], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="60+yrs Mortality  pre-exp",type='l',col='green')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),32], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="60+yrs Mortality  pre-exp",type='l',col='green')
 points(2010,mortality2010[4])
 segments(2010,mortality2010l[4],2010,mortality2010u[4])
 #vx2 40ve,30cov
-lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),23], col='green',lty=2)
-lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),23], col='green',lty=3)
-lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),23], col='green',lty=4)
-lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),23], col='green',lty=5)
-lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),23], col='green',lty=6)
-lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),23], col='green',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[2]+100):(y1[2]+150),32], col='green',lty=2)
+lines(seq(2000,2050),dfvx[(y1[3]+100):(y1[3]+150),32], col='green',lty=3)
+lines(seq(2000,2050),dfvx[(y1[4]+100):(y1[4]+150),32], col='green',lty=4)
+lines(seq(2000,2050),dfvx[(y1[5]+100):(y1[5]+150),32], col='green',lty=5)
+lines(seq(2000,2050),dfvx[(y1[6]+100):(y1[6]+150),32], col='green',lty=6)
+lines(seq(2000,2050),dfvx[(y1[7]+100):(y1[7]+150),32], col='green',lty=6, lwd=2)
 
 #TBM60+ plot vxtype3
 #baseline
-plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),23], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="60+yrs Mortality post-exp",type='l',col='green')
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),32], ylab="Mortality/100,000pop/yr",xlab="year", ylim=c(0,6),main="60+yrs Mortality post-exp",type='l',col='green')
 points(2010,mortality2010[4])
 segments(2010,mortality2010l[4],2010,mortality2010u[4])
 #vx2 40ve,30cov
-lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),23], col='green',lty=2)
-lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),23], col='green',lty=3)
-lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),23], col='green',lty=4)
-lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),23], col='green',lty=5)
-lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),23], col='green',lty=6)
-lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),23], col='green',lty=6, lwd=2)
+lines(seq(2000,2050),dfvx[(y1[8]+100):(y1[8]+150),32], col='green',lty=2)
+lines(seq(2000,2050),dfvx[(y1[9]+100):(y1[9]+150),32], col='green',lty=3)
+lines(seq(2000,2050),dfvx[(y1[10]+100):(y1[10]+150),32], col='green',lty=4)
+lines(seq(2000,2050),dfvx[(y1[11]+100):(y1[11]+150),32], col='green',lty=5)
+lines(seq(2000,2050),dfvx[(y1[12]+100):(y1[12]+150),32], col='green',lty=6)
+lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),32], col='green',lty=6, lwd=2)
 
 
 ######  cumulative plots)
@@ -331,3 +595,33 @@ lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),23], col='green',lty=6, lwd=
 # plot(redu[1:12,11],xlab="Run", ylab="Reduction in cumulative incidence", main='55-64yrs reduction in cumulative incidence')
 # plot(redu[1:12,12],xlab="Run", ylab="Reduction in cumulative incidence", main='65+yrs reduction in cumulative incidence')
 # 
+
+## barcharts for reduction in disease by age and overall
+
+#calc the difference between baseline and 2050 result for each vaccine, and calc percentage reduction. y1 is minus 1 to get rid of the baseline number
+pcrednames=c("30%cov, 40%VE", "30%cov, 60%VE","30%cov, 80%VE","70%cov, 40%VE","70%cov, 60%VE","70%cov, 80%VE","30%cov, 40%VE", "30%cov, 60%VE","30%cov, 80%VE","70%cov, 40%VE","70%cov, 60%VE","70%cov, 80%VE")
+pcredrow=c("All","0-14years","15-54years","55-64years","≥65years")
+pcredrowM=c("All","0-14years","15-59years","≥60years")
+agecols<-c("black","red","blue","purple","green")
+pcreduI[1,]<-100*((dfvx[151,15]-dfvx[(y1[-1]+150),15]))/(dfvx[151,15])
+pcreduI[2,]<-100*((dfvx[151,16]-dfvx[(y1[-1]+150),16]))/(dfvx[151,16])
+pcreduI[3,]<-100*((dfvx[151,17]-dfvx[(y1[-1]+150),17]))/(dfvx[151,17])
+pcreduI[4,]<-100*((dfvx[151,18]-dfvx[(y1[-1]+150),18]))/(dfvx[151,18])
+pcreduI[5,]<-100*((dfvx[151,19]-dfvx[(y1[-1]+150),19]))/(dfvx[151,19])
+colnames(pcreduI)<-pcrednames
+rownames(pcreduI)<-prcredrow
+
+pcreduM[1,]<-100*((dfvx[151,29]-dfvx[(y1[-1]+150),29]))/(dfvx[151,29])
+pcreduM[2,]<-100*((dfvx[151,30]-dfvx[(y1[-1]+150),30]))/(dfvx[151,30])
+pcreduM[3,]<-100*((dfvx[151,31]-dfvx[(y1[-1]+150),31]))/(dfvx[151,31])
+pcreduM[4,]<-100*((dfvx[151,32]-dfvx[(y1[-1]+150),32]))/(dfvx[151,32])
+colnames(pcreduM)<-pcrednames
+rownames(pcreduM)<-prcredrowM
+
+write.table(pcreduI,'2050_reduction_incidence.csv',sep=",",row.names=FALSE)
+write.table(pcreduM,'2050_reduction_mortality.csv',sep=",",row.names=FALSE)
+
+#plots
+par(mfcol=c(1,1))
+barplot(pcreduI[,1:6], col=agecols, ylim=c(0,50), beside=TRUE, legend.text=TRUE, args.legend(legend=pcredrow,fill=agecols))
+barplot(pcreduI[,7:12], legend.text=TRUE, col=agecols, beside=TRUE)

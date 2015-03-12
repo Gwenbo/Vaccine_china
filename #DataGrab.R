@@ -46,6 +46,9 @@ Cov<- suppressWarnings(read.csv('Cov.csv',header=TRUE,check.names=F) )     # cou
 # For DALY: life expectancy, data on costs and income group
 LifeE<- suppressWarnings(read.csv('LifeExp.csv',header=TRUE,check.names=F) )     # countries as column titles, rows = baseline coverage vx1
 dalydata<- as.matrix(drop.levels(read.csv('Dalydata_22HBC.csv',header=TRUE,check.names=F) ) )    # countries as column titles, rows = baseline coverage vx1
+#for Gao LTBI data
+#LTBI<- read.csv('gaoLTBI.csv', header=FALSE)
+
 
 # Get HIVnegative incidence for those countries of interest
 # TBIm above is for TB mortality in both HIV+ and HIV-s

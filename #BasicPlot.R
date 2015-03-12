@@ -14,6 +14,11 @@ incidence2010<- c(74.31,3.16,75.14,121.35,166.35)
 incidence2010u<- c(84.09,3.57,85.02,137.32,188.24)
 incidence2010l<- c(65.21,2.77,65.94,106.49,145.98)
 
+#noitfication lower limit is the reported notifications, notification upper limit assumes that all from private hospitals are missed from notification reporting (80% of cases reported to CDC, 20% private hospital)  
+notif2010 <- c()
+notif2010u<- c(63.91,2.72,64.62,104.36,143.07)*(100/80)
+notif2010l<- c(63.91,2.72,64.62,104.36,143.07)
+
 prevalence2000<- c(178,92,119,213,596)
 prevalence2000u<- c(163,116,146,260,698)
 prevalence2000l<- c(195,72,96,174,510)
@@ -48,7 +53,7 @@ mortality2010l<- c(4.84,0.27,1.72,14.12)
 par(mfrow=c(2,3))
 plot(seq(1990,2050),TBI[91:151,1], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='orange')
 points(2010,incidence2010[1])
-points(2050,TBI[151,1])
+#points(2050,TBI[151,1])
 segments(2010,incidence2010l[1],2010,incidence2010u[1])
 plot(seq(1990,2050),TBI[91:151,2], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='red')
 points(2010,incidence2010[2])
@@ -64,6 +69,29 @@ plot(seq(1990,2050),TBI[91:151,5], ylab="Incidence/100,000pop/yr",xlab="Year", y
 #segments(2010,incidence2010l[5],2010,incidence2010u[5])
 plot.new()
 legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 years"), lty=1,col=c("orange","red","blue","purple","green"))
+
+
+## notifications plot
+
+par(mfrow=c(2,3))
+plot(seq(1990,2050),TBN[91:151,1], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='orange')
+#points(2010,notif2010[1])
+segments(2010,notif2010l[1],2010,notif2010u[1])
+plot(seq(1990,2050),TBN[91:151,2], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='red')
+#points(2010,notif2010[2])
+segments(2010,notif2010l[2],2010,notif2010u[2])
+plot(seq(1990,2050),TBN[91:151,3], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='blue')
+#points(2010,notif2010[3])
+segments(2010,notif2010l[3],2010,notif2010u[3])
+plot(seq(1990,2050),TBN[91:151,4], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='purple')
+#points(2010,notif2010[4])
+segments(2010,notif2010l[4],2010,notif2010u[4])
+plot(seq(1990,2050),TBN[91:151,5], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='green')
+#points(2010,notif2010[5])
+segments(2010,notif2010l[5],2010,notif2010u[5])
+plot.new()
+legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 years"), lty=1,col=c("orange","red","blue","purple","green"))
+
 
 
 # plot(seq(1990,2050),TBI[91:151,1], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),type='l')

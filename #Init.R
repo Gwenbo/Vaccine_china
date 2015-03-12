@@ -23,8 +23,17 @@ new_NI<-matrix(0,steps,Mnage); new_NIH<-matrix(0,steps,Mnage);
 #new reactivation Infectious/non infectious
 new_I_react<-matrix(0,steps,Mnage)
 new_NI_react<-matrix(0,steps,Mnage)
+new_actv<-matrix(0,steps,Mnage)
+new_actv_react<-matrix(0,steps,Mnage)
+new_actv_inf<-matrix(0,steps,Mnage)
+new_actv_chk<-matrix(0,steps,Mnage)
+
+
 # Prevelance of HIV for checking
 #prevHIV<-matrix(0,steps,1);prevHIV1549<-matrix(0,steps,1);
+#New notifications
+new_notif<-matrix(0,steps,Mnage)
+
 
 # Vaccine matrices: Susceptible, Latent, Recovered and vaccinated. And then with HIV
 Sv<-matrix(0,steps,Mnage); Lv<-matrix(0,steps,Mnage);Rv<-matrix(0,steps,Mnage);
@@ -57,6 +66,18 @@ psize1529<-matrix(0,steps,1)
 psize3044<-matrix(0,steps,1)
 psize4559<-matrix(0,steps,1)
 psize60plus<-matrix(0,steps,1)
+psize55plus<-matrix(0,steps,1)
+psize55minus<-matrix(0,steps,1)
+psize0509<-matrix(0,steps,1)
+psize1019<-matrix(0,steps,1)
+psize2029<-matrix(0,steps,1)
+psize3039<-matrix(0,steps,1)
+psize4049<-matrix(0,steps,1)
+psize5059<-matrix(0,steps,1)
+psize6069<-matrix(0,steps,1)
+psize70plus<-matrix(0,steps,1)
+
+
 
 #psize and I for contact matirx
 psizematrix<-matrix(0,steps,4)
@@ -75,6 +96,18 @@ psize1529[1]<-sum(S[1,16:30],L[1,16:30],R[1,16:30],I[1,16:30],NI[1,16:30],Sv[1,1
 psize3044[1]<-sum(S[1,31:45],L[1,31:45],R[1,31:45],I[1,31:45],NI[1,31:45],Sv[1,31:45],Lv[1,31:45],Rv[1,31:45])
 psize4559[1]<-sum(S[1,46:60],L[1,46:60],R[1,46:60],I[1,46:60],NI[1,46:60],Sv[1,46:60],Lv[1,46:60],Rv[1,46:60])
 psize60plus[1]<-sum(S[1,61:Mnage],L[1,61:Mnage],R[1,61:Mnage],I[1,61:Mnage],NI[1,61:Mnage],Sv[1,61:Mnage],Lv[1,61:Mnage],Rv[1,61:Mnage])
+psize55plus[1]<-sum(S[1,56:Mnage],L[1,56:Mnage],R[1,56:Mnage],I[1,56:Mnage],NI[1,56:Mnage],Sv[1,56:Mnage],Lv[1,56:Mnage],Rv[1,56:Mnage])
+psize55minus[1]<-sum(S[1,1:55],L[1,1:55],R[1,1:55],I[1,1:55],NI[1,1:55],Sv[1,1:55],Lv[1,1:55],Rv[1,1:55])
+
+psize0509[1]<-sum(S[i,6:10],L[i,6:10],R[i,6:10],I[i,6:10],NI[i,6:10],Sv[i,6:10],Lv[i,6:10],Rv[i,6:10])
+psize1019[1]<-sum(S[i,11:20],L[i,11:20],R[i,11:20],I[i,11:20],NI[i,11:20],Sv[i,11:20],Lv[i,11:20],Rv[i,11:20])
+psize2029[1]<-sum(S[i,21:30],L[i,21:30],R[i,21:30],I[i,21:30],NI[i,21:30],Sv[i,21:30],Lv[i,21:30],Rv[i,21:30])
+psize3039[1]<-sum(S[i,31:40],L[i,31:40],R[i,31:40],I[i,31:40],NI[i,31:40],Sv[i,31:40],Lv[i,31:40],Rv[i,31:40])
+psize4049[1]<-sum(S[i,41:50],L[i,41:50],R[i,41:50],I[i,41:50],NI[i,41:50],Sv[i,41:50],Lv[i,41:50],Rv[i,41:50])
+psize5059[1]<-sum(S[i,51:60],L[i,51:60],R[i,51:60],I[i,51:60],NI[i,51:60],Sv[i,51:60],Lv[i,51:60],Rv[i,51:60])
+psize6069[1]<-sum(S[i,61:70],L[i,61:70],R[i,61:70],I[i,61:70],NI[i,61:70],Sv[i,61:70],Lv[i,61:70],Rv[i,61:70])
+psize70plus[1]<-sum(S[i,71:Mnage],L[i,71:Mnage],R[i,71:Mnage],I[i,71:Mnage],NI[i,71:Mnage],Sv[i,71:Mnage],Lv[i,71:Mnage],Rv[i,71:Mnage])
+
 
 #initalise contact matrices
 psizematrix[1,1]<-sum(S[1,1:6],L[1,1:6],R[1,1:6],I[1,1:6],NI[1,1:6],Sv[1,1:6],Lv[1,1:6],Rv[1,1:6])
@@ -114,36 +147,45 @@ ADeaths<-matrix(0,steps,Mnage); ADeathsH<-matrix(0,steps,Mnage);
 TBDeaths<-matrix(0,steps,Mnage);TBDeathsH<-matrix(0,steps,Mnage);AllDeathsH<-matrix(0,steps,Mnage);Deaths<--matrix(0,steps,5);
 # Number vaccinated
 VX<-matrix(0,steps,3); vaccgive<-matrix(0,1,5); 
-vaccgiveyr<-matrix(0,1,steps*dt);
-NNV<-matrix(0,12,4)
+vaccgiveyr<-matrix(0,1,26);
+NNV<-matrix(0,12,6)
+pcreduI<-matrix(0,5,12)
+pcreduM<-matrix(0,5,12)
+
 # Number of TB treatments, TB Incidence, TB mortality, ?
 
 TBRx<--matrix(0,steps,2);
-TBI<-matrix(0,steps,5);
-TBM<-matrix(0,steps,7);
-TBP<-matrix(0,steps,6);
-TBPb<-matrix(0,steps,6);
-TBPI<-matrix(0,steps,5);
-PSIZEy<-matrix(0,steps,10);
-TBRa<-matrix(0,steps,5);
-TBRi<-matrix(0,steps,5);
-TBInew<-matrix(0,steps,5);
+TBI<-matrix(0,steps,7);
+TBM<-matrix(0,steps,9);
+TBP<-matrix(0,steps,7);
+TBPb<-matrix(0,steps,7);
+TBPI<-matrix(0,steps,14);
+PSIZEy<-matrix(0,steps,19);
+TBRa<-matrix(0,steps,6);
+TBRi<-matrix(0,steps,6);
+TBInew<-matrix(0,steps,6);
+TBProp<-matrix(0,steps,4);
+TBN<-matrix(0,steps,7)
 
-colnames(TBI)<-c("All ages","0-14", "15-54", "55-64", "65+")
-colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+")
-colnames(TBP)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+")
-colnames(TBPb)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+")
-colnames(TBPI)<-c("All ages","0-14", "15-54", "55-64", "65+")
-colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+")
+colnames(TBI)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+", "<55")
+colnames(TBN)<-c("All ages","0-14", "15-54", "55-64", "65+","55+", "<55")
+colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+", "55+", "<55")
+colnames(TBP)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+")
+colnames(TBPb)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+")
+colnames(TBPI)<-c("All ages", "0-14", "15-54", "55-64", "65+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+")
+colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+")
+
+#ohthers
+I2050<-matrix(0,5,1)
 
 
 #cumulative cases and deaths
-totmort<- matrix(0,1,2)
-totmortyr<- matrix(0,(steps*dt),2)
-colnames(totmort)<-c("All ages", "65+")
+totmort<- matrix(0,1,4)
+totmortyr<- matrix(0,(steps*dt),4)
+colnames(totmort)<-c("All ages", "65+", "55+","<55")
 
-totcase<- matrix(0,1,2)
-totcaseyr<- matrix(0,(steps*dt),2)
-colnames(totcase)<-c("All ages","65+")
+totcase<- matrix(0,1,4)
+totcaseyr<- matrix(0,(steps*dt),4)
+colnames(totcase)<-c("All ages","65+","55+", "<55")
 
-cumuloutyr<- matrix(0,(steps*dt),4)
+cumuloutyr<- matrix(0,26,8)
