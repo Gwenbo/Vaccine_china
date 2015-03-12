@@ -162,7 +162,9 @@ TBPb<-matrix(0,steps,7);
 TBPI<-matrix(0,steps,14);
 PSIZEy<-matrix(0,steps,19);
 TBRa<-matrix(0,steps,6);
+TBRa2<-matrix(0,steps,6);
 TBRi<-matrix(0,steps,6);
+TBRi2<-matrix(0,steps,6);
 TBInew<-matrix(0,steps,6);
 TBProp<-matrix(0,steps,4);
 TBN<-matrix(0,steps,7)

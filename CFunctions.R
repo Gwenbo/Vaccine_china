@@ -250,7 +250,6 @@ if (k==2010){print(CDR)}
       L[i,2:Mnage] = L[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*(1 - p[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt - (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x + u[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt 
 
       new_infect[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*S[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*(x*L[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt  
-      
     
       new_I_react[i,2:Mnage] = v[1:(Mnage-1)]*f[1:(Mnage-1)]*(L[i-1,1:(Mnage-1)])*dt + r[1:(Mnage-1)]*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt 
       new_NI_react[i,2:Mnage] =  v[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
@@ -710,21 +709,53 @@ print("done start year")
           
           
           ## (7) % reactivation
-          TBRa[(k-year1+1),1]<-100*((sum(new_I_react[i1:i2,]))/(sum(new_I[i1:i2,])))
-          TBRa[(k-year1+1),2]<-100*((sum(new_I_react[i1:i2,1:15]))/(sum(new_I[i1:i2,1:15])))
-          TBRa[(k-year1+1),3]<-100*((sum(new_I_react[i1:i2,16:55]))/(sum(new_I[i1:i2,16:55])))
-          TBRa[(k-year1+1),4]<-100*((sum(new_I_react[i1:i2,56:65]))/(sum(new_I[i1:i2,56:65])))
-          TBRa[(k-year1+1),5]<-100*((sum(new_I_react[i1:i2,66:Mnage]))/(sum(new_I[i1:i2,66:Mnage])))
-          TBRa[(k-year1+1),6]<-100*((sum(new_I_react[i1:i2,56:Mnage]))/(sum(new_I[i1:i2,56:Mnage])))
-          
-          ## (8) % reinfection
+#           TBRa[(k-year1+1),1]<-100*((sum(new_I_react[i1:i2,]))/(sum(new_I[i1:i2,])))
+#           TBRa[(k-year1+1),2]<-100*((sum(new_I_react[i1:i2,1:15]))/(sum(new_I[i1:i2,1:15])))
+#           TBRa[(k-year1+1),3]<-100*((sum(new_I_react[i1:i2,16:55]))/(sum(new_I[i1:i2,16:55])))
+#           TBRa[(k-year1+1),4]<-100*((sum(new_I_react[i1:i2,56:65]))/(sum(new_I[i1:i2,56:65])))
+#           TBRa[(k-year1+1),5]<-100*((sum(new_I_react[i1:i2,66:Mnage]))/(sum(new_I[i1:i2,66:Mnage])))
+#           TBRa[(k-year1+1),6]<-100*((sum(new_I_react[i1:i2,56:Mnage]))/(sum(new_I[i1:i2,56:Mnage])))
+#           
+          TBRa[(k-year1+1),1]<-100*((sum(new_actv_react[i1:i2,]))/(sum(new_actv[i1:i2,])))
+          TBRa[(k-year1+1),2]<-100*((sum(new_actv_react[i1:i2,1:15]))/(sum(new_actv[i1:i2,1:15])))
+          TBRa[(k-year1+1),3]<-100*((sum(new_actv_react[i1:i2,16:55]))/(sum(new_actv[i1:i2,16:55])))
+          TBRa[(k-year1+1),4]<-100*((sum(new_actv_react[i1:i2,56:65]))/(sum(new_actv[i1:i2,56:65])))
+          TBRa[(k-year1+1),5]<-100*((sum(new_actv_react[i1:i2,66:Mnage]))/(sum(new_actv[i1:i2,66:Mnage])))
+          TBRa[(k-year1+1),6]<-100*((sum(new_actv_react[i1:i2,56:Mnage]))/(sum(new_actv[i1:i2,56:Mnage])))
+
+          TBRa2[(k-year1+1),1]<-100*((sum(new_I_react[i1:i2,]))/(sum(new_I[i1:i2,])))
+          TBRa2[(k-year1+1),2]<-100*((sum(new_I_react[i1:i2,1:15]))/(sum(new_I[i1:i2,1:15])))
+          TBRa2[(k-year1+1),3]<-100*((sum(new_I_react[i1:i2,16:55]))/(sum(new_I[i1:i2,16:55])))
+          TBRa2[(k-year1+1),4]<-100*((sum(new_I_react[i1:i2,56:65]))/(sum(new_I[i1:i2,56:65])))
+          TBRa2[(k-year1+1),5]<-100*((sum(new_I_react[i1:i2,66:Mnage]))/(sum(new_I[i1:i2,66:Mnage])))
+          TBRa2[(k-year1+1),6]<-100*((sum(new_I_react[i1:i2,56:Mnage]))/(sum(new_I[i1:i2,56:Mnage])))
+
+
+
+          ## (8) % new/reinfection
+#           TBRi[(k-year1+1),1]<-100-(TBRa[(k-year1+1),1])
+#           TBRi[(k-year1+1),2]<-100-(TBRa[(k-year1+1),2])
+#           TBRi[(k-year1+1),3]<-100-(TBRa[(k-year1+1),3])
+#           TBRi[(k-year1+1),4]<-100-(TBRa[(k-year1+1),4])
+#           TBRi[(k-year1+1),5]<-100-(TBRa[(k-year1+1),5])
+#           TBRi[(k-year1+1),6]<-100-(TBRa[(k-year1+1),6])
+#           
           TBRi[(k-year1+1),1]<-100-(TBRa[(k-year1+1),1])
           TBRi[(k-year1+1),2]<-100-(TBRa[(k-year1+1),2])
           TBRi[(k-year1+1),3]<-100-(TBRa[(k-year1+1),3])
           TBRi[(k-year1+1),4]<-100-(TBRa[(k-year1+1),4])
           TBRi[(k-year1+1),5]<-100-(TBRa[(k-year1+1),5])
           TBRi[(k-year1+1),6]<-100-(TBRa[(k-year1+1),6])
-          
+
+          TBRi2[(k-year1+1),1]<-100-(TBRa2[(k-year1+1),1])
+          TBRi2[(k-year1+1),2]<-100-(TBRa2[(k-year1+1),2])
+          TBRi2[(k-year1+1),3]<-100-(TBRa2[(k-year1+1),3])
+          TBRi2[(k-year1+1),4]<-100-(TBRa2[(k-year1+1),4])
+          TBRi2[(k-year1+1),5]<-100-(TBRa2[(k-year1+1),5])
+          TBRi2[(k-year1+1),6]<-100-(TBRa2[(k-year1+1),6])
+
+
+
           ## (9) number newly infected ppl
           TBInew[(k-year1+1),1]<-sum(new_infect[i1:i2,])
           TBInew[(k-year1+1),2]<-sum(new_infect[i1:i2,1:15])
@@ -848,7 +879,8 @@ assign('d',d,envir=.GlobalEnv);
   assign('TBI',TBI,envir=.GlobalEnv);assign('TBN',TBN,envir=.GlobalEnv);assign('TBM',TBM,envir=.GlobalEnv);assign('TBRx',TBRx,envir=.GlobalEnv);assign('VX',VX,envir=.GlobalEnv);
   assign('TBP',TBP,envir=.GlobalEnv);assign('TBPb',TBPb,envir=.GlobalEnv)
   assign('TBPI',TBPI,envir=.GlobalEnv);assign('PSIZEy',PSIZEy,envir=.GlobalEnv);
-  assign('TBRa',TBRa,envir=.GlobalEnv);assign('TBRi',TBRi,envir=.GlobalEnv);
+  assign('TBRa',TBRa,envir=.GlobalEnv);assign('TBRi',TBRi,envir=.GlobalEnv); 
+  assign('TBRa2',TBRa,envir=.GlobalEnv);assign('TBRi2',TBRi,envir=.GlobalEnv);
   assign('TBInew',TBInew,envir=.GlobalEnv);
   assign('CDR',CDR,envir=.GlobalEnv);
   #assign('CDRout',CDRout,envir=.GlobalEnv);
