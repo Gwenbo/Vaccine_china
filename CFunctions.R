@@ -257,6 +257,7 @@ if (k==2010){print(CDR)}
       new_actv_inf[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*S[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x*(L[i-1,1:(Mnage-1)])*dt + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*g*R[i-1,1:(Mnage-1)]*dt 
 
       new_I[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*f[1:(Mnage-1)]*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*f[1:(Mnage-1)]*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt + w*NI[i-1,1:(Mnage-1)]*dt
+      new_I_noconv[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*f[1:(Mnage-1)]*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*f[1:(Mnage-1)]*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt
       new_NI[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
       new_actv[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*S[i-1,1:(Mnage-1)] + (v[1:(Mnage-1)] +lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*L[i-1,1:(Mnage-1)]*dt + (r[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*g)*R[i-1,1:(Mnage-1)]*dt
       new_actv_chk[i,2:Mnage] = new_actv_react[i,2:Mnage] + new_actv_inf[i,2:Mnage]
@@ -438,14 +439,15 @@ print("done start year")
         new_actv_inf[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*S[i-1,1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*x*(L[i-1,1:Mnage])*dt + lambda[i-1,1:Mnage]*p[1:Mnage]*g*R[i-1,1:Mnage]*dt 
         
         #print("1")
-        new_I[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:(Mnage)]*f[1:(Mnage)]*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*f[1:(Mnage)]*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt + w*NI[i-1,1:(Mnage)]*dt
+        new_I[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*f[1:Mnage]*(S[i-1,1:Mnage] + g*R[i-1,1:(Mnage)])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*f[1:(Mnage)]*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt + w*NI[i-1,1:(Mnage)]*dt
+        new_I_noconv[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*f[1:Mnage]*(S[i-1,1:Mnage] + g*R[i-1,1:Mnage])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*x)*f[1:Mnage]*L[i-1,1:Mnage]*dt + r[1:Mnage]*h[1:Mnage]*R[i-1,1:Mnage]*dt
+        
+        
         #print("1")
         new_NI[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:(Mnage)]*(1 - f[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
         #print("1")
         new_actv[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*S[i-1,1:Mnage] + (v[1:Mnage] +lambda[i-1,1:Mnage]*p[1:Mnage]*x)*L[i-1,1:Mnage]*dt + (r[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*g)*R[i-1,1:Mnage]*dt
         new_actv_chk[i,1:Mnage] = new_actv_react[i,1:Mnage] + new_actv_inf[i,1:Mnage]
-        
-        
         
         new_notif[i,1:Mnage] = CDR[1:(Mnage)]*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage])
         #print("1")
@@ -617,13 +619,13 @@ print("done start year")
           print("k2")
           
           ## (2) TB incidence rate
-          TBI[(k-year1+1),1]<-100000*sum(new_I[i1:i2,],new_NI[i1:i2,])/mean(psize[i1:i2])
-          TBI[(k-year1+1),2]<-100000*sum(new_I[i1:i2,1:15],new_NI[i1:i2,1:15])/mean(psize014[i1:i2])
-          TBI[(k-year1+1),3]<-100000*sum(new_I[i1:i2,16:55],new_NI[i1:i2,16:55])/mean(psize1554[i1:i2])
-          TBI[(k-year1+1),4]<-100000*sum(new_I[i1:i2,56:65],new_NI[i1:i2,56:65])/mean(psize5564[i1:i2])
-          TBI[(k-year1+1),5]<-100000*sum(new_I[i1:i2,66:Mnage],new_NI[i1:i2,66:Mnage])/mean(psize65plus[i1:i2])
-          TBI[(k-year1+1),6]<-100000*sum(new_I[i1:i2,56:Mnage],new_NI[i1:i2,56:Mnage])/mean(psize55plus[i1:i2])
-          TBI[(k-year1+1),7]<-100000*sum(new_I[i1:i2,1:55],new_NI[i1:i2,1:55])/mean(psize55minus[i1:i2])
+          TBI[(k-year1+1),1]<-100000*sum(new_I_noconv[i1:i2,],new_NI[i1:i2,])/mean(psize[i1:i2])
+          TBI[(k-year1+1),2]<-100000*sum(new_I_noconv[i1:i2,1:15],new_NI[i1:i2,1:15])/mean(psize014[i1:i2])
+          TBI[(k-year1+1),3]<-100000*sum(new_I_noconv[i1:i2,16:55],new_NI[i1:i2,16:55])/mean(psize1554[i1:i2])
+          TBI[(k-year1+1),4]<-100000*sum(new_I_noconv[i1:i2,56:65],new_NI[i1:i2,56:65])/mean(psize5564[i1:i2])
+          TBI[(k-year1+1),5]<-100000*sum(new_I_noconv[i1:i2,66:Mnage],new_NI[i1:i2,66:Mnage])/mean(psize65plus[i1:i2])
+          TBI[(k-year1+1),6]<-100000*sum(new_I_noconv[i1:i2,56:Mnage],new_NI[i1:i2,56:Mnage])/mean(psize55plus[i1:i2])
+          TBI[(k-year1+1),7]<-100000*sum(new_I_noconv[i1:i2,1:55],new_NI[i1:i2,1:55])/mean(psize55minus[i1:i2])
           
           ## (2b) TB notification rate
           TBN[(k-year1+1),1]<-100000*sum(new_notif[i1:i2,]/mean(psize[i1:i2]))
@@ -723,12 +725,12 @@ print("done start year")
           TBRa[(k-year1+1),5]<-100*((sum(new_actv_react[i1:i2,66:Mnage]))/(sum(new_actv[i1:i2,66:Mnage])))
           TBRa[(k-year1+1),6]<-100*((sum(new_actv_react[i1:i2,56:Mnage]))/(sum(new_actv[i1:i2,56:Mnage])))
 
-          TBRa2[(k-year1+1),1]<-100*((sum(new_I_react[i1:i2,]))/(sum(new_I[i1:i2,])))
-          TBRa2[(k-year1+1),2]<-100*((sum(new_I_react[i1:i2,1:15]))/(sum(new_I[i1:i2,1:15])))
-          TBRa2[(k-year1+1),3]<-100*((sum(new_I_react[i1:i2,16:55]))/(sum(new_I[i1:i2,16:55])))
-          TBRa2[(k-year1+1),4]<-100*((sum(new_I_react[i1:i2,56:65]))/(sum(new_I[i1:i2,56:65])))
-          TBRa2[(k-year1+1),5]<-100*((sum(new_I_react[i1:i2,66:Mnage]))/(sum(new_I[i1:i2,66:Mnage])))
-          TBRa2[(k-year1+1),6]<-100*((sum(new_I_react[i1:i2,56:Mnage]))/(sum(new_I[i1:i2,56:Mnage])))
+          TBRa2[(k-year1+1),1]<-100*((sum(new_I_react[i1:i2,]))/(sum(new_I_noconv[i1:i2,])))
+          TBRa2[(k-year1+1),2]<-100*((sum(new_I_react[i1:i2,1:15]))/(sum(new_I_noconv[i1:i2,1:15])))
+          TBRa2[(k-year1+1),3]<-100*((sum(new_I_react[i1:i2,16:55]))/(sum(new_I_noconv[i1:i2,16:55])))
+          TBRa2[(k-year1+1),4]<-100*((sum(new_I_react[i1:i2,56:65]))/(sum(new_I_noconv[i1:i2,56:65])))
+          TBRa2[(k-year1+1),5]<-100*((sum(new_I_react[i1:i2,66:Mnage]))/(sum(new_I_noconv[i1:i2,66:Mnage])))
+          TBRa2[(k-year1+1),6]<-100*((sum(new_I_react[i1:i2,56:Mnage]))/(sum(new_I_noconv[i1:i2,56:Mnage])))
 
 
 
@@ -783,9 +785,9 @@ print("done start year")
           totmortyr[(k-2025+1),2]<-sum(TBDeaths[251:i,66:Mnage])
           totmortyr[(k-2025+1),3]<-sum(TBDeaths[251:i,56:Mnage])
           
-          totcaseyr[(k-2025+1),1]<- sum(new_I[251:i,],new_NI[251:i,])
-          totcaseyr[(k-2025+1),2]<- sum(new_I[251:i,66:Mnage],new_NI[251:i,66:Mnage])
-          totcaseyr[(k-2025+1),3]<- sum(new_I[251:i,56:Mnage],new_NI[251:i,56:Mnage])
+          totcaseyr[(k-2025+1),1]<- sum(new_I_noconv[251:i,],new_NI[251:i,])
+          totcaseyr[(k-2025+1),2]<- sum(new_I_noconv[251:i,66:Mnage],new_NI[251:i,66:Mnage])
+          totcaseyr[(k-2025+1),3]<- sum(new_I_noconv[251:i,56:Mnage],new_NI[251:i,56:Mnage])
           
           cumuloutyr[(k-2025+1),]<-c(totmortyr[(k-2025+1),],totcaseyr[(k-2025+1),])
           }
@@ -915,10 +917,10 @@ print("done assign")
   totmort[,4]<-sum(TBDeaths[251:302,1:55])
 print(totmort)
 
-  totcase[,1]<- sum(new_I[251:302,],new_NI[251:302,])
-  totcase[,2]<- sum(new_I[251:302,66:Mnage],new_NI[251:302,66:Mnage])
-  totcase[,3]<- sum(new_I[251:302,56:Mnage],new_NI[251:302,56:Mnage])
-  totcase[,4]<- sum(new_I[251:302,1:55],new_NI[251:302,1:55])
+  totcase[,1]<- sum(new_I_noconv[251:302,],new_NI[251:302,])
+  totcase[,2]<- sum(new_I_noconv[251:302,66:Mnage],new_NI[251:302,66:Mnage])
+  totcase[,3]<- sum(new_I_noconv[251:302,56:Mnage],new_NI[251:302,56:Mnage])
+  totcase[,4]<- sum(new_I_noconv[251:302,1:55],new_NI[251:302,1:55])
 print(totcase)
 
 

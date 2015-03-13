@@ -22,6 +22,7 @@ new_I<-matrix(0,steps,Mnage); new_IH<-matrix(0,steps,Mnage);
 new_NI<-matrix(0,steps,Mnage); new_NIH<-matrix(0,steps,Mnage);
 #new reactivation Infectious/non infectious
 new_I_react<-matrix(0,steps,Mnage)
+new_I_noconv<-matrix(0,steps,Mnage)
 new_NI_react<-matrix(0,steps,Mnage)
 new_actv<-matrix(0,steps,Mnage)
 new_actv_react<-matrix(0,steps,Mnage)
