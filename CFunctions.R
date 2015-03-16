@@ -709,14 +709,7 @@ print("done start year")
 
 
 
-
-
-
-
-
-          
-          
-          ## (7) % reactivation
+       ## (7) % reactivation
 #           TBRa[(k-year1+1),1]<-100*((sum(new_I_react[i1:i2,]))/(sum(new_I[i1:i2,])))
 #           TBRa[(k-year1+1),2]<-100*((sum(new_I_react[i1:i2,1:15]))/(sum(new_I[i1:i2,1:15])))
 #           TBRa[(k-year1+1),3]<-100*((sum(new_I_react[i1:i2,16:55]))/(sum(new_I[i1:i2,16:55])))

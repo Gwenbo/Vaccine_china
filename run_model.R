@@ -34,6 +34,9 @@ setwd(home)
   # Run the model with these parameters  
   Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)   
 
+setwd(home)
+source('#notif fitting.R')
+
   #EOn<-Econout;h10<-hbcout
   # save in big df for plot - original one
   #eee<-cbind(hbcout,kkk); colnames(eee)<-c(colnames(hbcout),"fit");
