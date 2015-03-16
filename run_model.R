@@ -35,6 +35,9 @@ setwd(home)
   Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)   
 
 setwd(home)
+source('#BasicPlot.R')
+
+setwd(home)
 source('#notif fitting.R')
 
   #EOn<-Econout;h10<-hbcout
