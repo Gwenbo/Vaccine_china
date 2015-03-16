@@ -249,17 +249,21 @@ if (k==2010){print(CDR)}
       S[i,2:Mnage] = S[i-1,1:(Mnage-1)] - (u[1:(Mnage-1)]+lambda[i-1,1:(Mnage-1)])*S[i-1,1:(Mnage-1)]*dt 
       L[i,2:Mnage] = L[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*(1 - p[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt - (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x + u[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt 
 
-      new_infect[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*S[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*(x*L[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt  
-    
+      new_infect[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*S[i-1,1:(Mnage-1)]*dt + lambda[i-1,1:(Mnage-1)]*(x*L[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt  
+
+
       new_I_react[i,2:Mnage] = v[1:(Mnage-1)]*f[1:(Mnage-1)]*(L[i-1,1:(Mnage-1)])*dt + r[1:(Mnage-1)]*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt 
       new_NI_react[i,2:Mnage] =  v[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
       new_actv_react[i,2:Mnage] = v[1:(Mnage-1)]*(L[i-1,1:(Mnage-1)])*dt + r[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt 
-      new_actv_inf[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*S[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x*(L[i-1,1:(Mnage-1)])*dt + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*g*R[i-1,1:(Mnage-1)]*dt 
+      new_actv_inf[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*S[i-1,1:(Mnage-1)]*dt + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x*(L[i-1,1:(Mnage-1)])*dt + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*g*R[i-1,1:(Mnage-1)]*dt 
+
 
       new_I[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*f[1:(Mnage-1)]*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*f[1:(Mnage-1)]*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt + w*NI[i-1,1:(Mnage-1)]*dt
       new_I_noconv[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*f[1:(Mnage-1)]*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*f[1:(Mnage-1)]*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt
       new_NI[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
-      new_actv[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*S[i-1,1:(Mnage-1)] + (v[1:(Mnage-1)] +lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*L[i-1,1:(Mnage-1)]*dt + (r[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*g)*R[i-1,1:(Mnage-1)]*dt
+      new_actv[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*S[i-1,1:(Mnage-1)]*dt + (v[1:(Mnage-1)] +lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*L[i-1,1:(Mnage-1)]*dt + (r[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*g)*R[i-1,1:(Mnage-1)]*dt
+
+
       new_actv_chk[i,2:Mnage] = new_actv_react[i,2:Mnage] + new_actv_inf[i,2:Mnage]
 
       #number of notifications defined as number detected. Have removed CoT from expression as is irrelevant to nnumber detected. e is scaling down of notification for NI as less likely to be detected.
@@ -269,6 +273,8 @@ if (k==2010){print(CDR)}
       I[i,2:Mnage] = I[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(new_I[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + ui[1:(Mnage-1)])*I[i-1,1:(Mnage-1)]*dt
       NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(e*new_NI[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + uni[1:(Mnage-1)] + w)*NI[i-1,1:(Mnage-1)]*dt                    
       
+###checked dt up to here
+
       #if(I[i,2] < I[i-1,1]){print(c(i,I[i,2],I[i-1,1],"stop",(n + u[1:13] + ui),"cdr",CDR,CoT))}
       if (k==2010) {print(CDR)}
       ####•••••••••••••••••••• TB HIV model •••••••••••••••••
@@ -429,14 +435,14 @@ print("done start year")
         #save(S,file="S.RData")
         L[i,1:Mnage] = L[i-1,1:Mnage] + lambda[i-1,1:Mnage]*(1 - p[1:Mnage])*(S[i-1,1:Mnage] + g*R[i-1,1:Mnage])*dt - (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*x + u[1:Mnage])*L[i-1,1:Mnage]*dt 
         #print("1")
-        new_infect[i,1:Mnage] = lambda[i-1,1:(Mnage)]*S[i-1,1:(Mnage)] + lambda[i-1,1:(Mnage)]*(x*L[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt  
+        new_infect[i,1:Mnage] = lambda[i-1,1:(Mnage)]*S[i-1,1:(Mnage)]*dt + lambda[i-1,1:(Mnage)]*(x*L[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt  
         
         new_I_react[i,1:Mnage] = v[1:Mnage]*f[1:(Mnage)]*(L[i-1,1:(Mnage)])*dt + r[1:Mnage]*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt 
         #print("1")
         new_NI_react[i,1:Mnage] =  v[1:Mnage]*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
         
         new_actv_react[i,1:Mnage] = v[1:Mnage]*(L[i-1,1:Mnage])*dt + r[1:Mnage]*R[i-1,1:Mnage]*dt 
-        new_actv_inf[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*S[i-1,1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*x*(L[i-1,1:Mnage])*dt + lambda[i-1,1:Mnage]*p[1:Mnage]*g*R[i-1,1:Mnage]*dt 
+        new_actv_inf[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*S[i-1,1:Mnage]*dt + lambda[i-1,1:Mnage]*p[1:Mnage]*x*(L[i-1,1:Mnage])*dt + lambda[i-1,1:Mnage]*p[1:Mnage]*g*R[i-1,1:Mnage]*dt 
         
         #print("1")
         new_I[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*f[1:Mnage]*(S[i-1,1:Mnage] + g*R[i-1,1:(Mnage)])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*f[1:(Mnage)]*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt + w*NI[i-1,1:(Mnage)]*dt
@@ -446,7 +452,7 @@ print("done start year")
         #print("1")
         new_NI[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:(Mnage)]*(1 - f[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
         #print("1")
-        new_actv[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*S[i-1,1:Mnage] + (v[1:Mnage] +lambda[i-1,1:Mnage]*p[1:Mnage]*x)*L[i-1,1:Mnage]*dt + (r[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*g)*R[i-1,1:Mnage]*dt
+        new_actv[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*S[i-1,1:Mnage]*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*x)*L[i-1,1:Mnage]*dt + (r[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*g)*R[i-1,1:Mnage]*dt
         new_actv_chk[i,1:Mnage] = new_actv_react[i,1:Mnage] + new_actv_inf[i,1:Mnage]
         
         new_notif[i,1:Mnage] = CDR[1:(Mnage)]*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage])
@@ -848,7 +854,7 @@ print("done start year")
   } 
 
   ## Outputs - in R, allows output to be seen without expressly wanting it 
-  assign('S',S,envir = .GlobalEnv);assign('L',L,envir = .GlobalEnv);assign('I',I,envir = .GlobalEnv);assign('NI',NI,envir = .GlobalEnv);assign('R',R,envir = .GlobalEnv);assign('new_I',new_I,envir = .GlobalEnv);assign('new_NI',new_NI,envir = .GlobalEnv);assign('new_notif',new_notif,envir = .GlobalEnv)
+  assign('S',S,envir = .GlobalEnv);assign('L',L,envir = .GlobalEnv);assign('I',I,envir = .GlobalEnv);assign('NI',NI,envir = .GlobalEnv);assign('R',R,envir = .GlobalEnv);assign('new_I',new_I,envir = .GlobalEnv);assign('new_I_noconv',new_I_noconv,envir = .GlobalEnv);assign('new_NI',new_NI,envir = .GlobalEnv);assign('new_notif',new_notif,envir = .GlobalEnv)
   assign('NBirths',BIRTHS,envir=.GlobalEnv);  assign('brate',brate,envir=.GlobalEnv)  
 #assign('SH',SH,envir = .GlobalEnv);assign('LH',LH,envir = .GlobalEnv);#assign('IH',IH,envir = .GlobalEnv);assign('NIH',NIH,envir = .GlobalEnv);assign('RH',RH,envir = .GlobalEnv);assign('new_IH',new_IH,envir = .GlobalEnv);assign('new_NIH',new_NIH,envir = .GlobalEnv)
   assign('Sv',Sv,envir = .GlobalEnv);assign('Lv',Lv,envir = .GlobalEnv);assign('Rv',Rv,envir = .GlobalEnv);#assign('SvH',SvH,envir = .GlobalEnv);assign('LvH',LvH,envir = .GlobalEnv);assign('RvH',RvH,envir = .GlobalEnv);
@@ -882,7 +888,7 @@ assign('d',d,envir=.GlobalEnv);
   assign('TBP',TBP,envir=.GlobalEnv);assign('TBPb',TBPb,envir=.GlobalEnv)
   assign('TBPI',TBPI,envir=.GlobalEnv);assign('PSIZEy',PSIZEy,envir=.GlobalEnv);
   assign('TBRa',TBRa,envir=.GlobalEnv);assign('TBRi',TBRi,envir=.GlobalEnv); 
-  assign('TBRa2',TBRa,envir=.GlobalEnv);assign('TBRi2',TBRi,envir=.GlobalEnv);
+  assign('TBRa2',TBRa2,envir=.GlobalEnv);assign('TBRi2',TBRi2,envir=.GlobalEnv);
   assign('TBInew',TBInew,envir=.GlobalEnv);
   assign('CDR',CDR,envir=.GlobalEnv);
   #assign('CDRout',CDRout,envir=.GlobalEnv);
