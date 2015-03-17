@@ -632,7 +632,9 @@ print("done start year")
           TBI[(k-year1+1),5]<-100000*sum(new_I_noconv[i1:i2,66:Mnage],new_NI[i1:i2,66:Mnage])/mean(psize65plus[i1:i2])
           TBI[(k-year1+1),6]<-100000*sum(new_I_noconv[i1:i2,56:Mnage],new_NI[i1:i2,56:Mnage])/mean(psize55plus[i1:i2])
           TBI[(k-year1+1),7]<-100000*sum(new_I_noconv[i1:i2,1:55],new_NI[i1:i2,1:55])/mean(psize55minus[i1:i2])
+
           
+
           ## (2b) TB notification rate
           TBN[(k-year1+1),1]<-100000*sum(new_notif[i1:i2,]/mean(psize[i1:i2]))
           TBN[(k-year1+1),2]<-100000*sum(new_notif[i1:i2,1:15]/mean(psize014[i1:i2]))
@@ -777,6 +779,14 @@ print("done start year")
           #I2020[2,]<-sum(new_infect[241:242,])
           I2050[1,]<-sum(new_infect[301:302,])
           
+          #av incidence rate in <55 and >55 for 2025-2050 for data check
+          TBIPGyng<-(sum(new_I_noconv[251:302,1:55],new_NI[251:302,1:55]))/26
+          TBIPGold<-(sum(new_I_noconv[251:302,56:Mnage],new_NI[251:302,56:Mnage]))/26
+          PsizePGyng<-mean(psize55minus[251:302])
+          PsizePGold<-mean(psize55plus[251:302])
+          PGyng<-100000*TBIPGyng/PsizePGyng
+          PGold<-100000*TBIPGold/PsizePGold
+
           #to be able to do NNV by yr
           if (k>=2025) {
           vaccgiveyr[,(k-2025+1)]<-sum(VX[i1:i2,1])
@@ -882,10 +892,11 @@ assign('d',d,envir=.GlobalEnv);
   assign('TBPI',TBPI,envir=.GlobalEnv);assign('PSIZEy',PSIZEy,envir=.GlobalEnv);
   assign('TBRa',TBRa,envir=.GlobalEnv);assign('TBRi',TBRi,envir=.GlobalEnv); 
   assign('TBRa2',TBRa2,envir=.GlobalEnv);assign('TBRi2',TBRi2,envir=.GlobalEnv);
-  assign('TBInew',TBInew,envir=.GlobalEnv);
+  assign('TBInew',TBInew,envir=.GlobalEnv);assign('PGyng',PGyng,envir=.GlobalEnv);assign('PGold',PGold,envir=.GlobalEnv);
   assign('CDR',CDR,envir=.GlobalEnv);
   #assign('CDRout',CDRout,envir=.GlobalEnv);
   assign('TBProp',TBProp,envir=.GlobalEnv);
+  assign('new_actv',new_actv, envir=.GlobalEnv);
 #   assign('I1990',I1990,envir=.GlobalEnv);
 #   assign('I2020',I2020,envir=.GlobalEnv);
   assign('I2050',I2050,envir=.GlobalEnv);
