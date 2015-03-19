@@ -88,27 +88,35 @@ if (yrintro < yearend){
   
   if (D < 100){ ## D <- 100 if lifelong protection. Then none leave vaccine category. 
     for (i in 1:steps){
-      # Remove from the category those that are of the age duration of vaccine + 6months after duration of protection has expired
-#       if (any((midyr+D*(1/dt)-1)==i)){
-#         dV1[i,D+1]<-1
-#       }
-      # Remove from the category those that were vaccinated at age 55. minus signs remove the ones during the duration of protection so only remove people from steps after end of duration
-      if (any((startyr[c(-1:-D)]-1)==i)){
-        dV2[i,(56+D+1)]<-1
-        #dV3[i,D+1]<-1
-      }
-      #vaccine waning of 5% per year throughout duration of protection
-      if (any((startyr[c(1:length(startyr))])==i)){
-        dV2[i,(c(57:(57+D-1)))]<-0.05
+      
+      #elderly: dV2 - vaccine immunosenescent waning of 5% per year throughout duration of protection and normal distribution around 20 yrs (s.d. 2yrs) for normal waning
+      #ado/adult: dv4 - vaccine waning gaussian throughout duration of protection peaking at 20yrs
+      #if (any((startyr[c(1:length(startyr))])==i)){  
+        for (n in 1:26){
+        if (i==startyr[n]) {k<-n
+        print(k)
+        dV2[i,]<-oldwane[k,]
+        dV4[i,]<-yngwane[k,]
+        }
+            }
+       #   } 
       }
       
+    # Remove from the category those that are of the age duration of vaccine + 6months after duration of protection has expired
+    #       if (any((midyr+D*(1/dt)-1)==i)){
+    #         dV1[i,D+1]<-1
+    #       }
+    #       # Remove from the category those that were vaccinated at age 55. minus signs remove the ones during the duration of protection so only remove people from steps after end of duration
+    #       if (any((startyr[c(-1:-D)]-1)==i)){
+    #         dV2[i,(56+D+1)]<-1
+    #         #dV3[i,D+1]<-1
+    #}
+    
       ##ado/adult wane as gaussian
-###NEED TO DO      
-      #vaccine waning gaussian throughout duration of protection
       #need to replace number with a matrix/vector of amt waning at each age
-      if (any((startyr[c(1:length(startyr))])==i)){
-        dV4[i,(c(57:(57+D-1)))]<-0.05
-      }
+#       if (any((startyr[c(1:length(startyr))])==i)){
+#         dV4[i,]<-
+#       }
       
       
       # Adult - remove those mass vaccinated = anyone aged 11+D and over (couldn't have been vaccinated any other way)
@@ -117,7 +125,7 @@ if (yrintro < yearend){
 #         dV2[i,(11+D):Mnage]<-1
         #dV3[i,(11+D):Mnage]<-1
       #}
-    }
+    #}
   }
 }
 
