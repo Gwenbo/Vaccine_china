@@ -77,7 +77,8 @@ psize4049<-matrix(0,steps,1)
 psize5059<-matrix(0,steps,1)
 psize6069<-matrix(0,steps,1)
 psize70plus<-matrix(0,steps,1)
-
+psize5574<-matrix(0,steps,1)
+psize75plus<-matrix(0,steps,1)
 
 
 #psize and I for contact matirx
@@ -108,6 +109,8 @@ psize4049[1]<-sum(S[i,41:50],L[i,41:50],R[i,41:50],I[i,41:50],NI[i,41:50],Sv[i,4
 psize5059[1]<-sum(S[i,51:60],L[i,51:60],R[i,51:60],I[i,51:60],NI[i,51:60],Sv[i,51:60],Lv[i,51:60],Rv[i,51:60])
 psize6069[1]<-sum(S[i,61:70],L[i,61:70],R[i,61:70],I[i,61:70],NI[i,61:70],Sv[i,61:70],Lv[i,61:70],Rv[i,61:70])
 psize70plus[1]<-sum(S[i,71:Mnage],L[i,71:Mnage],R[i,71:Mnage],I[i,71:Mnage],NI[i,71:Mnage],Sv[i,71:Mnage],Lv[i,71:Mnage],Rv[i,71:Mnage])
+psize5574[1]<-sum(S[i,56:75],L[i,56:75],R[i,56:75],I[i,56:75],NI[i,56:75],Sv[i,56:75],Lv[i,56:75],Rv[i,56:75])
+psize75plus[1]<-sum(S[i,76:Mnage],L[i,76:Mnage],R[i,76:Mnage],I[i,76:Mnage],NI[i,76:Mnage],Sv[i,76:Mnage],Lv[i,76:Mnage],Rv[i,76:Mnage])
 
 
 #initalise contact matrices
@@ -150,8 +153,8 @@ TBDeaths<-matrix(0,steps,Mnage);TBDeathsH<-matrix(0,steps,Mnage);AllDeathsH<-mat
 VX<-matrix(0,steps,3); vaccgive<-matrix(0,1,5); 
 vaccgiveyr<-matrix(0,1,26);
 NNV<-matrix(0,12,6)
-pcreduI<-matrix(0,5,12)
-pcreduM<-matrix(0,5,12)
+pcreduI<-matrix(0,7,36)
+pcreduM<-matrix(0,7,36)
 
 # Number of TB treatments, TB Incidence, TB mortality, ?
 
@@ -160,8 +163,8 @@ TBI<-matrix(0,steps,7);
 TBM<-matrix(0,steps,9);
 TBP<-matrix(0,steps,7);
 TBPb<-matrix(0,steps,7);
-TBPI<-matrix(0,steps,14);
-PSIZEy<-matrix(0,steps,19);
+TBPI<-matrix(0,steps,16);
+PSIZEy<-matrix(0,steps,21);
 TBRa<-matrix(0,steps,6);
 TBRa2<-matrix(0,steps,6);
 TBRi<-matrix(0,steps,6);
@@ -175,8 +178,8 @@ colnames(TBN)<-c("All ages","0-14", "15-54", "55-64", "65+","55+", "<55")
 colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+", "55+", "<55")
 colnames(TBP)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+")
 colnames(TBPb)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+")
-colnames(TBPI)<-c("All ages", "0-14", "15-54", "55-64", "65+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+")
-colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+")
+colnames(TBPI)<-c("All ages", "0-14", "15-54", "55-64", "65+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+","6574", "75+")
+colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+","55-74", "75+")
 
 #ohthers
 I2050<-matrix(0,5,1)

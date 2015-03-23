@@ -264,8 +264,11 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
         coms[count,]<-c(cover[vv],effs[zz],durs[xx])
         cov<-cover[vv]; tic <- effs[zz];    toc <- durs[xx];   print(c(cov,tic,toc))
         # Length of second input > 1 so triggers FitGo to do a vaccine scenario
-        X<-FitGo(cntry,c(nn,cov,tic,toc),c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,C)  
-#         ae<-merge(EOn,Econout,by="Year");ae<-ae[c(1:5,9:17)];
+       X<-FitGo(cntry,c(nn,cov,tic,toc),c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,C)  
+        #X<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,C)  
+        
+        
+        #         ae<-merge(EOn,Econout,by="Year");ae<-ae[c(1:5,9:17)];
 #         ae<-ae[125:150,]
 #         # save in countries VXout for DALY calc       
 #         # save in big df for plot
@@ -302,9 +305,9 @@ write.table(vaxgive,'vaccines_given.csv',sep=",",row.names=FALSE)
 write.table(vaxgiveyr,'vaccines_given_annual.csv',sep=",",row.names=FALSE)
 } # end of fits
 
-
 setwd(home)
 source('#PlotVax.R')
+setwd(home)
 
 #reduction in number of cases or deaths calc by subtracting cumul cases in vaccine scenario from the cumulative number in the baseline scenario
 redu<-rbind((cumulvx[1,]-cumulvx[2,]),(cumulvx[1,]-cumulvx[3,]),(cumulvx[1,]-cumulvx[4,]),(cumulvx[1,]-cumulvx[5,]),(cumulvx[1,]-cumulvx[6,]),(cumulvx[1,]-cumulvx[7,]),(cumulvx[1,]-cumulvx[8,]),(cumulvx[1,]-cumulvx[9,]),(cumulvx[1,]-cumulvx[10,]),(cumulvx[1,]-cumulvx[11,]),(cumulvx[1,]-cumulvx[12,]),(cumulvx[1,]-cumulvx[13,]))

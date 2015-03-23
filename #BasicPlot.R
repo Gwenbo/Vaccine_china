@@ -7,6 +7,7 @@
 #data to fit to
 population2010<- c(1359822,246707,863710,135859,113546)
 population2050<- c(1384976,204187,623982,225492,331315)
+population2025<-195605                                           #just elderly
 population2050u<-c(3867612,300552,722200,248041,364447)
 population2050l<-c(1153148,124968,527054,202943,298184)
 
@@ -178,6 +179,10 @@ plot(seq(1990,2050),TBPI[91:151,2], ylab="Prevalence of Infection (%)",xlab="yea
 plot(seq(1990,2050),TBPI[91:151,3], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='blue')
 plot(seq(1990,2050),TBPI[91:151,4], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='purple')
 plot(seq(1990,2050),TBPI[91:151,5], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='green')
+plot(seq(1990,2050),TBPI[91:151,15], ylab="Prevalence of Infection (%) 6574",xlab="year", ylim=c(0,100),type='l',col='green')
+plot(seq(1990,2050),TBPI[91:151,16], ylab="Prevalence of Infection (%) 75+",xlab="year", ylim=c(0,100),type='l',col='green')
+
+
 plot.new()
 legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 years"), lty=1,col=c("orange","red","blue","purple","green"))
 
@@ -200,10 +205,13 @@ plot(seq(1990,2050),PSIZEy[91:151,4], ylab="Population (thousands)",xlab="Year",
 points(2050,population2050[4])
 points(2010,population2010[4])
 segments(2050,population2050l[4],2050,population2050u[4])
-plot(seq(1990,2050),PSIZEy[91:151,5], ylab="Population (thousands)",xlab="Year", ylim=c(0,1000000),type='l',col='green')
+plot(seq(1990,2050),PSIZEy[91:151,5], ylab="Population 65+ (thousands)",xlab="Year", ylim=c(0,1000000),type='l',col='green')
 points(2050,population2050[5])
+points(2025,population2025)
 points(2010,population2010[5])
 segments(2050,population2050l[5],2050,population2050u[5])
+plot(seq(1990,2050),PSIZEy[91:151,20], ylab="Population 5574 (thousands)",xlab="Year", ylim=c(0,1000000),type='l',col='green')
+plot(seq(1990,2050),PSIZEy[91:151,21], ylab="Population 75+ (thousands)",xlab="Year", ylim=c(0,1000000),type='l',col='green')
 plot.new()
 legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 years"), lty=1,col=c("orange","red","blue","purple","green"))
 # points(seq(1990,2050),PSIZEy[91:151,2],type='l',col='red')

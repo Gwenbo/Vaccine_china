@@ -342,6 +342,8 @@ if (k==2010){print(CDR)}
       psize5564[i]<-sum(S[i,56:65],L[i,56:65],R[i,56:65],I[i,56:65],NI[i,56:65],Sv[i,56:65],Lv[i,56:65],Rv[i,56:65])
       psize65plus[i]<-sum(S[i,66:Mnage],L[i,66:Mnage],R[i,66:Mnage],I[i,66:Mnage],NI[i,66:Mnage],Sv[i,66:Mnage],Lv[i,66:Mnage],Rv[i,66:Mnage])
       psize55plus[i]<-sum(S[i,56:Mnage],L[i,56:Mnage],R[i,56:Mnage],I[i,56:Mnage],NI[i,56:Mnage],Sv[i,56:Mnage],Lv[i,56:Mnage],Rv[i,56:Mnage])
+      psize5574[i]<-sum(S[i,56:76],L[i,56:76],R[i,56:76],I[i,56:76],NI[i,56:76],Sv[i,56:76],Lv[i,56:76],Rv[i,56:76])
+
 
 #psize65plus[i]<-sum(S[i,66:86],L[i,66:86],R[i,66:86],I[i,66:86],NI[i,66:86],Sv[i,66:86],Lv[i,66:86],Rv[i,66:86])
       
@@ -365,6 +367,8 @@ if (k==2010){print(CDR)}
       psize5059[i]<-sum(S[i,51:60],L[i,51:60],R[i,51:60],I[i,51:60],NI[i,51:60],Sv[i,51:60],Lv[i,51:60],Rv[i,51:60])
       psize6069[i]<-sum(S[i,61:70],L[i,61:70],R[i,61:70],I[i,61:70],NI[i,61:70],Sv[i,61:70],Lv[i,61:70],Rv[i,61:70])
       psize70plus[i]<-sum(S[i,71:Mnage],L[i,71:Mnage],R[i,71:Mnage],I[i,71:Mnage],NI[i,71:Mnage],Sv[i,71:Mnage],Lv[i,71:Mnage],Rv[i,71:Mnage])
+      psize5574[i]<-sum(S[i,56:75],L[i,56:75],R[i,56:75],I[i,56:75],NI[i,56:75],Sv[i,56:75],Lv[i,56:75],Rv[i,56:75])
+      psize75plus[i]<-sum(S[i,76:Mnage],L[i,76:Mnage],R[i,76:Mnage],I[i,76:Mnage],NI[i,76:Mnage],Sv[i,76:Mnage],Lv[i,76:Mnage],Rv[i,76:Mnage])
 
 
 
@@ -540,6 +544,10 @@ print("done start year")
         psize60plus[i]<-sum(S[i,61:Mnage],L[i,61:Mnage],R[i,61:Mnage],I[i,61:Mnage],NI[i,61:Mnage],Sv[i,61:Mnage],Lv[i,61:Mnage],Rv[i,61:Mnage])
         psize55plus[i]<-sum(S[i,56:Mnage],L[i,56:Mnage],R[i,56:Mnage],I[i,56:Mnage],NI[i,56:Mnage],Sv[i,56:Mnage],Lv[i,56:Mnage],Rv[i,56:Mnage])
         psize55minus[i]<-sum(S[i,1:55],L[i,1:55],R[i,1:55],I[i,1:55],NI[i,1:55],Sv[i,1:55],Lv[i,1:55],Rv[i,1:55])
+        psize5574[i]<-sum(S[i,56:75],L[i,56:75],R[i,56:75],I[i,56:75],NI[i,56:75],Sv[i,56:75],Lv[i,56:75],Rv[i,56:75])
+        psize75plus[i]<-sum(S[i,76:Mnage],L[i,76:Mnage],R[i,76:Mnage],I[i,76:Mnage],NI[i,76:Mnage],Sv[i,76:Mnage],Lv[i,76:Mnage],Rv[i,76:Mnage])
+        
+        
         
         #ages needed to fit prev of infection
         psize0509[i]<-sum(S[i,6:10],L[i,6:10],R[i,6:10],I[i,6:10],NI[i,6:10],Sv[i,6:10],Lv[i,6:10],Rv[i,6:10])
@@ -621,6 +629,9 @@ print("done start year")
           PSIZEy[(k-year1+1),17]<-mean(psize5059[i1:i2])
           PSIZEy[(k-year1+1),18]<-mean(psize6069[i1:i2])
           PSIZEy[(k-year1+1),19]<-mean(psize70plus[i1:i2])
+          PSIZEy[(k-year1+1),20]<-mean(psize5574[i1:i2])
+          PSIZEy[(k-year1+1),21]<-mean(psize75plus[i1:i2])
+          
           
           print("k2")
           
@@ -708,6 +719,10 @@ print("done start year")
           TBPI[(k-year1+1),12]<-100*(((sum(L[i1,51:60])/psize5059[i1])+(sum(L[i2,51:60])/psize5059[i2]))/2)
           TBPI[(k-year1+1),13]<-100*(((sum(L[i1,61:70])/psize6069[i1])+(sum(L[i2,61:70])/psize6069[i2]))/2)
           TBPI[(k-year1+1),14]<-100*(((sum(L[i1,71:Mnage])/psize70plus[i1])+(sum(L[i2,71:Mnage])/psize70plus[i2]))/2)
+          TBPI[(k-year1+1),15]<-100*(((sum(L[i1,66:75])/(psize5574[i1]-psize5564[i1]))+(sum(L[i2,66:75])/(psize5574[i1]-psize5564[i1])))/2)
+          TBPI[(k-year1+1),16]<-100*(((sum(L[i1,76:Mnage])/psize75plus[i1])+(sum(L[i2,76:Mnage])/psize75plus[i2]))/2)
+
+
 
 
 
@@ -887,6 +902,10 @@ assign('d',d,envir=.GlobalEnv);
   assign('psize5059',psize5059,envir=.GlobalEnv)
   assign('psize6069',psize6069,envir=.GlobalEnv)
   assign('psize70plus',psize70plus,envir=.GlobalEnv)
+  assign('psize5574',psize5574,envir=.GlobalEnv)
+  assign('psize75plus',psize75plus,envir=.GlobalEnv)
+
+
   assign('TBI',TBI,envir=.GlobalEnv);assign('TBN',TBN,envir=.GlobalEnv);assign('TBM',TBM,envir=.GlobalEnv);assign('TBRx',TBRx,envir=.GlobalEnv);assign('VX',VX,envir=.GlobalEnv);
   assign('TBP',TBP,envir=.GlobalEnv);assign('TBPb',TBPb,envir=.GlobalEnv)
   assign('TBPI',TBPI,envir=.GlobalEnv);assign('PSIZEy',PSIZEy,envir=.GlobalEnv);
@@ -951,8 +970,8 @@ print(cumulout)
   colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+", "55+", "<55")
   colnames(TBP)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+")
   colnames(TBPb)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+")
-  colnames(TBPI)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+")
-  colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+", "55+","5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+")
+  colnames(TBPI)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+","6574", "75+")
+  colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+", "55+","5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+", "55-74", "75+")
   
   ## Actual Output required (collected as progressed with model)
   # need to update this. what does Ana do???
@@ -965,14 +984,14 @@ print(cumulout)
            TBP[,1],TBP[,2],TBP[,3], TBP[,4], TBP[,5], TBP[,6],TBP[,7], 
            TBPb[,1],TBPb[,2],TBPb[,3], TBPb[,4], TBPb[,5], TBPb[,6],TBPb[,7],
            TBPI[,1],TBPI[,2],TBPI[,3], TBPI[,4], TBPI[,5],  TBPI[,6], TBPI[,7],TBPI[,8],TBPI[,9], TBPI[,10], TBPI[,11],  TBPI[,12], TBPI[,13], TBPI[,14],
-           PSIZEy[,1],PSIZEy[,2], PSIZEy[,3], PSIZEy[,4], PSIZEy[,5], PSIZEy[,6], PSIZEy[,7], PSIZEy[,8], PSIZEy[,9], PSIZEy[,10], PSIZEy[,11], PSIZEy[,12], PSIZEy[,13], PSIZEy[,14], PSIZEy[,15], PSIZEy[,16], PSIZEy[,17], PSIZEy[,18], PSIZEy[,19])
+           PSIZEy[,1],PSIZEy[,2], PSIZEy[,3], PSIZEy[,4], PSIZEy[,5], PSIZEy[,6], PSIZEy[,7], PSIZEy[,8], PSIZEy[,9], PSIZEy[,10], PSIZEy[,11], PSIZEy[,12], PSIZEy[,13], PSIZEy[,14], PSIZEy[,15], PSIZEy[,16], PSIZEy[,17], PSIZEy[,18], PSIZEy[,19],PSIZEy[,20], PSIZEy[,21])
   colnames(X)<-c("PSIZE","S","Births","I","NI","L","R","new_I","new_NI","new_I_react","new_NI_react", "Sv","Lv","Rv",
                  "TBItot","TBI0-14","TBI15-54","TBI55-64","TBI65+","TBI55+","TBI<55",
                  "TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBN55+","TBN<55",
                  "TBMtot","TBM0-14", "TBM15-54", "TBM55-64", "TBM65+", "TBM15-59", "TBM60+","TBM55+","TBM<55",
                  "TBPtot","TBP0-14", "TBP15-29", "TBP30-44", "TBP45-59", "TBP60+", "TBP55+","TBPbtot","TBPb0-14", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBPb55+", 
                  "TBPItot","TBPI0-14", "TBPI15-54", "TBPI55-64", "TBPI65+", "TBPI55+", "TBPI5-9", "TBPI10-19", "TBPI20-29", "TBPI30-39", "TBPI40-49", "TBPI50-59", "TBPI60-69", "TBPI70+",
-                 "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+", "YearPsize55+", "YearPsize5-9", "YearPsize10-19", "YearPsize20-29", "YearPsize30-39", "YearPsize40-49", "YearPsize50-59", "YearPsize60-69", "YearPsize70+")
+                 "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+", "YearPsize55+", "YearPsize5-9", "YearPsize10-19", "YearPsize20-29", "YearPsize30-39", "YearPsize40-49", "YearPsize50-59", "YearPsize60-69", "YearPsize70+","YearPsize55-74", "YearPsize75+")
   print("X")
 #X<-data.frame(X)
   # To show
