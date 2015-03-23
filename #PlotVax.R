@@ -83,6 +83,55 @@ plot.new()
 legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="orange")
 
 
+#TBItot plot vxtype5 (adult)
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),15], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="Total Incidence adult pre-exp vacc",type='l',col='orange')
+points(2010,incidence2010[1])
+segments(2010,incidence2010l[1],2010,incidence2010u[1])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[20]+100):(y1[20]+150),15], col='orange',lty=2)
+lines(seq(2000,2050),dfvx[(y1[21]+100):(y1[21]+150),15], col='orange',lty=3)
+lines(seq(2000,2050),dfvx[(y1[22]+100):(y1[22]+150),15], col='orange',lty=4)
+lines(seq(2000,2050),dfvx[(y1[23]+100):(y1[23]+150),15], col='orange',lty=5)
+lines(seq(2000,2050),dfvx[(y1[24]+100):(y1[24]+150),15], col='orange',lty=6)
+lines(seq(2000,2050),dfvx[(y1[25]+100):(y1[25]+150),15], col='orange',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="orange")
+
+#TBItot plot vxtype6 (adult)
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),15], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="Total Incidence adult mixed effects vacc",type='l',col='orange')
+points(2010,incidence2010[1])
+segments(2010,incidence2010l[1],2010,incidence2010u[1])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[26]+100):(y1[26]+150),15], col='orange',lty=2)
+lines(seq(2000,2050),dfvx[(y1[27]+100):(y1[27]+150),15], col='orange',lty=3)
+lines(seq(2000,2050),dfvx[(y1[28]+100):(y1[28]+150),15], col='orange',lty=4)
+lines(seq(2000,2050),dfvx[(y1[29]+100):(y1[29]+150),15], col='orange',lty=5)
+lines(seq(2000,2050),dfvx[(y1[30]+100):(y1[30]+150),15], col='orange',lty=6)
+lines(seq(2000,2050),dfvx[(y1[31]+100):(y1[31]+150),15], col='orange',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="orange")
+
+
+#TBItot plot vxtype7 (adult)
+#baseline
+plot(seq(2000,2050),dfvx[(y1[1]+100):(y1[1]+150),15], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),main="Total Incidence adult latency vacc",type='l',col='orange')
+points(2010,incidence2010[1])
+segments(2010,incidence2010l[1],2010,incidence2010u[1])
+#vx2 40ve,30cov
+lines(seq(2000,2050),dfvx[(y1[32]+100):(y1[32]+150),15], col='orange',lty=2)
+lines(seq(2000,2050),dfvx[(y1[33]+100):(y1[33]+150),15], col='orange',lty=3)
+lines(seq(2000,2050),dfvx[(y1[34]+100):(y1[34]+150),15], col='orange',lty=4)
+lines(seq(2000,2050),dfvx[(y1[35]+100):(y1[35]+150),15], col='orange',lty=5)
+lines(seq(2000,2050),dfvx[(y1[36]+100):(y1[36]+150),15], col='orange',lty=6)
+lines(seq(2000,2050),dfvx[(y1[37]+100):(y1[37]+150),15], col='orange',lty=6, lwd=2)
+plot.new()
+legend("right",c("Baseline","40%VE, 30%coverage","40%VE, 70%coverage","60%VE, 30%coverage","60%VE, 70%coverage","80%VE, 30%coverage","80%VE, 70%coverage"), lty=c(1,2,3,4,5,6,6),lwd=c(1,1,1,1,1,1,2),col="orange")
+
+
+
+
 
 #TBI014 plot vxtype2
 #baseline
@@ -597,31 +646,47 @@ lines(seq(2000,2050),dfvx[(y1[13]+100):(y1[13]+150),32], col='green',lty=6, lwd=
 # 
 
 ## barcharts for reduction in disease by age and overall
+## used excel in report!
+
+plots<-"/Users/Rebecca/Vaccine_china/Plots"
+setwd(plots)
 
 #calc the difference between baseline and 2050 result for each vaccine, and calc percentage reduction. y1 is minus 1 to get rid of the baseline number
-pcrednames=c("30%cov, 40%VE", "30%cov, 60%VE","30%cov, 80%VE","70%cov, 40%VE","70%cov, 60%VE","70%cov, 80%VE","30%cov, 40%VE", "30%cov, 60%VE","30%cov, 80%VE","70%cov, 40%VE","70%cov, 60%VE","70%cov, 80%VE")
-pcredrow=c("All","0-14years","15-54years","55-64years","≥65years")
-pcredrowM=c("All","0-14years","15-59years","≥60years")
+pcrednames=c("30%cov, 40%VE", "30%cov, 60%VE","30%cov, 80%VE","70%cov, 40%VE","70%cov, 60%VE","70%cov, 80%VE","30%cov, 40%VE", "30%cov, 60%VE","30%cov, 80%VE","70%cov, 40%VE","70%cov, 60%VE","70%cov, 80%VE", "30%cov, 40%VE", "30%cov, 60%VE","30%cov, 80%VE","70%cov, 40%VE","70%cov, 60%VE","70%cov, 80%VE","30%cov, 40%VE", "30%cov, 60%VE","30%cov, 80%VE","70%cov, 40%VE","70%cov, 60%VE","70%cov, 80%VE","30%cov, 40%VE", "30%cov, 60%VE","30%cov, 80%VE","70%cov, 40%VE","70%cov, 60%VE","70%cov, 80%VE","30%cov, 40%VE", "30%cov, 60%VE","30%cov, 80%VE","70%cov, 40%VE","70%cov, 60%VE","70%cov, 80%VE")
+pcredrow=c("All","0-14years","15-54years","55-64years","≥65years", "55+ years","<55 years")
+#pcredrowM=c("All","0-14years","15-59years","≥60years")
 agecols<-c("black","red","blue","purple","green")
 pcreduI[1,]<-100*((dfvx[151,15]-dfvx[(y1[-1]+150),15]))/(dfvx[151,15])
 pcreduI[2,]<-100*((dfvx[151,16]-dfvx[(y1[-1]+150),16]))/(dfvx[151,16])
 pcreduI[3,]<-100*((dfvx[151,17]-dfvx[(y1[-1]+150),17]))/(dfvx[151,17])
 pcreduI[4,]<-100*((dfvx[151,18]-dfvx[(y1[-1]+150),18]))/(dfvx[151,18])
 pcreduI[5,]<-100*((dfvx[151,19]-dfvx[(y1[-1]+150),19]))/(dfvx[151,19])
-colnames(pcreduI)<-pcrednames
-rownames(pcreduI)<-prcredrow
+pcreduI[6,]<-100*((dfvx[151,20]-dfvx[(y1[-1]+150),20]))/(dfvx[151,20])
+pcreduI[7,]<-100*((dfvx[151,21]-dfvx[(y1[-1]+150),21]))/(dfvx[151,21])
 
+colnames(pcreduI)<-pcrednames
+rownames(pcreduI)<-pcredrow
+
+###chk numberd
 pcreduM[1,]<-100*((dfvx[151,29]-dfvx[(y1[-1]+150),29]))/(dfvx[151,29])
 pcreduM[2,]<-100*((dfvx[151,30]-dfvx[(y1[-1]+150),30]))/(dfvx[151,30])
 pcreduM[3,]<-100*((dfvx[151,31]-dfvx[(y1[-1]+150),31]))/(dfvx[151,31])
 pcreduM[4,]<-100*((dfvx[151,32]-dfvx[(y1[-1]+150),32]))/(dfvx[151,32])
+pcreduM[5,]<-100*((dfvx[151,33]-dfvx[(y1[-1]+150),33]))/(dfvx[151,33])
+pcreduM[6,]<-100*((dfvx[151,36]-dfvx[(y1[-1]+150),36]))/(dfvx[151,36])
+pcreduM[7,]<-100*((dfvx[151,37]-dfvx[(y1[-1]+150),37]))/(dfvx[151,37])
+
 colnames(pcreduM)<-pcrednames
-rownames(pcreduM)<-prcredrowM
+rownames(pcreduM)<-pcredrow
 
 write.table(pcreduI,'2050_reduction_incidence.csv',sep=",",row.names=FALSE)
 write.table(pcreduM,'2050_reduction_mortality.csv',sep=",",row.names=FALSE)
 
-#plots
+
+# #plots
+# par(mfcol=c(1,1))
+# barplot(pcreduI[,1:6], col=agecols, ylim=c(0,50), beside=TRUE, legend.text=TRUE)
+# barplot(pcreduI[,7:12], legend.text=TRUE, col=agecols, beside=TRUE)
 par(mfcol=c(1,1))
-barplot(pcreduI[,1:6], col=agecols, ylim=c(0,50), beside=TRUE, legend.text=TRUE, args.legend(legend=pcredrow,fill=agecols))
-barplot(pcreduI[,7:12], legend.text=TRUE, col=agecols, beside=TRUE)
+vaxname<-c("pre-elderly","latent-elderly","mixed-elderly","pre-ado","latent-ado","mixed-ado")
+barplot(pcreduI[1,(seq(6,36,6))], space=0.5, names.arg=(vaxname), col=c(3,3,3,4,4,4), ylim=c(0,30), xlab='Vaccine type', ylab='% reduction in incidence rate in 2050 vs baseline', axis.lty=1)
