@@ -92,8 +92,8 @@ if (yrintro < yearend){
       #elderly: dV2 - vaccine immunosenescent waning of 5% per year throughout duration of protection and normal distribution around 20 yrs (s.d. 2yrs) for normal waning
       #ado/adult: dv4 - vaccine waning gaussian throughout duration of protection peaking at 20yrs
       #if (any((startyr[c(1:length(startyr))])==i)){  
-        for (n in 1:26){
-        if (i==startyr[n]) {k<-n
+        for (nnn in 1:26){
+        if (i==startyr[nnn]) {k<-nnn
         print(k)
         dV2[i,]<-oldwane[k,]
         dV4[i,]<-yngwane[k,]
@@ -132,11 +132,11 @@ if (yrintro < yearend){
 # Depending on type, theta is theta# (coverage) times efficacy, d is dv#
 #vacc1=kids
 #vacc2=elderly pre-infection
-#vacc3=elderly mixed effects (pre or post infection, not active)
-#vacc4=elderly latent only
+#vacc3=elderly latent only
+#vacc4=elderly mixed effects (pre or post infection, not active)
 #vacc5=ado/adult pre-infection
-#vacc6=ado/adult mixed effects (pre or post infection, not active)
-#vacc7=ado/adult latent only
+#vacc6=ado/adult latent only
+#vacc7=ado/adult mixed effects (pre or post infection, not active)
 
 
 
@@ -155,17 +155,17 @@ if (vaccine == 1){
   #print(c('sumtheta',sum(theta)))
 } else if (vaccine == 3){
   theta<-thetaV2*eff
-  thetaS<-theta
+  thetaS<-thetablank
   thetaL<-theta
   thetaR<-theta
   d<-dV2
 } else if (vaccine == 4){
   theta<-thetaV2*eff
-  thetaS<-thetablank
+  thetaS<-theta
   thetaL<-theta
   thetaR<-theta
   d<-dV2 
-  #where else is this vaccine number does it need updating??
+#ado/adult
 } else if (vaccine == 5){
   theta<-thetaV4*eff
   thetaS<-theta
@@ -174,13 +174,13 @@ if (vaccine == 1){
   d<-dV4
 } else if (vaccine == 6){
   theta<-thetaV4*eff
-  thetaS<-theta
+  thetaS<-thetablank
   thetaL<-theta
   thetaR<-theta
   d<-dV4
 } else if (vaccine == 7){
   theta<-thetaV4*eff
-  thetaS<-thetablank
+  thetaS<-theta
   thetaL<-theta
   thetaR<-theta
   d<-dV4

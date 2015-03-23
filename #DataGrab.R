@@ -48,8 +48,8 @@ LifeE<- suppressWarnings(read.csv('LifeExp.csv',header=TRUE,check.names=F) )    
 dalydata<- as.matrix(drop.levels(read.csv('Dalydata_22HBC.csv',header=TRUE,check.names=F) ) )    # countries as column titles, rows = baseline coverage vx1
 #for Gao LTBI data
 #LTBI<- read.csv('gaoLTBI.csv', header=FALSE)
-oldwane<-as.matrix(read.csv('vaccwaneold.csv',header=TRUE, check.names=F, row.names=1))
-yngwane<-as.matrix(read.csv('vaccwaneyng.csv',header=TRUE, check.names=F, row.names=1))
+oldwane<-as.matrix(read.csv('vaccwaneold.csv',header=TRUE, check.names=F))
+yngwane<-as.matrix(read.csv('vaccwaneyng.csv',header=TRUE, check.names=F))
 
 # Get HIVnegative incidence for those countries of interest
 # TBIm above is for TB mortality in both HIV+ and HIV-s
