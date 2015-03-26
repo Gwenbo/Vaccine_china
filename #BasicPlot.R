@@ -179,12 +179,18 @@ plot(seq(1990,2050),TBPI[91:151,2], ylab="Prevalence of Infection (%)",xlab="yea
 plot(seq(1990,2050),TBPI[91:151,3], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='blue')
 plot(seq(1990,2050),TBPI[91:151,4], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='purple')
 plot(seq(1990,2050),TBPI[91:151,5], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='green')
-plot(seq(1990,2050),TBPI[91:151,15], ylab="Prevalence of Infection (%) 6574",xlab="year", ylim=c(0,100),type='l',col='green')
-plot(seq(1990,2050),TBPI[91:151,16], ylab="Prevalence of Infection (%) 75+",xlab="year", ylim=c(0,100),type='l',col='green')
-
-
+# plot(seq(1990,2050),TBPI[91:151,15], ylab="Prevalence of Infection (%) 6574",xlab="year", ylim=c(0,100),type='l',col='green')
+# plot(seq(1990,2050),TBPI[91:151,16], ylab="Prevalence of Infection (%) 75+",xlab="year", ylim=c(0,100),type='l',col='green')
 plot.new()
 legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 years"), lty=1,col=c("orange","red","blue","purple","green"))
+
+## Prev of Inf plot to compare with gao data
+par(mfrow=c(1,1))
+
+plot(seq(1990,2050),TBPI[91:151,1], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='orange')
+
+
+
 
 
 ##population plot
@@ -260,4 +266,16 @@ legend("center",c("New Infection","Reactivation","Overall","0-14 years","15-54 y
 # plot.new()
 # legend("center",c("New Infection","Reactivation","Overall","0-14 years","15-54 years","55-64 years","≥65 years"), lty=c(5,1,1,1,1,1,1),col=c("black","black","orange","red","blue","purple","green"))
 # 
+
+#### ARI ###
+
+par(mfrow=c(2,2))
+plot(seq(1990,2050),ARI[91:151,1], ylab="ARI (%)",xlab="Year", ylim=c(0,2),type='l',col='orange')
+plot(seq(1990,2050),ARI[91:151,2], ylab="ARI 0-14yr (%)",xlab="Year", ylim=c(0,2),type='l',col='red')
+plot(seq(1990,2050),ARI[91:151,3], ylab="ARI 15-54yr (%)",xlab="Year", ylim=c(0,2),type='l',col='blue')
+plot(seq(1990,2050),ARI[91:151,4], ylab="ARI 55+yr (%)",xlab="Year", ylim=c(0,2),type='l',col='green')
+
+
+
+
 

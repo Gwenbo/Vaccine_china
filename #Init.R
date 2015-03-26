@@ -28,6 +28,7 @@ new_actv<-matrix(0,steps,Mnage)
 new_actv_react<-matrix(0,steps,Mnage)
 new_actv_inf<-matrix(0,steps,Mnage)
 new_actv_chk<-matrix(0,steps,Mnage)
+num_vac<-matrix(0,steps,Mnage)
 
 
 # Prevelance of HIV for checking
@@ -172,6 +173,9 @@ TBRi2<-matrix(0,steps,6);
 TBInew<-matrix(0,steps,6);
 TBProp<-matrix(0,steps,4);
 TBN<-matrix(0,steps,7)
+ARI<-matrix(0,steps,4)
+TBAc<-matrix(0,(yearend-year1+1),1)
+NV<-matrix(0,(yearend-year1+1),1)
 
 colnames(TBI)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+", "<55")
 colnames(TBN)<-c("All ages","0-14", "15-54", "55-64", "65+","55+", "<55")

@@ -327,6 +327,10 @@ if (k==2010){print(CDR)}
       #LvH2 = LvH[i,] - LvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*LH[i,]
       #RvH2 = RvH[i,] - RvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*RH[i,]
       
+      ##calculate the number just vaccinated before the S gets replaced by S2 etc
+      num_vac[i,] = Sv[i,]*d[i,]*thetaS[i,] + thetaS[i,]*S[i,] + Lv[i,]*d[i,]*thetaL[i,] + thetaL[i,]*L[i,] + Rv[i,]*d[i,]*thetaR[i,] + thetaR[i,]*R[i,]
+
+      #replace S etc with the new number post-vaccination campaign
       S[i,]<-S2;L[i,]<-L2;R[i,]<-R2;       #SH[i,]<-SH2;LH[i,]<-LH2;RH[i,]<-RH2;
       Sv[i,]<-Sv2;Lv[i,]<-Lv2;Rv[i,]<-Rv2; #SvH[i,]<-SvH2;LvH[i,]<-LvH2;RvH[i,]<-RvH2;
       
@@ -518,6 +522,9 @@ print("done start year")
         #LvH2 = LvH[i,] - LvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*LH[i,]
         #RvH2 = RvH[i,] - RvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*RH[i,]
         
+        ##calculate the number just vaccinated before the S gets replaced by S2 etc
+        num_vac[i,] = Sv[i,]*d[i,]*thetaS[i,] + thetaS[i,]*S[i,] + Lv[i,]*d[i,]*thetaL[i,] + thetaL[i,]*L[i,] + Rv[i,]*d[i,]*thetaR[i,] + thetaR[i,]*R[i,]
+        
         S[i,]<-S2;L[i,]<-L2;R[i,]<-R2;       #SH[i,]<-SH2;LH[i,]<-LH2;RH[i,]<-RH2;
         Sv[i,]<-Sv2;Lv[i,]<-Lv2;Rv[i,]<-Rv2; #SvH[i,]<-SvH2;LvH[i,]<-LvH2;RvH[i,]<-RvH2;
         
@@ -579,6 +586,7 @@ print("done start year")
         #need to set up matrix for psizevacc to be recorded in to**
         #psizevacc[i]<-sum(Sv[i,],Lv[i,],Rv[i,])
         #nmbvacc<-psizevacc[i]-psizevacc[i-1]
+        
         
         
         ## Death markers
@@ -781,7 +789,15 @@ print("done start year")
           TBInew[(k-year1+1),4]<-sum(new_infect[i1:i2,56:65])
           TBInew[(k-year1+1),5]<-sum(new_infect[i1:i2,66:Mnage])
           TBInew[(k-year1+1),6]<-sum(new_infect[i1:i2,56:Mnage])
-          
+
+          ##(9b) ARI - annual risk of infection
+          ARI[(k-year1+1),1]<-(sum(new_infect[i1:i2,]))/mean(psize[i1:i2])*100
+          ARI[(k-year1+1),2]<-(sum(new_infect[i1:i2,1:15]))/mean(psize014[i1:i2])*100
+          ARI[(k-year1+1),3]<-(sum(new_infect[i1:i2,16:55]))/mean(psize1554[i1:i2])*100
+          ARI[(k-year1+1),4]<-(sum(new_infect[i1:i2,56:Mnage]))/mean(psize55plus[i1:i2])*100
+
+
+
           ## (10) proortion of prevalent cases by age
           ##needs fixing!
           TBProp[(k-year1+1),1]<-sum(I[i1:i2,1:15])/sum(I[i1:i2])
@@ -793,8 +809,21 @@ print("done start year")
           #I1990[1,]<-sum(new_infect[181:182,])
           #I2020[2,]<-sum(new_infect[241:242,])
           I2050[1,]<-sum(new_infect[301:302,])
-          
-          #av incidence rate in <55 and >55 for 2025-2050 for data check
+print("pre-actv")
+
+
+          ###(12) New active cases per year
+          TBAc[(k-year1+1),1]<-sum(new_actv[i1:i2,])
+
+print("pre-vac")
+          ##(13) number receiving vaccine
+          NV[(k-year1+1),1]<-sum(num_vac[i1:i2,])
+print("post-vac")
+
+
+
+
+#           #av incidence rate in <55 and >55 for 2025-2050 for data check
           TBIPGyng<-(sum(new_I_noconv[251:302,1:55],new_NI[251:302,1:55]))/26
           TBIPGold<-(sum(new_I_noconv[251:302,56:Mnage],new_NI[251:302,56:Mnage]))/26
           PsizePGyng<-mean(psize55minus[251:302])
@@ -802,7 +831,7 @@ print("done start year")
           PGyng<-100000*TBIPGyng/PsizePGyng
           PGold<-100000*TBIPGold/PsizePGold
 
-          #to be able to do NNV by yr
+#           to be able to do NNV by yr
           if (k>=2025) {
           vaccgiveyr[,(k-2025+1)]<-sum(VX[i1:i2,1])
           totmortyr[(k-2025+1),1]<-sum(TBDeaths[251:i,])
@@ -874,10 +903,10 @@ print("done start year")
   ## Outputs - in R, allows output to be seen without expressly wanting it 
   assign('S',S,envir = .GlobalEnv);assign('L',L,envir = .GlobalEnv);assign('I',I,envir = .GlobalEnv);assign('NI',NI,envir = .GlobalEnv);assign('R',R,envir = .GlobalEnv);assign('new_I',new_I,envir = .GlobalEnv);assign('new_I_noconv',new_I_noconv,envir = .GlobalEnv);assign('new_NI',new_NI,envir = .GlobalEnv);assign('new_notif',new_notif,envir = .GlobalEnv)
   assign('NBirths',BIRTHS,envir=.GlobalEnv);  assign('brate',brate,envir=.GlobalEnv)  
-#assign('SH',SH,envir = .GlobalEnv);assign('LH',LH,envir = .GlobalEnv);#assign('IH',IH,envir = .GlobalEnv);assign('NIH',NIH,envir = .GlobalEnv);assign('RH',RH,envir = .GlobalEnv);assign('new_IH',new_IH,envir = .GlobalEnv);assign('new_NIH',new_NIH,envir = .GlobalEnv)
+  #assign('SH',SH,envir = .GlobalEnv);assign('LH',LH,envir = .GlobalEnv);#assign('IH',IH,envir = .GlobalEnv);assign('NIH',NIH,envir = .GlobalEnv);assign('RH',RH,envir = .GlobalEnv);assign('new_IH',new_IH,envir = .GlobalEnv);assign('new_NIH',new_NIH,envir = .GlobalEnv)
   assign('Sv',Sv,envir = .GlobalEnv);assign('Lv',Lv,envir = .GlobalEnv);assign('Rv',Rv,envir = .GlobalEnv);#assign('SvH',SvH,envir = .GlobalEnv);assign('LvH',LvH,envir = .GlobalEnv);assign('RvH',RvH,envir = .GlobalEnv);
   assign('lambda',lambda,envir=.GlobalEnv);assign('thetaS',thetaS,envir=.GlobalEnv);assign('thetaL',thetaL,envir=.GlobalEnv);assign('thetaR',thetaR,envir=.GlobalEnv);
-assign('d',d,envir=.GlobalEnv);
+  assign('d',d,envir=.GlobalEnv);
   assign('TBDeaths',TBDeaths,envir=.GlobalEnv);#assign('TBDeathsH',TBDeathsH,envir=.GlobalEnv);
   #assign('AllDeathsH',AllDeathsH,envir=.GlobalEnv);
   assign('ADeaths',ADeaths,envir=.GlobalEnv);#assign('ADeathsH',ADeathsH,envir=.GlobalEnv);
@@ -912,23 +941,22 @@ assign('d',d,envir=.GlobalEnv);
   assign('TBRa',TBRa,envir=.GlobalEnv);assign('TBRi',TBRi,envir=.GlobalEnv); 
   assign('TBRa2',TBRa2,envir=.GlobalEnv);assign('TBRi2',TBRi2,envir=.GlobalEnv);
   assign('TBInew',TBInew,envir=.GlobalEnv);assign('PGyng',PGyng,envir=.GlobalEnv);assign('PGold',PGold,envir=.GlobalEnv);
+  assign('ARI',ARI,envir=.GlobalEnv);assign('TBAc',TBAc,envir=.GlobalEnv);assign('num_vac',num_vac,envir=.GlobalEnv); assign('NV',NV,envir=.GlobalEnv);
   assign('CDR',CDR,envir=.GlobalEnv);
   #assign('CDRout',CDRout,envir=.GlobalEnv);
   assign('TBProp',TBProp,envir=.GlobalEnv);
   assign('new_actv',new_actv, envir=.GlobalEnv);
-#   assign('I1990',I1990,envir=.GlobalEnv);
-#   assign('I2020',I2020,envir=.GlobalEnv);
+  #   assign('I1990',I1990,envir=.GlobalEnv);
+  #   assign('I2020',I2020,envir=.GlobalEnv);
   assign('I2050',I2050,envir=.GlobalEnv);
 
-
-
-assign('Imatrix',Imatrix,envir=.GlobalEnv);
-
-#assign('ui',ui,envir=.GlobalEnv);
-#assign('uni',uni,envir=.GlobalEnv);
-#assign('n',n,envir=.GlobalEnv);
-
-#assign('Econout',EconOut,envir=.GlobalEnv);
+  assign('Imatrix',Imatrix,envir=.GlobalEnv);
+  
+  #assign('ui',ui,envir=.GlobalEnv);
+  #assign('uni',uni,envir=.GlobalEnv);
+  #assign('n',n,envir=.GlobalEnv);
+  
+  #assign('Econout',EconOut,envir=.GlobalEnv);
   #assign('Out',Out,envir=.GlobalEnv);
   assign('vaccgive',vaccgive,envir=.GlobalEnv);
   assign('vaccgiveyr',vaccgiveyr,envir=.GlobalEnv);
@@ -1010,7 +1038,7 @@ print(cumulout)
   
   # If want to see plots 
   #if (Plot==1){source("#Plot.R")}
-  
+ 
   # What outputting
   return(X)
 }

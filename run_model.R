@@ -218,6 +218,7 @@ vaxgive<-c()
 vaxgiveyr<-c()
 cumulvxyrM<-c()
 cumulvxyrI<-c()
+NumV<-c()
 
 # Run through all fits
 for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example 
@@ -239,6 +240,8 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
   # save in big df for plot - original one
   setwd(home)
   source('#BasicPlot.R')
+  
+  new_active<-cbind(TBAc,0,0)
   
   eee<-cbind(Xn,0,0); colnames(eee)<-c(colnames(Xn),"type","vxint")
    dfvx<-rbind(dfvx,eee)
@@ -296,6 +299,12 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
           cumulvxyrM<-as.matrix(cumulvxyrM)
           cumulvxyrI<-cbind(cumulvxyrI,cumuloutyr[,3])
           cumulvxyrI<-as.matrix(cumulvxyrI)
+
+
+          new_active<-cbind(new_active,TBAc,nn,count)
+          NumV<-cbind(NumV,NV,nn,count)
+
+
       }}}}
 assign('dfvx',dfvx,envir=.GlobalEnv)
 assign('vaxgive',vaxgive,envir=.GlobalEnv)
@@ -303,11 +312,29 @@ write.table(dfvx,'vaccine_results.csv',sep=",",row.names=FALSE)
 write.table(cumulvx,'cumulative_vax_results.csv',sep=",",row.names=FALSE)
 write.table(vaxgive,'vaccines_given.csv',sep=",",row.names=FALSE)
 write.table(vaxgiveyr,'vaccines_given_annual.csv',sep=",",row.names=FALSE)
+
+write.table(new_active,'new_active.csv',sep=",",row.names=FALSE)
+write.table(NumV,'number_vaccinated.csv',sep=",",row.names=FALSE)
 } # end of fits
 
 setwd(home)
 source('#PlotVax.R')
 setwd(home)
+
+###cases averted ###
+
+#select appropriate active disease columns. typen -1 as not using infant scenario
+activecols<-seq(4,(((typen-1)*count*3)+1),3)
+#calc cases averted
+CAV<-matrix(0,(yearend-year1+1),((typen-1)*count))
+CAV<-new_active[,1]-new_active[,(activecols)]
+cavnames<-c("2,1","2,2","2,3","2,4","2,5","2,6","3,1","3,2","3,3","3,4","3,5","3,6","4,1","4,2","4,3","4,4","4,5","4,6","5,1","5,2","5,3","5,4","5,5","5,6","6,1","6,2","6,3","6,4","6,5","6,6","7,1","7,2","7,3","7,4","7,5","7,6")
+write.table(CAV,'annual_cases_averted.csv',sep=",",row.names=FALSE)
+
+#cal NNVc
+
+NNVc<-
+
 
 #reduction in number of cases or deaths calc by subtracting cumul cases in vaccine scenario from the cumulative number in the baseline scenario
 redu<-rbind((cumulvx[1,]-cumulvx[2,]),(cumulvx[1,]-cumulvx[3,]),(cumulvx[1,]-cumulvx[4,]),(cumulvx[1,]-cumulvx[5,]),(cumulvx[1,]-cumulvx[6,]),(cumulvx[1,]-cumulvx[7,]),(cumulvx[1,]-cumulvx[8,]),(cumulvx[1,]-cumulvx[9,]),(cumulvx[1,]-cumulvx[10,]),(cumulvx[1,]-cumulvx[11,]),(cumulvx[1,]-cumulvx[12,]),(cumulvx[1,]-cumulvx[13,]))
