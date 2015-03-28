@@ -327,9 +327,16 @@ if (k==2010){print(CDR)}
       #LvH2 = LvH[i,] - LvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*LH[i,]
       #RvH2 = RvH[i,] - RvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*RH[i,]
       
-      ##calculate the number just vaccinated before the S gets replaced by S2 etc
-      num_vac[i,] = Sv[i,]*d[i,]*thetaS[i,] + thetaS[i,]*S[i,] + Lv[i,]*d[i,]*thetaL[i,] + thetaL[i,]*L[i,] + Rv[i,]*d[i,]*thetaR[i,] + thetaR[i,]*R[i,]
+      ##calculate the number just vaccinated before the S gets replaced by S2 etc. Everyone except active cases included.
+      if (vaccine==2){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV2[i,]}
+      if (vaccine==3){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV2[i,]}
+      if (vaccine==4){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV2[i,]}
+      if (vaccine==5){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV4[i,]}
+      if (vaccine==6){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV4[i,]}
+      if (vaccine==7){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV4[i,]}
 
+
+        
       #replace S etc with the new number post-vaccination campaign
       S[i,]<-S2;L[i,]<-L2;R[i,]<-R2;       #SH[i,]<-SH2;LH[i,]<-LH2;RH[i,]<-RH2;
       Sv[i,]<-Sv2;Lv[i,]<-Lv2;Rv[i,]<-Rv2; #SvH[i,]<-SvH2;LvH[i,]<-LvH2;RvH[i,]<-RvH2;
@@ -522,8 +529,15 @@ print("done start year")
         #LvH2 = LvH[i,] - LvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*LH[i,]
         #RvH2 = RvH[i,] - RvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*RH[i,]
         
-        ##calculate the number just vaccinated before the S gets replaced by S2 etc
-        num_vac[i,] = Sv[i,]*d[i,]*thetaS[i,] + thetaS[i,]*S[i,] + Lv[i,]*d[i,]*thetaL[i,] + thetaL[i,]*L[i,] + Rv[i,]*d[i,]*thetaR[i,] + thetaR[i,]*R[i,]
+        ##calculate the number just vaccinated before the S gets replaced by S2 etc. Everyone except active cases included.
+        if (vaccine==2){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV2[i,]}
+        if (vaccine==3){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV2[i,]}
+        if (vaccine==4){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV2[i,]}
+        if (vaccine==5){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV4[i,]}
+        if (vaccine==6){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV4[i,]}
+        if (vaccine==7){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV4[i,]}
+        
+        
         
         S[i,]<-S2;L[i,]<-L2;R[i,]<-R2;       #SH[i,]<-SH2;LH[i,]<-LH2;RH[i,]<-RH2;
         Sv[i,]<-Sv2;Lv[i,]<-Lv2;Rv[i,]<-Rv2; #SvH[i,]<-SvH2;LvH[i,]<-LvH2;RvH[i,]<-RvH2;
@@ -809,16 +823,13 @@ print("done start year")
           #I1990[1,]<-sum(new_infect[181:182,])
           #I2020[2,]<-sum(new_infect[241:242,])
           I2050[1,]<-sum(new_infect[301:302,])
-print("pre-actv")
 
-
-          ###(12) New active cases per year
+          ###(12) New active cases and TB deaths per year
           TBAc[(k-year1+1),1]<-sum(new_actv[i1:i2,])
+          TBMo[(k-year1+1),1]<-sum(TBDeaths[i1:i2,])
 
-print("pre-vac")
           ##(13) number receiving vaccine
           NV[(k-year1+1),1]<-sum(num_vac[i1:i2,])
-print("post-vac")
 
 
 
@@ -941,7 +952,7 @@ print("post-vac")
   assign('TBRa',TBRa,envir=.GlobalEnv);assign('TBRi',TBRi,envir=.GlobalEnv); 
   assign('TBRa2',TBRa2,envir=.GlobalEnv);assign('TBRi2',TBRi2,envir=.GlobalEnv);
   assign('TBInew',TBInew,envir=.GlobalEnv);assign('PGyng',PGyng,envir=.GlobalEnv);assign('PGold',PGold,envir=.GlobalEnv);
-  assign('ARI',ARI,envir=.GlobalEnv);assign('TBAc',TBAc,envir=.GlobalEnv);assign('num_vac',num_vac,envir=.GlobalEnv); assign('NV',NV,envir=.GlobalEnv);
+  assign('ARI',ARI,envir=.GlobalEnv);assign('TBAc',TBAc,envir=.GlobalEnv);assign('TBMo',TBMo,envir=.GlobalEnv);assign('num_vac',num_vac,envir=.GlobalEnv); assign('NV',NV,envir=.GlobalEnv);
   assign('CDR',CDR,envir=.GlobalEnv);
   #assign('CDRout',CDRout,envir=.GlobalEnv);
   assign('TBProp',TBProp,envir=.GlobalEnv);
