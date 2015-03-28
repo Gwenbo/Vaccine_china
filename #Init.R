@@ -175,6 +175,7 @@ TBProp<-matrix(0,steps,4);
 TBN<-matrix(0,steps,7)
 ARI<-matrix(0,steps,4)
 TBAc<-matrix(0,(yearend-year1+1),1)
+TBMo<-matrix(0,(yearend-year1+1),1)
 NV<-matrix(0,(yearend-year1+1),1)
 
 colnames(TBI)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+", "<55")
