@@ -242,6 +242,7 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
   source('#BasicPlot.R')
   
   new_active<-cbind(TBAc,0,0)
+  new_mort<-cbind(TBMo,0,0)
   
   eee<-cbind(Xn,0,0); colnames(eee)<-c(colnames(Xn),"type","vxint")
    dfvx<-rbind(dfvx,eee)
@@ -278,42 +279,20 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
           eee<-cbind(X,nn,count); colnames(eee)<-c(colnames(X),"type","vxint")
           dfvx<-rbind(dfvx,eee)
           dfvx<-as.matrix(dfvx)
-
-          ggg<-cbind(cumulout,nn,count); colnames(ggg)<-c(colnames(cumulout),"type","vxint")
-          #cumulative number of cases or deaths in 2050 in vaccine scenario
-          cumulvx<-rbind(cumulvx,ggg)
-          cumulvx<-as.matrix(cumulvx)
-
-          #colnames(hhh)<-c("vaxtot","vaxroutine","vaxmass","type","vxint")
-          vaccgive[4]<-nn
-          vaccgive[5]<-count
-          #total number of vaccines given (cumulative to 2050), r binding each new vaccine type
-          vaxgive<-rbind(vaxgive,vaccgive);#colnames(vaxgive)<-c("vaxtot","vaxroutine","vaxmass","type","vxint")
-          vaxgive<-as.matrix(vaxgive)
-
-          #look at yrly NNV to see if reason is higher with higher coverage is because the incidence drops so although NNV starts lower it becomes higher long term.
-          vaxgiveyr<-rbind(vaxgiveyr,vaccgiveyr[1,])
-          vaxgiveyr<-as.matrix(vaxgiveyr)
-
-          cumulvxyrM<-cbind(cumulvxyrM,cumuloutyr[,1])
-          cumulvxyrM<-as.matrix(cumulvxyrM)
-          cumulvxyrI<-cbind(cumulvxyrI,cumuloutyr[,3])
-          cumulvxyrI<-as.matrix(cumulvxyrI)
-
-
+          
+          #calcs needed for NNV
           new_active<-cbind(new_active,TBAc,nn,count)
+          new_mort<-cbind(new_mort,TBMo,nn,count)
           NumV<-cbind(NumV,NV,nn,count)
 
 
       }}}}
 assign('dfvx',dfvx,envir=.GlobalEnv)
-assign('vaxgive',vaxgive,envir=.GlobalEnv)
-write.table(dfvx,'vaccine_results.csv',sep=",",row.names=FALSE)
-write.table(cumulvx,'cumulative_vax_results.csv',sep=",",row.names=FALSE)
-write.table(vaxgive,'vaccines_given.csv',sep=",",row.names=FALSE)
-write.table(vaxgiveyr,'vaccines_given_annual.csv',sep=",",row.names=FALSE)
-
+assign('new_active',new_active,envir=.GlobalEnv)
+assign('new_mort',new_mort,envir=.GlobalEnv)
+assign('NumV',NumV,envir=.GlobalEnv)
 write.table(new_active,'new_active.csv',sep=",",row.names=FALSE)
+write.table(new_mort,'new_mort.csv',sep=",",row.names=FALSE)
 write.table(NumV,'number_vaccinated.csv',sep=",",row.names=FALSE)
 } # end of fits
 
@@ -321,19 +300,11 @@ setwd(home)
 source('#PlotVax.R')
 setwd(home)
 
-###cases averted ###
+source('#NNV.R')
+setwd(home)
 
-#select appropriate active disease columns. typen -1 as not using infant scenario
-activecols<-seq(4,(((typen-1)*count*3)+1),3)
-#calc cases averted
-CAV<-matrix(0,(yearend-year1+1),((typen-1)*count))
-CAV<-new_active[,1]-new_active[,(activecols)]
-cavnames<-c("2,1","2,2","2,3","2,4","2,5","2,6","3,1","3,2","3,3","3,4","3,5","3,6","4,1","4,2","4,3","4,4","4,5","4,6","5,1","5,2","5,3","5,4","5,5","5,6","6,1","6,2","6,3","6,4","6,5","6,6","7,1","7,2","7,3","7,4","7,5","7,6")
-write.table(CAV,'annual_cases_averted.csv',sep=",",row.names=FALSE)
 
-#cal NNVc
 
-NNVc<-
 
 
 #reduction in number of cases or deaths calc by subtracting cumul cases in vaccine scenario from the cumulative number in the baseline scenario
