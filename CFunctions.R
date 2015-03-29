@@ -353,6 +353,7 @@ if (k==2010){print(CDR)}
       psize5564[i]<-sum(S[i,56:65],L[i,56:65],R[i,56:65],I[i,56:65],NI[i,56:65],Sv[i,56:65],Lv[i,56:65],Rv[i,56:65])
       psize65plus[i]<-sum(S[i,66:Mnage],L[i,66:Mnage],R[i,66:Mnage],I[i,66:Mnage],NI[i,66:Mnage],Sv[i,66:Mnage],Lv[i,66:Mnage],Rv[i,66:Mnage])
       psize55plus[i]<-sum(S[i,56:Mnage],L[i,56:Mnage],R[i,56:Mnage],I[i,56:Mnage],NI[i,56:Mnage],Sv[i,56:Mnage],Lv[i,56:Mnage],Rv[i,56:Mnage])
+      psize55minus[i]<-sum(S[i,1:55],L[i,1:55],R[i,1:55],I[i,1:55],NI[i,1:55],Sv[i,1:55],Lv[i,1:55],Rv[i,1:55])
       psize5574[i]<-sum(S[i,56:76],L[i,56:76],R[i,56:76],I[i,56:76],NI[i,56:76],Sv[i,56:76],Lv[i,56:76],Rv[i,56:76])
 
 
