@@ -1,5 +1,6 @@
 #### NNV ####
 
+setwd("Outputs")
 
 ###cases averted ###
 
@@ -24,8 +25,15 @@ NNVc
 NNVcp<-matrix(0,1,((typen-1)*count))
 NNVcp[,1:((typen-1)*count)]<-colSums(NumV[,(numvcols)])/colSums(CAV)
 colnames(NNVcp)<-vacnames
+write.table(NNVcp,'period_NNV_case.csv',sep=",",row.names=FALSE)
 NNVcp
 
+
+doses<- colSums(NumV[,(numvcols)])
+casesav<-colSums(CAV)
+chart<-rbind(doses,casesav)
+chart
+write.table(chart,'chart.csv',sep=",",row.names=FALSE)
 
 
 
@@ -47,6 +55,7 @@ NNVd
 NNVdp<-matrix(0,1,((typen-1)*count))
 NNVdp[,1:((typen-1)*count)]<-colSums(NumV[,(numvcols)])/colSums(DAV)
 colnames(NNVdp)<-vacnames
+write.table(NNVdp,'period_NNV_death.csv',sep=",",row.names=FALSE)
 NNVdp
 
 
@@ -55,10 +64,9 @@ NNVdp
 
 
 
+##### PLOTS #####
 
-
-# plots<-"/Users/Rebecca/Vaccine_china/Plots"
-# setwd(plots)
+# setwd("Plots")
 
 ### plot NNVc 30% cov 40% VE
 par(mfcol=c(2,2))
@@ -133,5 +141,36 @@ barplot(NNVcp[1:length(NNVcp)], col=c(1,2,3,7,5,"orange",1,2,3,7,5,"orange",1,2,
 
 
 
+#### death plots
+
+par(mfcol=c(1,2))
+### plot NNVd 70% cov 80% VE
+plot(seq(2025,2050,1),NNVd[126:151,6], ylab="Annual NNV per death averted", xlab="Year", ylim=c(0,25000), main="Annual NNV per death averted by vaccine type (all 70% cov, 80%ve)", type="l",col=1)
+lines(seq(2025,2050,1), NNVd[126:151,12], lty=1, col=2)
+lines(seq(2025,2050,1), NNVd[126:151,18], lty=1, col=3)
+lines(seq(2025,2050,1), NNVd[126:151,24], lty=1, col=7)
+lines(seq(2025,2050,1), NNVd[126:151,30], lty=1, col=5)
+lines(seq(2025,2050,1), NNVd[126:151,36], lty=1, col="orange")
+plot.new()
+legend("center",c("Old_Pre","Old_Latent","Old_Mixed","Young_Pre","Young_Latent","Young_Mixed"), lty=c(1,1,1,1,1,1),col=c(1,2,3,7,5,"orange"))
 
 
+
+par(mfcol=c(1,2))
+##plot comparing VE and coverage - elderly mixed
+plot(seq(2025,2050,1),NNVd[126:151,13], ylab="Annual NNV per death averted", xlab="Year", ylim=c(0,4000), main="Annual NNV per death averted - Older adults, Mixed effect", type="l",col=1)
+lines(seq(2025,2050,1), NNVd[126:151,14], lty=1, col=2)
+lines(seq(2025,2050,1), NNVd[126:151,15], lty=1, col=3)
+lines(seq(2025,2050,1), NNVd[126:151,16], lty=1, col=7)
+lines(seq(2025,2050,1), NNVd[126:151,17], lty=1, col=5)
+lines(seq(2025,2050,1), NNVd[126:151,18], lty=1, col="orange")
+plot.new()
+legend("center",c("40%VE, 30%coverage","60%VE, 30%coverage","80%VE, 30%coverage","40%VE, 70%coverage","60%VE, 70%coverage","80%VE, 70%coverage"), lty=c(1,1,1,1,1,1),col=c(1,2,3,7,5,"orange"))
+
+
+## NNVdp plot
+par(mfcol=c(1,1))
+barplot(NNVdp[1:length(NNVdp)], col=c(1,2,3,7,5,"orange",1,2,3,7,5,"orange",1,2,3,7,5,"orange",1,2,3,7,5,"orange",1,2,3,7,5,"orange",1,2,3,7,5,"orange"))
+
+
+setwd(home)

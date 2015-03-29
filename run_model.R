@@ -291,13 +291,19 @@ assign('dfvx',dfvx,envir=.GlobalEnv)
 assign('new_active',new_active,envir=.GlobalEnv)
 assign('new_mort',new_mort,envir=.GlobalEnv)
 assign('NumV',NumV,envir=.GlobalEnv)
+setwd("Outputs")
 write.table(new_active,'new_active.csv',sep=",",row.names=FALSE)
 write.table(new_mort,'new_mort.csv',sep=",",row.names=FALSE)
 write.table(NumV,'number_vaccinated.csv',sep=",",row.names=FALSE)
+setwd(home)
 } # end of fits
 
 setwd(home)
 source('#PlotVax.R')
+setwd(home)
+
+setwd(home)
+source('#%reduction.R')
 setwd(home)
 
 source('#NNV.R')
