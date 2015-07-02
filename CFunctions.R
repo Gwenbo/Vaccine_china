@@ -32,14 +32,20 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   #identify number of years in each age category, create vectors of age-specific parameters for adults vs kids vs elderly
   chiyrs<-15
   aduyrs<-50
+  yaduyrs<-40
   eldyrs<-(Mnage-chiyrs-aduyrs)
+  voldadu<-(vadult+velderly)/2
+  noldadu<-(n+nelderly)/2
+  roldadu<-(radult+relderly)/2
+  
+  
   
   p=c((rep(pchild, l=chiyrs)),(rep(padult, l=aduyrs)),(rep(pelderly, l=eldyrs)))
   f=c((rep(fchild, l=chiyrs)),(rep(fadult, l=aduyrs)),(rep(felderly, l=eldyrs)))
   h=c((rep(hchild, l=chiyrs)),(rep(hadult, l=aduyrs)),(rep(helderly, l=eldyrs)))
-  v=c((rep(vchild, l=chiyrs)),(rep(vadult, l=aduyrs)),(rep(velderly, l=eldyrs)))
-  r=c((rep(rchild, l=chiyrs)),(rep(radult, l=aduyrs)),(rep(relderly, l=eldyrs)))
-  n=c((rep(n, l=chiyrs)),(rep(n, l=aduyrs)),(rep(nelderly, l=eldyrs)))
+  v=c((rep(vchild, l=chiyrs)),(rep(vadult, l=yaduyrs)),(rep(voldadu, l=(aduyrs-yaduyrs))), (rep(velderly, l=eldyrs)))
+  r=c((rep(rchild, l=chiyrs)),(rep(radult, l=yaduyrs)),(rep(roldadu, l=(aduyrs-yaduyrs))), (rep(relderly, l=eldyrs)))
+  n=c((rep(n, l=chiyrs)),(rep(n, l=yaduyrs)),(rep(noldadu, l=(aduyrs-yaduyrs))), (rep(nelderly, l=eldyrs)))
   print("doneeldyears")
   
   # Timesteps with inputted start end and timestep
@@ -55,7 +61,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   if(length(Fit)>3){if (rmortTB<0){ui<-rmortTB*(ui)+ui; uni<-rmortTB*(uni)+uni;
   } else {ui<-rmortTB*(1-ui)+ui; uni<-rmortTB*(1-uni)+uni}
   }
-  # u and ui use age depandent pattern and apply to existing number
+  # u and ui use age dependent pattern and apply to existing number
   
   uichild<-ui*uiscaleC
   uiadult<-ui*uiscaleA
@@ -179,15 +185,18 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 
     #CDRscales<-c((rep(CDRscale, l=chiyrs)),(rep(CDRscale, l=aduyrs)),(rep(CDRscaleE, l=eldyrs)))
  
-    if (CDRscale<0){CDRscaled<-CDRscale*(cdr[,1:(Mnage-eldyrs)])+cdr[,1:(Mnage-eldyrs)]} else {CDRscaled<-CDRscale*(1-cdr[,1:(Mnage-eldyrs)])+cdr[,1:(Mnage-eldyrs)]}
+    if (CDRscale<0){CDRscaled<-CDRscale*(cdr[,1:(chiyrs+yaduyrs)])+cdr[,1:(chiyrs+yaduyrs)]} else {CDRscaled<-CDRscale*(1-cdr[,1:(chiyrs+yaduyrs)])+cdr[,1:(chiyrs+yaduyrs)]}
 
-    if (CDRscaleE<0){CDRscaledE<-CDRscaleE*(cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]} else {CDRscaledE<-CDRscaleE[1:Mnage]*(1-cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]}
+    if (CDRscaleO<0){CDRscaledO<-CDRscaleO*(cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)])+cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)]} else {CDRscaledO<-CDRscaleO*(1-cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)])+cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)]}
 
-    CDRscaleT<-cbind(CDRscaled,CDRscaledE)
+    if (CDRscaleE<0){CDRscaledE<-CDRscaleE*(cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]} else {CDRscaledE<-CDRscaleE*(1-cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]}
+
+    CDRscaleT<-cbind(CDRscaled,CDRscaledO,CDRscaledE)
     CDR<-CDRscaleT[1+CDR_yr-1990,]
+    #CDR_av[(year1-k),1]<-sum(CDR)/101
+    if (k==2010) {CDR2010<-CDRscaleT}
+    #CDRout[k,1:Mnage]<-CDR
 
-#     CDRout[k,1:Mnage]<-CDR
-if (k==2010){print(CDR)}
     #CDRH<-CDRscale*cdrH[1+yr-2010];
     CoT<-suctt[1+CoT_yr-1994];#CoTH<-sucttH[1+yr-2010];
     #print(c(yr,'CDRH',CDRH,'CoT',CoT,'CoTH',CoTH,1+yr-2010))
@@ -235,8 +244,14 @@ if (k==2010){print(CDR)}
       #lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
       #1-exp turns rate->probability
 #       
-      # PAF_year=2050
-       #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
+      #PAF_year=2050
+      #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
+      #if (k>=PAF_year) {Imatrix[i-1,3]<-Imatno6080A[i-1]}
+      #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
+      #if (k>=PAF_year) {Imatrix[i-1,4]<-Imatno75up[i-1]}
+
+
+
       lambda[i-1,1:Mnage] <- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[i-1,1:4])/(psizematrix[i-1,1:4]))))))
                       
       print("post-start lambda")
@@ -384,16 +399,21 @@ if (k==2010){print(CDR)}
       psize75plus[i]<-sum(S[i,76:Mnage],L[i,76:Mnage],R[i,76:Mnage],I[i,76:Mnage],NI[i,76:Mnage],Sv[i,76:Mnage],Lv[i,76:Mnage],Rv[i,76:Mnage])
       psize1524[i]<-sum(S[i,16:25],L[i,16:25],R[i,16:25],I[i,16:25],NI[i,16:25],Sv[i,16:25],Lv[i,16:25],Rv[i,16:25])
       psize2554[i]<-sum(S[i,26:55],L[i,26:55],R[i,26:55],I[i,26:55],NI[i,26:55],Sv[i,26:55],Lv[i,26:55],Rv[i,26:55])
-
-
-
+      psize15plus[i]<-sum(S[i,16:Mnage],L[i,16:Mnage],R[i,16:Mnage],I[i,16:Mnage],NI[i,16:Mnage],Sv[i,16:Mnage],Lv[i,16:Mnage],Rv[i,16:Mnage])
 
 
       Imatrix[i,1]<-sum(I[i,1:6])
       Imatrix[i,2]<-sum(I[i,7:20])
       Imatrix[i,3]<-sum(I[i,21:65])
       Imatrix[i,4]<-sum(I[i,66:Mnage])
-      
+
+      Imatno6080A[i]<-sum(I[i,21:55])
+      Imatno6080B[i]<-sum(I[i,76:Mnage])
+      Imatno75up[i]<-sum(I[i,66:75])
+
+
+
+
       print ("done psize start yr")
       
       ## number vaccinated
@@ -443,7 +463,12 @@ print("done start year")
         print("pre-post lambda")
         
         #PAF_year=2050
-        # if (k>=PAF_year) {Imatrix[i-1,4]<-0}
+        #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
+        #if (k>=PAF_year) {Imatrix[i-1,3]<-Imatno6080A[i-1]}
+        #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
+        #if (k>=PAF_year) {Imatrix[i-1,4]<-Imatno75up[i-1]}
+        
+        
         lambda[i-1,1:Mnage] <- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[i-1,1:4])/(psizematrix[i-1,1:4]))))))
         
         print("post-lambda")
@@ -575,6 +600,8 @@ print("done start year")
         psize75plus[i]<-sum(S[i,76:Mnage],L[i,76:Mnage],R[i,76:Mnage],I[i,76:Mnage],NI[i,76:Mnage],Sv[i,76:Mnage],Lv[i,76:Mnage],Rv[i,76:Mnage])
         psize1524[i]<-sum(S[i,16:25],L[i,16:25],R[i,16:25],I[i,16:25],NI[i,16:25],Sv[i,16:25],Lv[i,16:25],Rv[i,16:25])
         psize2554[i]<-sum(S[i,26:55],L[i,26:55],R[i,26:55],I[i,26:55],NI[i,26:55],Sv[i,26:55],Lv[i,26:55],Rv[i,26:55])      
+        psize15plus[i]<-sum(S[i,16:Mnage],L[i,16:Mnage],R[i,16:Mnage],I[i,16:Mnage],NI[i,16:Mnage],Sv[i,16:Mnage],Lv[i,16:Mnage],Rv[i,16:Mnage])
+        
         
         #ages needed to fit prev of infection
         psize0509[i]<-sum(S[i,6:10],L[i,6:10],R[i,6:10],I[i,6:10],NI[i,6:10],Sv[i,6:10],Lv[i,6:10],Rv[i,6:10])
@@ -598,6 +625,12 @@ print("done start year")
         Imatrix[i,2]<-sum(I[i,7:20])
         Imatrix[i,3]<-sum(I[i,21:65])
         Imatrix[i,4]<-sum(I[i,66:Mnage])
+        
+        Imatno6080A[i]<-sum(I[i,21:55])
+        Imatno6080B[i]<-sum(I[i,76:Mnage])
+        Imatno75up[i]<-sum(I[i,66:75])
+        
+        
         print("imatrix post-matrix")
         
         print("done pop")
@@ -661,6 +694,8 @@ print("done start year")
           PSIZEy[(k-year1+1),21]<-mean(psize75plus[i1:i2])
           PSIZEy[(k-year1+1),22]<-mean(psize1524[i1:i2])
           PSIZEy[(k-year1+1),23]<-mean(psize2554[i1:i2])
+          PSIZEy[(k-year1+1),24]<-mean(psize15plus[i1:i2])
+          
           
           print("k2")
           
@@ -707,6 +742,8 @@ print("done start year")
           TBPb[(k-year1+1),5]<-100000*sum(I[i1:i2,46:60])/mean(psize4559[i1:i2])
           TBPb[(k-year1+1),6]<-100000*sum(I[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
           TBPb[(k-year1+1),7]<-100000*sum(I[i1:i2,56:Mnage])/mean(psize55plus[i1:i2])
+          TBPb[(k-year1+1),8]<-100000*sum(I[i1:i2,16:Mnage])/mean(psize15plus[i1:i2])
+          
           
           ## (5) TB mortality rate
           #print(c("IH",sum(new_IH[i,],new_NIH[i,]),TBI[i,2]))
@@ -720,7 +757,7 @@ print("done start year")
           TBM[(k-year1+1),8]<-100000*sum(TBDeaths[i1:i2,56:Mnage])/mean(psize55plus[i1:i2])
           TBM[(k-year1+1),9]<-100000*sum(TBDeaths[i1:i2,1:55])/mean(psize55minus[i1:i2])
           TBM[(k-year1+1),10]<-100000*sum(TBDeaths[i1:i2,16:25])/mean(psize1524[i1:i2])
-          TBM[(k-year1+1),11]<-100000*sum(TBDeaths[i1:i2,26:54])/mean(psize2554[i1:i2])
+          TBM[(k-year1+1),11]<-100000*sum(TBDeaths[i1:i2,26:55])/mean(psize2554[i1:i2])
           
           ## (6) Prevalence of latent infection - in case get data to fit to. WHAT ABOUT RECOVERDS - is ok as data excluded recovereds by excluding those with TB history from the study
 #           TBPI[(k-year1+1),1]<-100*(((sum(L[i1:i2,]))/2)/mean(psize[i1:i2]))
@@ -755,6 +792,8 @@ print("done start year")
           TBPI[(k-year1+1),14]<-100*(((sum(L[i1,71:Mnage])/psize70plus[i1])+(sum(L[i2,71:Mnage])/psize70plus[i2]))/2)
           TBPI[(k-year1+1),15]<-100*(((sum(L[i1,66:75])/(psize5574[i1]-psize5564[i1]))+(sum(L[i2,66:75])/(psize5574[i1]-psize5564[i1])))/2)
           TBPI[(k-year1+1),16]<-100*(((sum(L[i1,76:Mnage])/psize75plus[i1])+(sum(L[i2,76:Mnage])/psize75plus[i2]))/2)
+          TBPI[(k-year1+1),17]<-100*(((sum(L[i1,16:25])/psize1524[i1])+(sum(L[i2,16:25])/psize1524[i2]))/2)
+
 
 
 
@@ -833,11 +872,20 @@ print("done start year")
           
           #(11) to calc PAF - number of new infections
           #I1990[1,]<-sum(new_infect[181:182,])
-          #I2020[2,]<-sum(new_infect[241:242,])
+          #I2025[1,]<-sum(new_infect[251:252,])
+          #I2050[1,]<-sum(new_infect[301:302,])
           I2050[1,]<-sum(new_infect[301:302,])
+
 
           ###(12) New active cases and TB deaths per year
           TBAc[(k-year1+1),1]<-sum(new_actv[i1:i2,])
+
+          TBAc_age[(k-year1+1),1]<-sum(new_actv[i1:i2,1:15])
+          TBAc_age[(k-year1+1),2]<-sum(new_actv[i1:i2,16:25])
+          TBAc_age[(k-year1+1),3]<-sum(new_actv[i1:i2,26:55])
+          TBAc_age[(k-year1+1),4]<-sum(new_actv[i1:i2,56:65])
+          TBAc_age[(k-year1+1),5]<-sum(new_actv[i1:i2,66:Mnage])
+
           TBMo[(k-year1+1),1]<-sum(TBDeaths[i1:i2,])
 
           ##(13) number receiving vaccine
@@ -855,19 +903,19 @@ print("done start year")
           PGold<-100000*TBIPGold/PsizePGold
 
 #           to be able to do NNV by yr
-          if (k>=2025) {
-          vaccgiveyr[,(k-2025+1)]<-sum(VX[i1:i2,1])
-          totmortyr[(k-2025+1),1]<-sum(TBDeaths[251:i,])
-          totmortyr[(k-2025+1),2]<-sum(TBDeaths[251:i,66:Mnage])
-          totmortyr[(k-2025+1),3]<-sum(TBDeaths[251:i,56:Mnage])
-          
-          totcaseyr[(k-2025+1),1]<- sum(new_I_noconv[251:i,],new_NI[251:i,])
-          totcaseyr[(k-2025+1),2]<- sum(new_I_noconv[251:i,66:Mnage],new_NI[251:i,66:Mnage])
-          totcaseyr[(k-2025+1),3]<- sum(new_I_noconv[251:i,56:Mnage],new_NI[251:i,56:Mnage])
-          
-          cumuloutyr[(k-2025+1),]<-c(totmortyr[(k-2025+1),],totcaseyr[(k-2025+1),])
-          }
-          
+#           if (k>=2025) {
+#           vaccgiveyr[,(k-2025+1)]<-sum(VX[i1:i2,1])
+#           totmortyr[(k-2025+1),1]<-sum(TBDeaths[251:i,])
+#           totmortyr[(k-2025+1),2]<-sum(TBDeaths[251:i,66:Mnage])
+#           totmortyr[(k-2025+1),3]<-sum(TBDeaths[251:i,56:Mnage])
+#           
+#           totcaseyr[(k-2025+1),1]<- sum(new_I_noconv[251:i,],new_NI[251:i,])
+#           totcaseyr[(k-2025+1),2]<- sum(new_I_noconv[251:i,66:Mnage],new_NI[251:i,66:Mnage])
+#           totcaseyr[(k-2025+1),3]<- sum(new_I_noconv[251:i,56:Mnage],new_NI[251:i,56:Mnage])
+#           
+#           cumuloutyr[(k-2025+1),]<-c(totmortyr[(k-2025+1),],totcaseyr[(k-2025+1),])
+#           }
+#           
           #for last time step of the model calc number of vaccines delivered
           if (i==(length(seq(year1,(yearend+(1-dt)),dt)))){ # LAST TIME STEP of the model
             
@@ -958,6 +1006,8 @@ print("done start year")
   assign('psize75plus',psize75plus,envir=.GlobalEnv)
   assign('psize1524',psize1524,envir=.GlobalEnv)
   assign('psize2554',psize2554,envir=.GlobalEnv)
+  assign('psize15plus',psize15plus,envir=.GlobalEnv)
+
 
 
   assign('TBI',TBI,envir=.GlobalEnv);assign('TBN',TBN,envir=.GlobalEnv);assign('TBM',TBM,envir=.GlobalEnv);assign('TBRx',TBRx,envir=.GlobalEnv);assign('VX',VX,envir=.GlobalEnv);
@@ -966,14 +1016,16 @@ print("done start year")
   assign('TBRa',TBRa,envir=.GlobalEnv);assign('TBRi',TBRi,envir=.GlobalEnv); 
   assign('TBRa2',TBRa2,envir=.GlobalEnv);assign('TBRi2',TBRi2,envir=.GlobalEnv);
   assign('TBInew',TBInew,envir=.GlobalEnv);assign('PGyng',PGyng,envir=.GlobalEnv);assign('PGold',PGold,envir=.GlobalEnv);
-  assign('ARI',ARI,envir=.GlobalEnv);assign('TBAc',TBAc,envir=.GlobalEnv);assign('TBMo',TBMo,envir=.GlobalEnv);assign('num_vac',num_vac,envir=.GlobalEnv); assign('NV',NV,envir=.GlobalEnv);
-  assign('CDR',CDR,envir=.GlobalEnv);
+  assign('ARI',ARI,envir=.GlobalEnv);assign('TBAc',TBAc,envir=.GlobalEnv);assign('TBAc_age',TBAc_age,envir=.GlobalEnv); assign('TBMo',TBMo,envir=.GlobalEnv);assign('num_vac',num_vac,envir=.GlobalEnv); assign('NV',NV,envir=.GlobalEnv);
+  assign('CDR',CDR,envir=.GlobalEnv);assign('CDR2010',CDR2010,envir=.GlobalEnv);
   #assign('CDRout',CDRout,envir=.GlobalEnv);
   assign('TBProp',TBProp,envir=.GlobalEnv);
   assign('new_actv',new_actv, envir=.GlobalEnv);
   #   assign('I1990',I1990,envir=.GlobalEnv);
   #   assign('I2020',I2020,envir=.GlobalEnv);
   assign('I2050',I2050,envir=.GlobalEnv);
+  assign('CDR_av',CDR_av,envir=.GlobalEnv);
+
 
   assign('Imatrix',Imatrix,envir=.GlobalEnv);
   
@@ -1022,9 +1074,9 @@ print(cumulout)
   colnames(TBN)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+","<55")
   colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+", "55+", "<55","15-24","25-54")
   colnames(TBP)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+")
-  colnames(TBPb)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+")
-  colnames(TBPI)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+","6574", "75+")
-  colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+", "55+","5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+", "55-74", "75+","15-24", "25-54")
+  colnames(TBPb)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+","15+")
+  colnames(TBPI)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+","6574", "75+","1524")
+  colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+", "55+","5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+", "55-74", "75+","15-24", "25-54","15+")
   
   ## Actual Output required (collected as progressed with model)
   # need to update this. what does Ana do???
@@ -1038,15 +1090,16 @@ print(cumulout)
            TBPb[,1],TBPb[,2],TBPb[,3], TBPb[,4], TBPb[,5], TBPb[,6],TBPb[,7],
            TBPI[,1],TBPI[,2],TBPI[,3], TBPI[,4], TBPI[,5],  TBPI[,6], TBPI[,7],TBPI[,8],TBPI[,9], TBPI[,10], TBPI[,11],  TBPI[,12], TBPI[,13], TBPI[,14],
            PSIZEy[,1],PSIZEy[,2], PSIZEy[,3], PSIZEy[,4], PSIZEy[,5], PSIZEy[,6], PSIZEy[,7], PSIZEy[,8], PSIZEy[,9], PSIZEy[,10], PSIZEy[,11], PSIZEy[,12], PSIZEy[,13], PSIZEy[,14], PSIZEy[,15], PSIZEy[,16], PSIZEy[,17], PSIZEy[,18], PSIZEy[,19],PSIZEy[,20], PSIZEy[,21], PSIZEy[,22], PSIZEy[,23],
-           TBI[,8], TBI[,9],TBM[,10],TBM[,11])
+           TBI[,8], TBI[,9],TBM[,10],TBM[,11],TBPb[,8],PSIZEy[,24])
   colnames(X)<-c("PSIZE","S","Births","I","NI","L","R","new_I","new_NI","new_I_react","new_NI_react", "Sv","Lv","Rv",
                  "TBItot","TBI0-14","TBI15-54","TBI55-64","TBI65+","TBI55+","TBI<55",
                  "TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBN55+","TBN<55",
                  "TBMtot","TBM0-14", "TBM15-54", "TBM55-64", "TBM65+", "TBM15-59", "TBM60+","TBM55+","TBM<55",
-                 "TBPtot","TBP0-14", "TBP15-29", "TBP30-44", "TBP45-59", "TBP60+", "TBP55+","TBPbtot","TBPb0-14", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBPb55+", 
+                 "TBPtot","TBP0-14", "TBP15-29", "TBP30-44", "TBP45-59", "TBP60+", "TBP55+",
+                 "TBPbtot","TBPb0-14", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBPb55+", 
                  "TBPItot","TBPI0-14", "TBPI15-54", "TBPI55-64", "TBPI65+", "TBPI55+", "TBPI5-9", "TBPI10-19", "TBPI20-29", "TBPI30-39", "TBPI40-49", "TBPI50-59", "TBPI60-69", "TBPI70+",
                  "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+", "YearPsize55+", "YearPsize5-9", "YearPsize10-19", "YearPsize20-29", "YearPsize30-39", "YearPsize40-49", "YearPsize50-59", "YearPsize60-69", "YearPsize70+","YearPsize55-74", "YearPsize75+", "YearPsize15-24","YearPsize25-54",
-                 "TBI15-24","TBI25-54","TBM15-24","TBM25-54")
+                 "TBI15-24","TBI25-54","TBM15-24","TBM25-54","TBPb15+","YearPsize15plus")
   print("X")
 #X<-data.frame(X)
   # To show

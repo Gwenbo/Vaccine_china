@@ -82,6 +82,8 @@ psize5574<-matrix(0,steps,1)
 psize75plus<-matrix(0,steps,1)
 psize1524<-matrix(0,steps,1)
 psize2554<-matrix(0,steps,1)
+psize15plus<-matrix(0,steps,1)
+
 
 
 
@@ -89,6 +91,9 @@ psize2554<-matrix(0,steps,1)
 psizematrix<-matrix(0,steps,4)
 Imatrix<-matrix(0,steps,4)
 BIRTHS<-vector('numeric',steps)
+Imatno6080A<-matrix(0,steps,1)
+Imatno6080B<-matrix(0,steps,1)
+Imatno75up<-matrix(0,steps,1)
 
 #filling in first time step as is usually calculated at later tme steps of the year
 psize[1]<-sum(S[1,],L[1,],R[1,],I[1,],NI[1,],Sv[1,],Lv[1,],Rv[1,])
@@ -117,6 +122,8 @@ psize5574[1]<-sum(S[i,56:75],L[i,56:75],R[i,56:75],I[i,56:75],NI[i,56:75],Sv[i,5
 psize75plus[1]<-sum(S[i,76:Mnage],L[i,76:Mnage],R[i,76:Mnage],I[i,76:Mnage],NI[i,76:Mnage],Sv[i,76:Mnage],Lv[i,76:Mnage],Rv[i,76:Mnage])
 psize1524[1]<-sum(S[i,16:25],L[i,16:25],R[i,16:25],I[i,16:25],NI[i,16:25],Sv[i,16:25],Lv[i,16:25],Rv[i,16:25])
 psize2554[1]<-sum(S[i,26:55],L[i,26:55],R[i,26:55],I[i,26:55],NI[i,26:55],Sv[i,26:55],Lv[i,26:55],Rv[i,26:55])
+psize15plus[1]<-sum(S[i,16:Mnage],L[i,16:Mnage],R[i,16:Mnage],I[i,16:Mnage],NI[i,16:Mnage],Sv[i,16:Mnage],Lv[i,16:Mnage],Rv[i,16:Mnage])
+
 
 
 
@@ -130,6 +137,12 @@ Imatrix[1,1]<-sum(I[1,1:6])
 Imatrix[1,2]<-sum(I[1,7:20])
 Imatrix[1,3]<-sum(I[1,21:65])
 Imatrix[1,4]<-sum(I[1,66:Mnage])
+
+Imatno6080A[1,1]<-sum(I[i,21:60])
+Imatno6080B[1,1]<-sum(I[i,81:Mnage])
+Imatno75up[1,1]<-sum(I[i,66:75])
+
+
 
 # Imatrix[1,1]<-sum(I0[1:6])
 # Imatrix[1,2]<-sum(I0[7:20])
@@ -169,9 +182,9 @@ TBRx<--matrix(0,steps,2);
 TBI<-matrix(0,steps,9);
 TBM<-matrix(0,steps,11);
 TBP<-matrix(0,steps,7);
-TBPb<-matrix(0,steps,7);
-TBPI<-matrix(0,steps,16);
-PSIZEy<-matrix(0,steps,23);
+TBPb<-matrix(0,steps,8);
+TBPI<-matrix(0,steps,17);
+PSIZEy<-matrix(0,steps,24);
 TBRa<-matrix(0,steps,6);
 TBRa2<-matrix(0,steps,6);
 TBRi<-matrix(0,steps,6);
@@ -181,6 +194,7 @@ TBProp<-matrix(0,steps,4);
 TBN<-matrix(0,steps,7)
 ARI<-matrix(0,steps,4)
 TBAc<-matrix(0,(yearend-year1+1),1)
+TBAc_age<-matrix(0,(yearend-year1+1),6)
 TBMo<-matrix(0,(yearend-year1+1),1)
 NV<-matrix(0,(yearend-year1+1),1)
 
@@ -188,13 +202,13 @@ colnames(TBI)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+", "<55","15-24
 colnames(TBN)<-c("All ages","0-14", "15-54", "55-64", "65+","55+", "<55")
 colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+", "55+", "<55","15-24","25-54")
 colnames(TBP)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+")
-colnames(TBPb)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+")
-colnames(TBPI)<-c("All ages", "0-14", "15-54", "55-64", "65+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+","6574", "75+")
-colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+","55-74", "75+","15-24", "25-54")
+colnames(TBPb)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+", "15+")
+colnames(TBPI)<-c("All ages", "0-14", "15-54", "55-64", "65+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+","6574", "75+", "1524")
+colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+","55-74", "75+","15-24", "25-54","15+")
 
 #ohthers
 I2050<-matrix(0,5,1)
-
+CDR_av<-matrix(0,(yearend-year1),1)
 
 #cumulative cases and deaths
 totmort<- matrix(0,1,4)

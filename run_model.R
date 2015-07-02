@@ -23,19 +23,23 @@ nm<-c(pararange[,1],"p0") # The parameter ranges
 setwd(home)
 
 # Simulate data 
-# rrun<-10 # It can be as high as 1000 but just do a few to get a feel and for it to be quicker
-# xout<-c(); eee<-c(); # Initialise all vectors to be empty
-# for (kkk in 1:rrun){
-#   print(kkk)
-  kkk<-1
+ rrun<-3 # It can be as high as 1000 but just do a few to get a feel and for it to be quicker
+ xout<-c(); eee<-c(); # Initialise all vectors to be empty
+ for (kkk in 1:rrun){
+   print(kkk)
+  #kkk<-1
   for (i in 1:length(nm)){assign(nm[i],as.numeric(para[kkk,i]))} # Assign the parameters to the correct values
   neta2<-neta # this parameter needs extra assigning for some annoying reason! 
   
   # Run the model with these parameters  
-  Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)   
+  system.time(Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0))   
+  }
 
 setwd(home)
 source('#BasicPlot.R')
+
+setwd(home)
+source('TBPI by age plot.R')
 
 setwd(home)
 source('#notif fitting.R')
@@ -55,7 +59,7 @@ source('#notif fitting.R')
 # 
 # I1990
 # I2020
-# I2050
+ I2050
 ##for use in calculating NNV
 #print(TBInew)
 
@@ -219,6 +223,9 @@ vaxgiveyr<-c()
 cumulvxyrM<-c()
 cumulvxyrI<-c()
 NumV<-c()
+inc2050<-c()
+mort2050<-c()
+
 
 # Run through all fits
 for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example 
@@ -242,19 +249,23 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
   source('#BasicPlot.R')
   
   new_active<-cbind(TBAc,0,0)
+  new_ac_age<-cbind(TBAc_age,0,0)
   new_mort<-cbind(TBMo,0,0)
+  inc2050<-rbind(TBI[151,])
+  mort2050<-rbind(TBM[151,])
+  
   
   eee<-cbind(Xn,0,0); colnames(eee)<-c(colnames(Xn),"type","vxint")
    dfvx<-rbind(dfvx,eee)
-    ggg<-cbind(cumulout,0,0); colnames(ggg)<-c(colnames(cumulout),"type","vxint")
-    cumulvx<-rbind(cumulvx,ggg)
-    cumulvx<-as.matrix(cumulvx)
-    cumulvxyrM<-cbind(cumulvxyrM,cumuloutyr[,1])
-    cumulvxyrM<-as.matrix(cumulvxyrM)
-    cumulvxyrI<-cbind(cumulvxyrI,cumuloutyr[,3])
-    cumulvxyrI<-as.matrix(cumulvxyrI)
+#     ggg<-cbind(cumulout,0,0); colnames(ggg)<-c(colnames(cumulout),"type","vxint")
+#     cumulvx<-rbind(cumulvx,ggg)
+#     cumulvx<-as.matrix(cumulvx)
+#     cumulvxyrM<-cbind(cumulvxyrM,cumuloutyr[,1])
+#     cumulvxyrM<-as.matrix(cumulvxyrM)
+#     cumulvxyrI<-cbind(cumulvxyrI,cumuloutyr[,3])
+#     cumulvxyrI<-as.matrix(cumulvxyrI)
   # For each type of vaccine
-  #have set to start at 2 only as only doing vaccine type 2(S only), 3 (all) and 4 (L/R only)  plus same again for ado/adult at the moment
+  #have set to start at 2 only as only doing vaccine type 2(S only), 3 (L/R only) and 4 (all)  plus same again for ado/adult at the moment
   for (nn in 2:typen){
     
     count<-0;coms<-matrix(0,combn,3);
@@ -264,7 +275,7 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
       for (zz in 1:length(effs)){
       # For each duration
       for (xx in 1:length(durs)){
-        count<-count+1
+        count<-count+1  
         coms[count,]<-c(cover[vv],effs[zz],durs[xx])
         cov<-cover[vv]; tic <- effs[zz];    toc <- durs[xx];   print(c(cov,tic,toc))
         # Length of second input > 1 so triggers FitGo to do a vaccine scenario
@@ -282,19 +293,32 @@ for (kkk in 1:1){ # Again this could be 1000 but just do 10 for example
           
           #calcs needed for NNV
           new_active<-cbind(new_active,TBAc,nn,count)
+          new_ac_age<-cbind(new_ac_age,TBAc_age,nn,count)
           new_mort<-cbind(new_mort,TBMo,nn,count)
           NumV<-cbind(NumV,NV,nn,count)
+
+          #outputting 2050 incidence rate
+          inc2050<-rbind(inc2050,TBI[151,])
+          mort2050<-rbind(mort2050,TBM[151,])
 
 
       }}}}
 assign('dfvx',dfvx,envir=.GlobalEnv)
 assign('new_active',new_active,envir=.GlobalEnv)
+assign('new_ac_age',new_ac_age,envir=.GlobalEnv)
 assign('new_mort',new_mort,envir=.GlobalEnv)
 assign('NumV',NumV,envir=.GlobalEnv)
+assign('inc2050',inc2050,envir=.GlobalEnv)
+assign('mort2050',mort2050,envir=.GlobalEnv)
+
+
 setwd("Outputs")
 write.table(new_active,'new_active.csv',sep=",",row.names=FALSE)
 write.table(new_mort,'new_mort.csv',sep=",",row.names=FALSE)
 write.table(NumV,'number_vaccinated.csv',sep=",",row.names=FALSE)
+write.table(inc2050,'inc_rates_2050.csv',sep=",",row.names=FALSE)
+write.table(mort2050,'mort_rates_2050.csv',sep=",",row.names=FALSE)
+
 setwd(home)
 } # end of fits
 
@@ -309,54 +333,54 @@ setwd(home)
 source('#NNV.R')
 setwd(home)
 
-
+write.table(dfvx,'dfvx.csv',sep=",",row.names=FALSE)
 
 
 
 #reduction in number of cases or deaths calc by subtracting cumul cases in vaccine scenario from the cumulative number in the baseline scenario
-redu<-rbind((cumulvx[1,]-cumulvx[2,]),(cumulvx[1,]-cumulvx[3,]),(cumulvx[1,]-cumulvx[4,]),(cumulvx[1,]-cumulvx[5,]),(cumulvx[1,]-cumulvx[6,]),(cumulvx[1,]-cumulvx[7,]),(cumulvx[1,]-cumulvx[8,]),(cumulvx[1,]-cumulvx[9,]),(cumulvx[1,]-cumulvx[10,]),(cumulvx[1,]-cumulvx[11,]),(cumulvx[1,]-cumulvx[12,]),(cumulvx[1,]-cumulvx[13,]))
-redu<-redu[,-7]
-redu<-redu[,-8]
-
-NNV[,1]<-vaxgive[,1]/redu[,1]
-NNV[,3]<-vaxgive[,1]/redu[,2]
-NNV[,2]<-vaxgive[,1]/redu[,3]
-NNV[,4]<-vaxgive[,1]/redu[,4]
-NNV[,6]<-vaxgive[,1]/redu[,5]
-NNV[,5]<-vaxgive[,1]/redu[,6]
-colnames(NNV)<-c("NNVm_all","NNVm_55+","NNVm_eld","NNVi_all", "NNVi_55+","NNVi_eld")
-write.table(NNV,'NNV_results.csv',sep=",",row.names=FALSE)
-write.table(redu,'redu_results.csv',sep=",",row.names=FALSE)
-
-cumulvxyrI<-t(cumulvxyrI)
-cumulvxyrM<-t(cumulvxyrM)
-vaxgiveyr<-vaxgiveyr[,1:26]
-cumulvxyrI<-cumulvxyrI[,1:26]
-cumulvxyrM<-cumulvxyrM[,1:26]
-reduyrI<-rbind((cumulvxyrI[1,]-cumulvxyrI[2,]),(cumulvxyrI[1,]-cumulvxyrI[3,]),(cumulvxyrI[1,]-cumulvxyrI[4,]),(cumulvxyrI[1,]-cumulvxyrI[5,]),(cumulvxyrI[1,]-cumulvxyrI[6,]),(cumulvxyrI[1,]-cumulvxyrI[7,]),(cumulvxyrI[1,]-cumulvxyrI[8,]),(cumulvxyrI[1,]-cumulvxyrI[9,]),(cumulvxyrI[1,]-cumulvxyrI[10,]),(cumulvxyrI[1,]-cumulvxyrI[11,]),(cumulvxyrI[1,]-cumulvxyrI[12,]),(cumulvxyrI[1,]-cumulvxyrI[13,]))
-reduyrM<-rbind((cumulvxyrM[1,]-cumulvxyrM[2,]),(cumulvxyrM[1,]-cumulvxyrM[3,]),(cumulvxyrM[1,]-cumulvxyrM[4,]),(cumulvxyrM[1,]-cumulvxyrM[5,]),(cumulvxyrM[1,]-cumulvxyrM[6,]),(cumulvxyrM[1,]-cumulvxyrM[7,]),(cumulvxyrM[1,]-cumulvxyrM[8,]),(cumulvxyrM[1,]-cumulvxyrM[9,]),(cumulvxyrM[1,]-cumulvxyrM[10,]),(cumulvxyrM[1,]-cumulvxyrM[11,]),(cumulvxyrM[1,]-cumulvxyrM[12,]),(cumulvxyrM[1,]-cumulvxyrM[13,]))
-
-NNVi<-vaxgiveyr/reduyrI
-NNVi<-t(NNVi)
-NNVm<-vaxgiveyr/reduyrM
-NNVm<-t(NNVm)
-par(mfrow=c(1,1))
-plot(seq(2030,2050),NNVi[6:26,1],ylab='NNV',xlab='yr',type='l')
-lines(seq(2030,2050),NNVi[6:26,2], lty=1,col='red')
-lines(seq(2030,2050),NNVi[6:26,3], lty=1,col='orange')
-lines(seq(2030,2050),NNVi[6:26,4], lty=1,col='yellow')
-lines(seq(2030,2050),NNVi[6:26,5], lty=1,col='green')
-lines(seq(2030,2050),NNVi[6:26,6], lty=1,col='purple')
-lines(seq(2030,2050),NNVi[6:26,7], lty=5,col='black')
-lines(seq(2030,2050),NNVi[6:26,8], lty=5,col='red')
-lines(seq(2030,2050),NNVi[6:26,9], lty=5,col='orange')
-lines(seq(2030,2050),NNVi[6:26,10], lty=5,col='yellow')
-lines(seq(2030,2050),NNVi[6:26,11], lty=5,col='green')
-lines(seq(2030,2050),NNVi[6:26,12], lty=5,col='purple')
-
-test<-matrix(0,12,1)
-test[1,]<-mean(NNVi[,1])
-test[2,]<-mean(NNVi[,4])
+# redu<-rbind((cumulvx[1,]-cumulvx[2,]),(cumulvx[1,]-cumulvx[3,]),(cumulvx[1,]-cumulvx[4,]),(cumulvx[1,]-cumulvx[5,]),(cumulvx[1,]-cumulvx[6,]),(cumulvx[1,]-cumulvx[7,]),(cumulvx[1,]-cumulvx[8,]),(cumulvx[1,]-cumulvx[9,]),(cumulvx[1,]-cumulvx[10,]),(cumulvx[1,]-cumulvx[11,]),(cumulvx[1,]-cumulvx[12,]),(cumulvx[1,]-cumulvx[13,]))
+# redu<-redu[,-7]
+# redu<-redu[,-8]
+# 
+# NNV[,1]<-vaxgive[,1]/redu[,1]
+# NNV[,3]<-vaxgive[,1]/redu[,2]
+# NNV[,2]<-vaxgive[,1]/redu[,3]
+# NNV[,4]<-vaxgive[,1]/redu[,4]
+# NNV[,6]<-vaxgive[,1]/redu[,5]
+# NNV[,5]<-vaxgive[,1]/redu[,6]
+# colnames(NNV)<-c("NNVm_all","NNVm_55+","NNVm_eld","NNVi_all", "NNVi_55+","NNVi_eld")
+# write.table(NNV,'NNV_results.csv',sep=",",row.names=FALSE)
+# write.table(redu,'redu_results.csv',sep=",",row.names=FALSE)
+# 
+# cumulvxyrI<-t(cumulvxyrI)
+# cumulvxyrM<-t(cumulvxyrM)
+# vaxgiveyr<-vaxgiveyr[,1:26]
+# cumulvxyrI<-cumulvxyrI[,1:26]
+# cumulvxyrM<-cumulvxyrM[,1:26]
+# reduyrI<-rbind((cumulvxyrI[1,]-cumulvxyrI[2,]),(cumulvxyrI[1,]-cumulvxyrI[3,]),(cumulvxyrI[1,]-cumulvxyrI[4,]),(cumulvxyrI[1,]-cumulvxyrI[5,]),(cumulvxyrI[1,]-cumulvxyrI[6,]),(cumulvxyrI[1,]-cumulvxyrI[7,]),(cumulvxyrI[1,]-cumulvxyrI[8,]),(cumulvxyrI[1,]-cumulvxyrI[9,]),(cumulvxyrI[1,]-cumulvxyrI[10,]),(cumulvxyrI[1,]-cumulvxyrI[11,]),(cumulvxyrI[1,]-cumulvxyrI[12,]),(cumulvxyrI[1,]-cumulvxyrI[13,]))
+# reduyrM<-rbind((cumulvxyrM[1,]-cumulvxyrM[2,]),(cumulvxyrM[1,]-cumulvxyrM[3,]),(cumulvxyrM[1,]-cumulvxyrM[4,]),(cumulvxyrM[1,]-cumulvxyrM[5,]),(cumulvxyrM[1,]-cumulvxyrM[6,]),(cumulvxyrM[1,]-cumulvxyrM[7,]),(cumulvxyrM[1,]-cumulvxyrM[8,]),(cumulvxyrM[1,]-cumulvxyrM[9,]),(cumulvxyrM[1,]-cumulvxyrM[10,]),(cumulvxyrM[1,]-cumulvxyrM[11,]),(cumulvxyrM[1,]-cumulvxyrM[12,]),(cumulvxyrM[1,]-cumulvxyrM[13,]))
+# 
+# NNVi<-vaxgiveyr/reduyrI
+# NNVi<-t(NNVi)
+# NNVm<-vaxgiveyr/reduyrM
+# NNVm<-t(NNVm)
+# par(mfrow=c(1,1))
+# plot(seq(2030,2050),NNVi[6:26,1],ylab='NNV',xlab='yr',type='l')
+# lines(seq(2030,2050),NNVi[6:26,2], lty=1,col='red')
+# lines(seq(2030,2050),NNVi[6:26,3], lty=1,col='orange')
+# lines(seq(2030,2050),NNVi[6:26,4], lty=1,col='yellow')
+# lines(seq(2030,2050),NNVi[6:26,5], lty=1,col='green')
+# lines(seq(2030,2050),NNVi[6:26,6], lty=1,col='purple')
+# lines(seq(2030,2050),NNVi[6:26,7], lty=5,col='black')
+# lines(seq(2030,2050),NNVi[6:26,8], lty=5,col='red')
+# lines(seq(2030,2050),NNVi[6:26,9], lty=5,col='orange')
+# lines(seq(2030,2050),NNVi[6:26,10], lty=5,col='yellow')
+# lines(seq(2030,2050),NNVi[6:26,11], lty=5,col='green')
+# lines(seq(2030,2050),NNVi[6:26,12], lty=5,col='purple')
+# 
+# test<-matrix(0,12,1)
+# test[1,]<-mean(NNVi[,1])
+# test[2,]<-mean(NNVi[,4])
 
 # y<-subset(dfvx,dfvx$type==1)
 # y<-subset(dfvx,dvfx[,54]==3)

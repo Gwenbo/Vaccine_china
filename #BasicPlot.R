@@ -3,6 +3,10 @@
 # plots<-"/Users/Rebecca/Vaccine_china/Plots"
 # setwd(plots)
 
+print(TBI[111])
+print(TBN[111,4])
+print(TBN[111,5])
+
 
 #data to fit to
 population2010<- c(1359822,246707,863710,135859,113546)
@@ -16,7 +20,7 @@ incidence2010u<- c(84.09,3.57,85.02,137.32,188.24)
 incidence2010l<- c(65.21,2.77,65.94,106.49,145.98)
 
 #noitfication lower limit is the reported notifications, notification upper limit assumes that all from private hospitals are missed from notification reporting (80% of cases reported to CDC, 20% private hospital)  
-notif2010 <- c()
+notif2010 <- c(63.91,2.72,64.62,104.36,143.07)
 notif2010u<- c(63.91,2.72,64.62,104.36,143.07)*(100/80)
 notif2010l<- c(63.91,2.72,64.62,104.36,143.07)
 
@@ -52,22 +56,22 @@ mortality2010l<- c(4.84,0.27,1.72,14.12)
 ##incidence plot
 
 par(mfrow=c(2,3))
-plot(seq(1990,2050),TBI[91:151,1], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='orange')
+plot(seq(1990,2050),TBI[91:151,1], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,300),type='l',col='orange')
 points(2010,incidence2010[1])
 #points(2050,TBI[151,1])
 segments(2010,incidence2010l[1],2010,incidence2010u[1])
-plot(seq(1990,2050),TBI[91:151,2], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='red')
-points(2010,incidence2010[2])
-segments(2010,incidence2010l[2],2010,incidence2010u[2])
-plot(seq(1990,2050),TBI[91:151,3], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='blue')
-points(2010,incidence2010[3])
-segments(2010,incidence2010l[3],2010,incidence2010u[3])
-plot(seq(1990,2050),TBI[91:151,4], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='purple')
-points(2010,incidence2010[4])
-segments(2010,incidence2010l[4],2010,incidence2010u[4])
-plot(seq(1990,2050),TBI[91:151,5], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='green')
-#points(2010,incidence2010[5])
-#segments(2010,incidence2010l[5],2010,incidence2010u[5])
+plot(seq(1990,2050),TBI[91:151,2], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,300),type='l',col='red')
+# points(2010,incidence2010[2])
+# segments(2010,incidence2010l[2],2010,incidence2010u[2])
+plot(seq(1990,2050),TBI[91:151,3], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,300),type='l',col='blue')
+# points(2010,incidence2010[3])
+# segments(2010,incidence2010l[3],2010,incidence2010u[3])
+plot(seq(1990,2050),TBI[91:151,4], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,300),type='l',col='purple')
+# points(2010,incidence2010[4])
+# segments(2010,incidence2010l[4],2010,incidence2010u[4])
+plot(seq(1990,2050),TBI[91:151,5], ylab="Incidence/100,000pop/yr",xlab="Year", ylim=c(0,300),type='l',col='green')
+# points(2010,incidence2010[5])
+# segments(2010,incidence2010l[5],2010,incidence2010u[5])
 plot.new()
 legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 years"), lty=1,col=c("orange","red","blue","purple","green"))
 
@@ -75,20 +79,20 @@ legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 year
 ## notifications plot
 
 par(mfrow=c(2,3))
-plot(seq(1990,2050),TBN[91:151,1], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='orange')
-#points(2010,notif2010[1])
+plot(seq(1990,2050),TBN[91:151,1], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,200),type='l',col='orange')
+points(2010,notif2010[1])
 segments(2010,notif2010l[1],2010,notif2010u[1])
-plot(seq(1990,2050),TBN[91:151,2], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='red')
-#points(2010,notif2010[2])
+plot(seq(1990,2050),TBN[91:151,2], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,200),type='l',col='red')
+points(2010,notif2010[2])
 segments(2010,notif2010l[2],2010,notif2010u[2])
-plot(seq(1990,2050),TBN[91:151,3], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='blue')
-#points(2010,notif2010[3])
+plot(seq(1990,2050),TBN[91:151,3], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,200),type='l',col='blue')
+points(2010,notif2010[3])
 segments(2010,notif2010l[3],2010,notif2010u[3])
-plot(seq(1990,2050),TBN[91:151,4], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='purple')
-#points(2010,notif2010[4])
+plot(seq(1990,2050),TBN[91:151,4], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,200),type='l',col='purple')
+points(2010,notif2010[4])
 segments(2010,notif2010l[4],2010,notif2010u[4])
-plot(seq(1990,2050),TBN[91:151,5], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,600),type='l',col='green')
-#points(2010,notif2010[5])
+plot(seq(1990,2050),TBN[91:151,5], ylab="Notifications/100,000pop/yr",xlab="Year", ylim=c(0,200),type='l',col='green')
+points(2010,notif2010[5])
 segments(2010,notif2010l[5],2010,notif2010u[5])
 plot.new()
 legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 years"), lty=1,col=c("orange","red","blue","purple","green"))
@@ -114,7 +118,7 @@ legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 year
 ## prevalence plot
 
 par(mfrow=c(2,3))
-plot(seq(1990,2050),TBPb[91:151,1], ylab="Prevalence/100,000population",xlab="Year", ylim=c(0,700),type='l',col='orange')
+plot(seq(1990,2050),TBPb[91:151,8], ylab="Prevalence/100,000population",xlab="Year", ylim=c(0,700),type='l',col='orange')
 points(2000,prevalence2000[1])
 points(2010,prevalence2010[1])
 segments(2000,prevalence2000l[1],2000,prevalence2000u[1])
@@ -140,7 +144,9 @@ points(2010,prevalence2010[5])
 segments(2000,prevalence2000l[5],2000,prevalence2000u[5])
 segments(2010,prevalence2010l[5],2010,prevalence2010u[5])
 plot.new()
-legend("center",c("Overall","15-29 years","30-44 years","45-59 years","≥60 years"), lty=1,col=c("orange","lightblue","blue","purple","green"))
+legend("center",c("Overall(15+ years","15-29 years","30-44 years","45-59 years","≥60 years"), lty=1,col=c("orange","lightblue","blue","purple","green"))
+
+
 
 
 # par(mfrow=c(1,1))
@@ -155,17 +161,17 @@ legend("center",c("Overall","15-29 years","30-44 years","45-59 years","≥60 yea
 
 # Mortality plot
 par(mfrow=c(2,3))
-plot(seq(1990,2050),TBM[91:151,1], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,80),type='l',col='orange')
+plot(seq(1990,2050),TBM[91:151,1], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,50),type='l',col='orange')
 points(2010,mortality2010[1])
 segments(2010,mortality2010l[1],2010,mortality2010u[1])
-plot(seq(1990,2050),TBM[91:151,2], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,8),type='l',col='red')
+plot(seq(1990,2050),TBM[91:151,2], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,5),type='l',col='red')
 points(2010,mortality2010[2])
 segments(2010,mortality2010l[2],2010,mortality2010u[2])
 plot.new()
-plot(seq(1990,2050),TBM[91:151,6], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,80),type='l',col='blue')
+plot(seq(1990,2050),TBM[91:151,6], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,50),type='l',col='blue')
 points(2010,mortality2010[3])
 segments(2010,mortality2010l[3],2010,mortality2010u[3])
-plot(seq(1990,2050),TBM[91:151,7], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,80),type='l',col='green')
+plot(seq(1990,2050),TBM[91:151,7], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,50),type='l',col='green')
 points(2010,mortality2010[4])
 segments(2010,mortality2010l[4],2010,mortality2010u[4])
 plot.new()
@@ -184,11 +190,11 @@ plot(seq(1990,2050),TBPI[91:151,5], ylab="Prevalence of Infection (%)",xlab="yea
 plot.new()
 legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 years"), lty=1,col=c("orange","red","blue","purple","green"))
 
-## Prev of Inf plot to compare with gao data
-par(mfrow=c(1,1))
-
-plot(seq(1990,2050),TBPI[91:151,1], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='orange')
-
+# ## Prev of Inf plot to compare with gao data
+# par(mfrow=c(1,1))
+# 
+# plot(seq(1990,2050),TBPI[91:151,1], ylab="Prevalence of Infection (%)",xlab="year", ylim=c(0,100),type='l',col='orange')
+# 
 
 
 
@@ -216,8 +222,8 @@ points(2050,population2050[5])
 points(2025,population2025)
 points(2010,population2010[5])
 segments(2050,population2050l[5],2050,population2050u[5])
-plot(seq(1990,2050),PSIZEy[91:151,20], ylab="Population 5574 (thousands)",xlab="Year", ylim=c(0,1000000),type='l',col='green')
-plot(seq(1990,2050),PSIZEy[91:151,21], ylab="Population 75+ (thousands)",xlab="Year", ylim=c(0,1000000),type='l',col='green')
+# plot(seq(1990,2050),PSIZEy[91:151,20], ylab="Population 5574 (thousands)",xlab="Year", ylim=c(0,1000000),type='l',col='green')
+# plot(seq(1990,2050),PSIZEy[91:151,21], ylab="Population 75+ (thousands)",xlab="Year", ylim=c(0,1000000),type='l',col='green')
 plot.new()
 legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 years"), lty=1,col=c("orange","red","blue","purple","green"))
 # points(seq(1990,2050),PSIZEy[91:151,2],type='l',col='red')
@@ -269,35 +275,64 @@ legend("center",c("New Infection","Reactivation","Overall","0-14 years","15-54 y
 
 #### ARI ###
 
-par(mfrow=c(2,2))
-plot(seq(1990,2050),ARI[91:151,1], ylab="ARI (%)",xlab="Year", ylim=c(0,2),type='l',col='orange')
-plot(seq(1990,2050),ARI[91:151,2], ylab="ARI 0-14yr (%)",xlab="Year", ylim=c(0,2),type='l',col='red')
-plot(seq(1990,2050),ARI[91:151,3], ylab="ARI 15-54yr (%)",xlab="Year", ylim=c(0,2),type='l',col='blue')
-plot(seq(1990,2050),ARI[91:151,4], ylab="ARI 55+yr (%)",xlab="Year", ylim=c(0,2),type='l',col='green')
+# par(mfrow=c(2,2))
+# plot(seq(1990,2050),ARI[91:151,1], ylab="ARI (%)",xlab="Year", ylim=c(0,2),type='l',col='orange')
+# plot(seq(1990,2050),ARI[91:151,2], ylab="ARI 0-14yr (%)",xlab="Year", ylim=c(0,2),type='l',col='red')
+# plot(seq(1990,2050),ARI[91:151,3], ylab="ARI 15-54yr (%)",xlab="Year", ylim=c(0,2),type='l',col='blue')
+# plot(seq(1990,2050),ARI[91:151,4], ylab="ARI 55+yr (%)",xlab="Year", ylim=c(0,2),type='l',col='green')
 
 
 ### % population and cases per age group ###
 
-PcPop<-matrix(0,2,6)
-popsizeall<-sum(psize[301:302])
-casesall<-sum(new_actv[301:302,])
-PcPop[1,1]<-sum(psize014[301:302])/popsizeall*100
-PcPop[1,2]<-sum(psize1524[301:302])/popsizeall*100
-PcPop[1,3]<-sum(psize2554[301:302])/popsizeall*100
-PcPop[1,4]<-sum(psize5564[301:302])/popsizeall*100
-PcPop[1,5]<-((sum(psize5574[301:302]))-(sum(psize5564[301:302])))/popsizeall*100
-PcPop[1,6]<-sum(psize75plus[301:302])/popsizeall*100
+PcPop<-matrix(0,4,6)
+popsizeall50<-sum(psize[301:302])
+casesall50<-sum(new_actv[301:302,])
+popsizeall25<-sum(psize[251:252])
+casesall25<-sum(new_actv[251:252,])
 
 
-PcPop[2,1]<-sum(new_actv[301:302,1:15])/casesall*100
-PcPop[2,2]<-sum(new_actv[301:302,16:25])/casesall*100
-PcPop[2,3]<-sum(new_actv[301:302,26:55])/casesall*100
-PcPop[2,4]<-sum(new_actv[301:302,56:65])/casesall*100
-PcPop[2,5]<-sum(new_actv[301:302,66:75])/casesall*100
-PcPop[2,6]<-sum(new_actv[301:302,76:Mnage])/casesall*100
+PcPop[1,1]<-sum(psize014[251:252])/popsizeall25*100
+PcPop[1,2]<-sum(psize1524[251:252])/popsizeall25*100
+PcPop[1,3]<-sum(psize2554[251:252])/popsizeall25*100
+PcPop[1,4]<-sum(psize5564[251:252])/popsizeall25*100
+PcPop[1,5]<-((sum(psize5574[251:252]))-(sum(psize5564[251:252])))/popsizeall25*100
+PcPop[1,6]<-sum(psize75plus[251:252])/popsizeall25*100
+
+
+PcPop[2,1]<-sum(new_actv[251:252,1:15])/casesall25*100
+PcPop[2,2]<-sum(new_actv[251:252,16:25])/casesall25*100
+PcPop[2,3]<-sum(new_actv[251:252,26:55])/casesall25*100
+PcPop[2,4]<-sum(new_actv[251:252,56:65])/casesall25*100
+PcPop[2,5]<-sum(new_actv[251:252,66:75])/casesall25*100
+PcPop[2,6]<-sum(new_actv[251:252,76:Mnage])/casesall25*100
+
+PcPop[3,1]<-sum(psize014[301:302])/popsizeall50*100
+PcPop[3,2]<-sum(psize1524[301:302])/popsizeall50*100
+PcPop[3,3]<-sum(psize2554[301:302])/popsizeall50*100
+PcPop[3,4]<-sum(psize5564[301:302])/popsizeall50*100
+PcPop[3,5]<-((sum(psize5574[301:302]))-(sum(psize5564[301:302])))/popsizeall50*100
+PcPop[3,6]<-sum(psize75plus[301:302])/popsizeall50*100
+
+
+PcPop[4,1]<-sum(new_actv[301:302,1:15])/casesall50*100
+PcPop[4,2]<-sum(new_actv[301:302,16:25])/casesall50*100
+PcPop[4,3]<-sum(new_actv[301:302,26:55])/casesall50*100
+PcPop[4,4]<-sum(new_actv[301:302,56:65])/casesall50*100
+PcPop[4,5]<-sum(new_actv[301:302,66:75])/casesall50*100
+PcPop[4,6]<-sum(new_actv[301:302,76:Mnage])/casesall50*100
+
+casesall90<-sum(new_actv[181:182,])
+PcPop2<-matrix(0,1,6)
+PcPop2[1,1]<-sum(new_actv[181:182,1:15])/casesall90*100
+PcPop2[1,2]<-sum(new_actv[181:182,16:25])/casesall90*100
+PcPop2[1,3]<-sum(new_actv[181:182,26:55])/casesall90*100
+PcPop2[1,4]<-sum(new_actv[181:182,56:65])/casesall90*100
+PcPop2[1,5]<-sum(new_actv[181:182,66:75])/casesall90*100
+PcPop2[1,6]<-sum(new_actv[181:182,76:Mnage])/casesall90*100
+
 
 colnames(PcPop)<-c("0-14","15-24","25-54","55-64","65-74","75+")
-rownames(PcPop)<-c("% population", "%cases")
+rownames(PcPop)<-c("2025 % population", "2025 %cases","2050 % population", "2050 %cases")
 
 setwd("Outputs")
 write.table(PcPop,'Percent pop_cases per agegrp.csv',sep=",",row.names=TRUE,col.names=TRUE)

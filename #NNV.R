@@ -23,15 +23,26 @@ NNVc
 
 #calc NNVC for period 2025-2050
 NNVcp<-matrix(0,1,((typen-1)*count))
-NNVcp[,1:((typen-1)*count)]<-colSums(NumV[,(numvcols)])/colSums(CAV)
+CAV2550<-sum(new_active[126:151,1])-colSums(new_active[126:151,(activecols)])
+doses<- colSums(NumV[,(numvcols)])
+NNVcp[,1:((typen-1)*count)]<-doses/CAV2550
 colnames(NNVcp)<-vacnames
 write.table(NNVcp,'period_NNV_case.csv',sep=",",row.names=FALSE)
 NNVcp
 
 
-doses<- colSums(NumV[,(numvcols)])
+#by age
+sum_ac_age<-colSums(new_ac_age[126:151,])
+ACAV<-sum_ac_age[1]-sum_ac_age[-1]
+ACAV
+write.table(ACAV,'Age_cases_averted.csv',sep=",",row.names=FALSE)
+
+
+
+
 casesav<-colSums(CAV)
 chart<-rbind(doses,casesav)
+colnames(chart)<-vacnames
 chart
 write.table(chart,'chart.csv',sep=",",row.names=FALSE)
 
@@ -44,6 +55,7 @@ DAV<-matrix(0,(yearend-year1+1),((typen-1)*count))
 DAV<-new_mort[,1]-new_mort[,(activecols)]
 colnames(DAV)<-vacnames
 write.table(DAV,'annual_deaths_averted.csv',sep=",",row.names=FALSE)
+deathsav<-colSums(DAV)
 
 #calc NNVd per yr
 NNVd<-NumV[,(numvcols)]/DAV
@@ -57,11 +69,6 @@ NNVdp[,1:((typen-1)*count)]<-colSums(NumV[,(numvcols)])/colSums(DAV)
 colnames(NNVdp)<-vacnames
 write.table(NNVdp,'period_NNV_death.csv',sep=",",row.names=FALSE)
 NNVdp
-
-
-
-
-
 
 
 ##### PLOTS #####
