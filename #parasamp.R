@@ -9,7 +9,7 @@ nm<-c(pararange[,1],"p0") # The parameter ranges
 ### Generate Parameter Sets ###
 
 ##number of parameter sets - will increase later
-n_p<-5
+n_p<-3
 
 ##generate matrix for storing parameter sets (later will want to store these as the file that you call for the model)
 
@@ -28,12 +28,13 @@ randparam[1:n_p,(length(nm)+1)]<-rep(1267142,n_p) ##insert p0 value here (126714
   
 #randparam needs to be saves as paraout_China.csv in data file
 setwd(home);setwd("Data")
-write.table(randparam,paste("paraout1_",cntry,".csv",sep=''),sep=",",row.names=FALSE) #sep within paste tells how the elements should be separated (baseline is to assume space), and in write.table sep is to say how the data are separated
+write.table(randparam,paste("paraout_",cntry,".csv",sep=''),sep=",",row.names=FALSE) #sep within paste tells how the elements should be separated (baseline is to assume space), and in write.table sep is to say how the data are separated
 
 
 #read parameters back in without numbering
 setwd(home);setwd("Data")
-para<-read.csv(paste("paraout1_",cntry,".csv",sep=''))[-1]
+#can be slow, if doing evry time change to not read back in
+para<-read.csv(paste("paraout_",cntry,".csv",sep=''))[-1]
 setwd(home)
 
 typen<-0 #temporary
@@ -56,10 +57,6 @@ for (kkk in 1:n_p)
     Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)   
     xout[(((yearend-year1+1)*2*kkk*nmbr)-(2*(yearend-year1+1)-1)):(2*(yearend-year1+1)*kkk*nmbr),]<-cbind(Xn,times,year,nn,count,kkk)
 }
-
-neww<-xout[which(xout[,"year"]>1980),]
-View(neww)
-
 
 
 #newo<-ddply(eee,.(Year,fit),summarise,psize=Psize,tbi=100000*(negcases)/Psize,tbm=100000*(negdeaths)/Psize,tbih=100000*(poscases)/Psize,tbmh=100000*(posdeaths)/Psize)
