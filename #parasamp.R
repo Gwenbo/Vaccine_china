@@ -9,7 +9,7 @@ nm<-c(pararange[,1],"p0") # The parameter ranges
 ### Generate Parameter Sets ###
 
 ##number of parameter sets - will increase later
-n_p<-3
+n_p<-5
 
 ##generate matrix for storing parameter sets (later will want to store these as the file that you call for the model)
 

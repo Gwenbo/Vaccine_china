@@ -72,13 +72,71 @@ new10<-xout[which(xout[,"year"]%in%2010),c("TBPb15+", "TBPb15-29", "TBPb30-44", 
 neww<-cbind(new00,new10)
 View(neww)
 #neww<-xout[which(xout[,"year"]%in%c(2000,2010)),c("type","vxint","fit","year","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
-
-
+#colnames(neww)<-NULL
+neww<-neww[,4:23]
 
 ## then calc likelihood of that parameter given the data (i.e. the prev etc that we're trying to fit to)
 
+#likelihood calc
+# L<-rep(0,n_p)
+# for (i in 1:n_p){
+#   L[i] <- prod(((2*pi*var)^(-1/2))*exp(-(1/(2*var))*(((neww[i,])-FitData)^2)))
+# }
+
+#had to switch to log likelihood as likelihood becomes too small beyond approx 17 terms and just gives zero, so need to use log likelihood as adds rather than multiplies
+###HOW DOES USING LOG LIKELIHOOD affect how you use these numbers? +ive vs negative log likelihood??
+### HAVE NEGATIVE values, what do about this???
+
 L<-rep(0,n_p)
-for (iii in 1:n_p){
-  L[iii] <-prod(((2*pi*var)^(-1/2))*exp(-(1/(2*var))*((neww[iii,4:23]-FitData)^2)))
+for (i in 1:n_p){
+  L[i] <- sum((-0.5*log(2*pi))-(0.5*log(var))-((((neww[i,])-FitData)^2)/(2*var)))
 }
+
+L
+
+
+
+### Sample the runs with a weight based upon the calculated likelihood of that run's parameters
+
+library(gdata)
+
+N_resamp<-10000 # number of samples to take
+
+#### kick out everything with negative model outputs??  if so drop those where negative, and in sample need to have seq length N_p minus those deleted###
+
+#resample with weights based upon likelihodds
+# t will be a vector of the indices of the resampled parameter sets
+t<-sample(seq(1:n_p),N_resamp,replace=TRUE,prob=L/sum(L))
+# This just pulls out the unique values of t
+unique_t<-unique(t)
+table(t)
+
+## For a model output which is a time-course you can use the following to calculate a median or CI etc (just set prob to what you want)
+model_m=apply(neww[t,],1,function(x) quantile(x,probs=c(0.5))) 
+model_u=apply(neww[t,],1,function(x) quantile(x,probs=c(0.975))) 
+model_l=apply(neww[t,],1,function(x) quantile(x,probs=c(0.025))) 
+
+
+#plotting
+
+#prior vs posterior plots
+
+for (i in 1:(length(nm)-1))
+{
+  nam<-paste(pararange[i,1],"_posterior",sep='')
+  tpar<-as.numeric(para[t,i])
+  assign(nam,tpar)
+  plot(density(tpar),xlim=c(as.numeric(pararange[i,2]),as.numeric(pararange[i,3]))) # plot the density of the posterior
+  lines(density(para[,i]))  # plot the density of the prior (a flat line (ish as density smooths things) as it was uniform)
+}
+
+
+# par(mfrow=c(1,1))
+# 
+# matplot(neww[,1], type="l",col="grey",ylim=c(0,30))     # plot all 1000 outputs as grey lines
+# points(FitData[,1],col="red")                  # plot the data as red dots
+# lines(model[,which.max(L)],col="red")   # plot the best fit as a red line
+# lines(model_m,col="black",lty=2)        # plot the median and 95% CI
+# lines(model_u,col="black")      
+# lines(model_l,col="black")    
 
