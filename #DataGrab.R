@@ -50,6 +50,9 @@ dalydata<- as.matrix(drop.levels(read.csv('Dalydata_22HBC.csv',header=TRUE,check
 #LTBI<- read.csv('gaoLTBI.csv', header=FALSE)
 oldwane<-as.matrix(read.csv('vaccwaneold.csv',header=TRUE, check.names=F))
 yngwane<-as.matrix(read.csv('vaccwaneyng.csv',header=TRUE, check.names=F))
+oldwane10<-as.matrix(read.csv('vaccwaneold10.csv',header=TRUE, check.names=F))
+yngwane10<-as.matrix(read.csv('vaccwaneyng10.csv',header=TRUE, check.names=F))
+
 
 # Get HIVnegative incidence for those countries of interest
 # TBIm above is for TB mortality in both HIV+ and HIV-s

@@ -57,13 +57,13 @@ if (yrintro < yearend){
 #       thetaV1[i,1]<-infantcov 
 #     }
     ###elderly vaccine
-    # If any step is the start of the year then vaccinate 55yos
+    # If any step is the start of the year then vaccinate 60yos
     if (any(startyr==i)){
-      thetaV2a[i,56]<-coverage # Because of this at the start of the year theta[i,j]*X[i-1,j-1]. As the j-1 have just hit 10yo and are immediately vaccinated
+      thetaV2a[i,61]<-coverage # Because of this at the start of the year theta[i,j]*X[i-1,j-1]. As the j-1 have just hit 10yo and are immediately vaccinated
     }
-    # If a masscampyear (start of then) then get 56-64yos. Campaign over 3 yrs, so divide adult coverage by the 3 yrs of the campaign
+    # If a masscampyear (start of then) then get 61-64yos (was 56-64 when vacc att 55, but reduced number of yrs to align with ages think wuold vac. Campaign over 3 yrs, so divide adult coverage by the 3 yrs of the campaign
     if (any(masscampyr==i)){
-      thetaV2m[i,57:65]<-coverage/3
+      thetaV2m[i,62:65]<-coverage/3
     }
     
     ### ado/adolescent vaccine (V4 because V3 is the combo)
@@ -87,6 +87,9 @@ if (yrintro < yearend){
 
   
   if (D < 100){ ## D <- 100 if lifelong protection. Then none leave vaccine category. 
+  
+ if (D==20){  
+    
     for (i in 1:steps){
       
       #elderly: dV2 - vaccine immunosenescent waning of 5% per year throughout duration of protection and normal distribution around 20 yrs (s.d. 2yrs) for normal waning
@@ -100,6 +103,7 @@ if (yrintro < yearend){
         }
             }
        #   } 
+      }
       }
       
     # Remove from the category those that are of the age duration of vaccine + 6months after duration of protection has expired
@@ -126,9 +130,25 @@ if (yrintro < yearend){
         #dV3[i,(11+D):Mnage]<-1
       #}
     #}
-  }
-}
+  
 
+if (D==10){  
+  
+  for (i in 1:steps){
+    
+    #elderly: dV2 - vaccine immunosenescent waning of 5% per year throughout duration of protection and normal distribution around 10 yrs (s.d. 2yrs) for normal waning
+    #ado/adult: dv4 - vaccine waning gaussian throughout duration of protection peaking at 10yrs
+    #if (any((startyr[c(1:length(startyr))])==i)){  
+    for (nnn in 1:26){
+      if (i==startyr[nnn]) {k<-nnn
+                            print(k)
+                            dV2[i,]<-oldwane10[k,]
+                            dV4[i,]<-yngwane10[k,]
+      }
+ }
+}
+}
+}
 # Depending on type, theta is theta# (coverage) times efficacy, d is dv#
 #vacc1=kids
 #vacc2=elderly pre-infection
@@ -191,4 +211,8 @@ if (vaccine == 1){
 assign('thetaV2a',thetaV2a,envir=.GlobalEnv);
 assign('thetaV2m',thetaV2m,envir=.GlobalEnv);
 assign('thetaV4a',thetaV2a,envir=.GlobalEnv);
-assign('thetaV4m',thetaV2m,envir=.GlobalEnv);
+assign('thetaV4m',thetaV2m,envir=.GlobalEnv)
+
+}
+
+

@@ -144,7 +144,7 @@ points(2010,prevalence2010[5])
 segments(2000,prevalence2000l[5],2000,prevalence2000u[5])
 segments(2010,prevalence2010l[5],2010,prevalence2010u[5])
 plot.new()
-legend("center",c("Overall(15+ years","15-29 years","30-44 years","45-59 years","≥60 years"), lty=1,col=c("orange","lightblue","blue","purple","green"))
+legend("center",c("Overall(15+) years","15-29 years","30-44 years","45-59 years","≥60 years"), lty=1,col=c("orange","lightblue","blue","purple","green"))
 
 
 

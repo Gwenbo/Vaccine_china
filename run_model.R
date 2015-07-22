@@ -23,7 +23,7 @@ nm<-c(pararange[,1],"p0") # The parameter ranges
 setwd(home)
 
 # Simulate data 
- rrun<-3 # It can be as high as 1000 but just do a few to get a feel and for it to be quicker
+ rrun<-1 # It can be as high as 1000 but just do a few to get a feel and for it to be quicker
  xout<-c(); eee<-c(); # Initialise all vectors to be empty
  for (kkk in 1:rrun){
    print(kkk)
@@ -207,7 +207,7 @@ setwd(home)
 ## Vaccine interventions
 typen<-7 ## Number of vaccine types (increased to 7 to inc latency vaccine and adult/ado vaccine)
 effs<-c(40,60,80)/100
-durs<-c(20)
+durs<-c(10,20)
 cover<-c(0.3,0.7)
 combn<-length(effs)*length(durs)*length(cover) ## Number of efficacy and duration combinations
 

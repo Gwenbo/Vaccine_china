@@ -288,7 +288,6 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       I[i,2:Mnage] = I[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(new_I[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + ui[1:(Mnage-1)])*I[i-1,1:(Mnage-1)]*dt
       NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(e*new_NI[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + uni[1:(Mnage-1)] + w)*NI[i-1,1:(Mnage-1)]*dt                    
       
-###checked dt up to here
 
       #if(I[i,2] < I[i-1,1]){print(c(i,I[i,2],I[i-1,1],"stop",(n + u[1:13] + ui),"cdr",CDR,CoT))}
       if (k==2010) {print(CDR)}
@@ -370,9 +369,6 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       psize55plus[i]<-sum(S[i,56:Mnage],L[i,56:Mnage],R[i,56:Mnage],I[i,56:Mnage],NI[i,56:Mnage],Sv[i,56:Mnage],Lv[i,56:Mnage],Rv[i,56:Mnage])
       psize55minus[i]<-sum(S[i,1:55],L[i,1:55],R[i,1:55],I[i,1:55],NI[i,1:55],Sv[i,1:55],Lv[i,1:55],Rv[i,1:55])
       psize5574[i]<-sum(S[i,56:76],L[i,56:76],R[i,56:76],I[i,56:76],NI[i,56:76],Sv[i,56:76],Lv[i,56:76],Rv[i,56:76])
-
-
-#psize65plus[i]<-sum(S[i,66:86],L[i,66:86],R[i,66:86],I[i,66:86],NI[i,66:86],Sv[i,66:86],Lv[i,66:86],Rv[i,66:86])
       
       #ages needed to fit to mort  and prevalence as have different groupings
       psize1559[i]<-sum(S[i,16:60],L[i,16:60],R[i,16:60],I[i,16:60],NI[i,16:60],Sv[i,16:60],Lv[i,16:60],Rv[i,16:60])

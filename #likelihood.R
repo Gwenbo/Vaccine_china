@@ -17,7 +17,7 @@ FitDataI<-matrix(78)
 
 FitData<-cbind(FitDataP, FitDataN, FitDataM, FitDataI)
 
-#variance of data from 95% CIs
+#95% CIs
 
 cip<-matrix(c(163,72,96,174,510,195,116,146,260,698,101,40,54,106,294,132,86,99,168,407),nrow=4, ncol=5, byrow=TRUE)
 colnames(cip)<-c("Overall(15+)","15-29 years","30-44 years","45-59 years","≥60 years")
@@ -35,7 +35,7 @@ rownames(cim)<-c("lower2010","upper2010")
 cii<-c(68,88)
 
 
-
+#calc variance of data from CIs assuming normal distrib (therefore can use 1.96sd=95% CIs)
 ### sd from lower and upper is different so not normally distrib, so how use this??
 sdpl<-(FitDataP[,1:5]-cip[1,])/1.96
 sdpu<-(cip[2,]-FitDataP[,1:5])/1.96
@@ -57,13 +57,7 @@ sdi<-(FitDataI-cii[1])/1.96
 var<-c((sdp^2),(sdp2^2),(sdn^2),(sdm^2),(sdi^2))
 #colnames(var)<-c("TBPb15+2000","TBPb15-29_2000","TBPb30-44_2000","TBPb45-59_2000","TBPb60+_2000","TBPb15+","TBPb15-29","TBPb30-44","TBPb45-59","TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")
 
-# var<-mat.or.vec(1,20)
-# var[1,]<-sdp^2
-# var[2,]<-sdp2^2
-# var[3,]<-sdn^2
-# var[4,1:4]<-sdm^2
-# var[5,1]<-sdi^2
-# rownames(var)<-c("Prev2000","Prev2010","Notif2010","Mort2010","Inc2010") 
+
 
 # have model outcomes to be fitted to in easily readible format 
 new00<-xout[which(xout[,"year"]%in%2000),c("type","vxint","fit","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+")]
@@ -73,6 +67,7 @@ neww<-cbind(new00,new10)
 View(neww)
 #neww<-xout[which(xout[,"year"]%in%c(2000,2010)),c("type","vxint","fit","year","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
 #colnames(neww)<-NULL
+
 neww<-neww[,4:23]
 
 ## then calc likelihood of that parameter given the data (i.e. the prev etc that we're trying to fit to)
@@ -94,6 +89,16 @@ for (i in 1:n_p){
 
 L
 
+#retunr vector indicating which rows are complete (i.e. no NaNs)
+missing<-as.vector(complete.cases(L))
+
+#### NOT WORKING!! ###
+
+for(i in 1:n_p)
+{
+if (missing[i]==FALSE) replace(L[i],1,0)
+assign('L1', L, envir=.GlobalEnv)
+}
 
 
 ### Sample the runs with a weight based upon the calculated likelihood of that run's parameters
@@ -123,14 +128,14 @@ model_l=apply(neww[t,],1,function(x) quantile(x,probs=c(0.025)))
 
 for (i in 1:(length(nm)-1))
 {
-  nam<-paste(pararange[i,1],"_posterior",sep='')
+  nam<-paste(pararange[i,1]," posterior",sep='')
   tpar<-as.numeric(para[t,i])
   assign(nam,tpar)
-  plot(density(tpar),xlim=c(as.numeric(pararange[i,2]),as.numeric(pararange[i,3]))) # plot the density of the posterior
+  plot(density(tpar),xlim=c(as.numeric(pararange[i,2]),as.numeric(pararange[i,3])),main=nam, col="red") # plot the density of the posterior
   lines(density(para[,i]))  # plot the density of the prior (a flat line (ish as density smooths things) as it was uniform)
 }
 
-
+# ###over time, need xout??
 # par(mfrow=c(1,1))
 # 
 # matplot(neww[,1], type="l",col="grey",ylim=c(0,30))     # plot all 1000 outputs as grey lines
@@ -139,4 +144,31 @@ for (i in 1:(length(nm)-1))
 # lines(model_m,col="black",lty=2)        # plot the median and 95% CI
 # lines(model_u,col="black")      
 # lines(model_l,col="black")    
+
+
+
+## Scatter plots
+
+#prev 2010 vs parameters
+
+for (i in 1:(length(nm)-1))
+{
+  nam<-paste(pararange[i,1]," vs Prevalence rate 2000",sep='')
+  plot(para[,i],neww[,1],ylab="Prevalence rate (2000)",xlab=paste(pararange[i,1]),type='p', main=nam)
+  
+  nam<-paste(pararange[i,1]," vs Prevalence rate 2010",sep='')
+  plot(para[,i],neww[,6],ylab="Prevalence rate (2010)",xlab=paste(pararange[i,1]), type='p', main=nam)
+
+  nam<-paste(pararange[i,1]," vs Notification rate 2010",sep='')
+  plot(para[,i],neww[,11],ylab="Notification rate (2010)",xlab=paste(pararange[i,1]), type='p', main=nam)
+  
+  nam<-paste(pararange[i,1]," vs Mortality rate 2010",sep='')
+  plot(para[,i],neww[,16],ylab="Mortality rate (2010)",xlab=paste(pararange[i,1]), type='p', main=nam)
+  
+  nam<-paste(pararange[i,1]," vs Incidence rate 2010",sep='')
+  plot(para[,i],neww[,20],ylab="Incidence rate (2010)",xlab=paste(pararange[i,1]), type='p', main=nam)
+  
+}
+
+
 
