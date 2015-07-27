@@ -9,7 +9,7 @@ nm<-c(pararange[,1],"p0") # The parameter ranges
 ### Generate Parameter Sets ###
 
 ##number of parameter sets - will increase later
-n_p<-5
+n_p<-50
 
 ##generate matrix for storing parameter sets (later will want to store these as the file that you call for the model)
 
@@ -46,6 +46,8 @@ nmbr<-count*nn #use this once doing vaccine scenarios
 xout<-mat.or.vec(((yearend-year1+1)*2*n_p*(typen+1)),99) #(94+run number+vacc type+vacc effic) would need changing if extra outputs added
 colnames(xout)<-c(colnames(X),"timestep","year","type","vxint","fit") #timestep is for params where given by timestep, year is for where output is summary of annual
 
+par(mfrow=c(2,2))
+
 # Simulate data 
 for (kkk in 1:n_p)
     {
@@ -56,6 +58,39 @@ for (kkk in 1:n_p)
     # Run the model with these parameters  
     Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)   
     xout[(((yearend-year1+1)*2*kkk*nmbr)-(2*(yearend-year1+1)-1)):(2*(yearend-year1+1)*kkk*nmbr),]<-cbind(Xn,times,year,nn,count,kkk)
+
+    
+    popcheck<-xout[(((yearend-year1+1)*2*kkk*nmbr)-(2*(yearend-year1+1)-1)):(2*(yearend-year1+1)*kkk*nmbr),(1:7)]
+    popcheck<-as.data.frame(popcheck)
+    plot(seq(1,302),popcheck$PSIZE, ylab="Size",xlab="Timestep", main=kkk, ylim=c(0,1800000),xlim=c(0,302),type='l',col='purple')
+    lines(seq(1,302),popcheck$S,type='l',col='red')
+    lines(seq(1,302),popcheck$L,type='l',col='orange')
+    lines(seq(1,302),popcheck$NI,type='l',col='yellow')
+    lines(seq(1,302),popcheck$I,type='l',col='green')
+    lines(seq(1,302),popcheck$R,type='l',col='blue')
+    lines(seq(1,302),popcheck$Births,type='l',col='pink')
+#     plot.new()
+#     legend("center",c("Psize","S","L","NI","I","R","Births"), lty=1,col=c("purple","red","orange","yellow","green","blue","pink"))
+#  
+    
+    
+    plot(seq(1,302),popcheck$PSIZE, ylab="Size",xlab="Timestep",main=kkk, ylim=c(0,100000),xlim=c(0,302),type='l',col='purple')
+    lines(seq(1,302),popcheck$S,type='l',col='red')
+    lines(seq(1,302),popcheck$L,type='l',col='orange')
+    lines(seq(1,302),popcheck$NI,type='l',col='yellow')
+    lines(seq(1,302),popcheck$I,type='l',col='green')
+    lines(seq(1,302),popcheck$R,type='l',col='blue')
+    lines(seq(1,302),popcheck$Births,type='l',col='pink')
+#     plot.new()
+#     legend("center",c("Psize","S","L","NI","I","R","Births"), lty=1,col=c("purple","red","orange","yellow","green","blue","pink"))
+#     
+
+plot(seq(1,302),lambda[1:302,1], ylab="lambda",xlab="Timestep",main=kkk,type='l')
+for (i in 2:101){
+  lines(seq(1,302),lambda[,i],type='l')
+}
+
+
 }
 
 

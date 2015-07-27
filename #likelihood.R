@@ -73,32 +73,50 @@ neww<-neww[,4:23]
 ## then calc likelihood of that parameter given the data (i.e. the prev etc that we're trying to fit to)
 
 #likelihood calc
-# L<-rep(0,n_p)
+#  L<-rep(0,n_p)
 # for (i in 1:n_p){
-#   L[i] <- prod(((2*pi*var)^(-1/2))*exp(-(1/(2*var))*(((neww[i,])-FitData)^2)))
-# }
+#    L[i] <- prod(((2*pi*var)^(-1/2))*exp(-(1/(2*var))*(((neww[i,])-FitData)^2)))
+#  }
 
 #had to switch to log likelihood as likelihood becomes too small beyond approx 17 terms and just gives zero, so need to use log likelihood as adds rather than multiplies
 ###HOW DOES USING LOG LIKELIHOOD affect how you use these numbers? +ive vs negative log likelihood??
 ### HAVE NEGATIVE values, what do about this???
 
+# L<-rep(0,n_p)
+# for (i in 1:n_p){
+#   L[i] <- sum((-0.5*log(2*pi))-(0.5*log(var))-((((neww[i,])-FitData)^2)/(2*var)))
+# }
+
+
 L<-rep(0,n_p)
 for (i in 1:n_p){
-  L[i] <- sum((-0.5*log(2*pi))-(0.5*log(var))-((((neww[i,])-FitData)^2)/(2*var)))
+  L[i] <- sum((-0.5*log(2*pi*var))-((((neww[i,])-FitData)^2)/(2*var)))
 }
-
 L
+
+#need to do this so that the most liekly ones are the biggest number, as log likelihood is best when is the clostest to zero, so times b -1 to make it a positive value, then 1/L to make the best ones the biggest numbers so that works for weighted sampling
+L<-(-1/L)
 
 #retunr vector indicating which rows are complete (i.e. no NaNs)
 missing<-as.vector(complete.cases(L))
 
-#### NOT WORKING!! ###
+## make those that didnt work zeros so they wont be selected
 
 for(i in 1:n_p)
 {
-if (missing[i]==FALSE) replace(L[i],1,0)
-assign('L1', L, envir=.GlobalEnv)
+if (missing[i]==FALSE) {L[i]<-0}
 }
+L
+
+## matirx to indicate  THE NEGATIVEs - if the value of negs is >0 then that parameter set has given at least one negative output
+test<-matrix(1,n_p,20)
+
+for(kkk in 1:n_p){
+  test[kkk,]<-ifelse(neww[kkk,]<0,test[kkk,]==1,test[kkk,]==0)
+}
+
+negs<-rowSums(test)
+
 
 
 ### Sample the runs with a weight based upon the calculated likelihood of that run's parameters
@@ -111,7 +129,7 @@ N_resamp<-10000 # number of samples to take
 
 #resample with weights based upon likelihodds
 # t will be a vector of the indices of the resampled parameter sets
-t<-sample(seq(1:n_p),N_resamp,replace=TRUE,prob=L/sum(L))
+t<-sample(seq(1:n_p),N_resamp,replace=TRUE,prob=L)
 # This just pulls out the unique values of t
 unique_t<-unique(t)
 table(t)
@@ -135,17 +153,6 @@ for (i in 1:(length(nm)-1))
   lines(density(para[,i]))  # plot the density of the prior (a flat line (ish as density smooths things) as it was uniform)
 }
 
-# ###over time, need xout??
-# par(mfrow=c(1,1))
-# 
-# matplot(neww[,1], type="l",col="grey",ylim=c(0,30))     # plot all 1000 outputs as grey lines
-# points(FitData[,1],col="red")                  # plot the data as red dots
-# lines(model[,which.max(L)],col="red")   # plot the best fit as a red line
-# lines(model_m,col="black",lty=2)        # plot the median and 95% CI
-# lines(model_u,col="black")      
-# lines(model_l,col="black")    
-
-
 
 ## Scatter plots
 
@@ -153,22 +160,39 @@ for (i in 1:(length(nm)-1))
 
 for (i in 1:(length(nm)-1))
 {
-  nam<-paste(pararange[i,1]," vs Prevalence rate 2000",sep='')
-  plot(para[,i],neww[,1],ylab="Prevalence rate (2000)",xlab=paste(pararange[i,1]),type='p', main=nam)
-  
-  nam<-paste(pararange[i,1]," vs Prevalence rate 2010",sep='')
-  plot(para[,i],neww[,6],ylab="Prevalence rate (2010)",xlab=paste(pararange[i,1]), type='p', main=nam)
-
-  nam<-paste(pararange[i,1]," vs Notification rate 2010",sep='')
-  plot(para[,i],neww[,11],ylab="Notification rate (2010)",xlab=paste(pararange[i,1]), type='p', main=nam)
-  
+#   nam<-paste(pararange[i,1]," vs Prevalence rate 2000",sep='')
+#   plot(para[,i],neww[,1],ylab="Prevalence rate (2000)",xlab=paste(pararange[i,1]),type='p', main=nam)
+#   
+#   nam<-paste(pararange[i,1]," vs Prevalence rate 2010",sep='')
+#   plot(para[,i],neww[,6],ylab="Prevalence rate (2010)",xlab=paste(pararange[i,1]), type='p', main=nam)
+# 
+#   nam<-paste(pararange[i,1]," vs Notification rate 2010",sep='')
+#   plot(para[,i],neww[,11],ylab="Notification rate (2010)",xlab=paste(pararange[i,1]), type='p', main=nam)
+#   
   nam<-paste(pararange[i,1]," vs Mortality rate 2010",sep='')
   plot(para[,i],neww[,16],ylab="Mortality rate (2010)",xlab=paste(pararange[i,1]), type='p', main=nam)
   
-  nam<-paste(pararange[i,1]," vs Incidence rate 2010",sep='')
-  plot(para[,i],neww[,20],ylab="Incidence rate (2010)",xlab=paste(pararange[i,1]), type='p', main=nam)
-  
+#   nam<-paste(pararange[i,1]," vs Incidence rate 2010",sep='')
+#   plot(para[,i],neww[,20],ylab="Incidence rate (2010)",xlab=paste(pararange[i,1]), type='p', main=nam)
+#   
 }
+
+
+# ###over time, need xout?? NO as need to plot the fitted ones.
+# par(mfrow=c(1,1))
+# 
+xout<-as.data.frame(xout)
+plot(xout[xout$fit==9,"year"],xout[xout$fit==9,"TBPbtot"], type="l",col="grey",ylim=c(0,100), xlim=c(1900,2050))     # plot all  outputs as grey lines
+# points(FitData[,1],col="red")                  # plot the data as red dots
+# lines(model[,which.max(L)],col="red")   # plot the best fit as a red line
+# lines(model_m,col="black",lty=2)        # plot the median and 95% CI
+# lines(model_u,col="black")      
+# lines(model_l,col="black")    
+
+#xout[(((yearend-year1+1)*2*kkk*nmbr)-(2*(yearend-year1+1)-1)):(2*(yearend-year1+1)*kkk*nmbr),]<-cbind(Xn,times,year,nn,count,kkk)
+
+overall prevalence over time of model, with median, and with data points
+
 
 
 
