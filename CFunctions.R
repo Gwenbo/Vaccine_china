@@ -408,8 +408,6 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       Imatno75up[i]<-sum(I[i,66:75])
 
 
-
-
       print ("done psize start yr")
       
       ## number vaccinated
@@ -457,6 +455,7 @@ print("done start year")
         start <- 0 # Not the start of the year
         #lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
         print("pre-post lambda")
+      
         
         #PAF_year=2050
         #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
@@ -661,8 +660,8 @@ print("done start year")
         if(i == ((1/dt)*(k-year1)+1/dt)){
           
           print("last time step")
-          #i1 is number of first time step of the yr, i2 is number of last timestep of the yr
-          i1<-((1/dt)*(k-year1)+1); i2<-((1/dt)*(k-year1)+1/dt)
+          #i1 is number of first time step of the yr, i2 is number of last timestep of the yr, i3 is second timestep of the yesr
+          i1<-((1/dt)*(k-year1)+1); i2<-((1/dt)*(k-year1)+1/dt); i3<-((1/dt)*(k-year1)+2)
           # TB INCIDENCE AND MORTALITY etc for MODEL FITTING and RESEARCH OUTCOMES
           #print(c(i,TBI[1,],sum(new_I[i1:i2,],new_NI[i1:i2,]),mean(psize[i1:i2])))
           # Yearly average PSIZE, Incidence and mortality
@@ -722,24 +721,53 @@ print("done start year")
           
           
           ## (3) TB prevalence rate 
-          TBP[(k-year1+1),1]<-100000*sum(I[i1:i2,],NI[i1:i2,])/mean(psize[i1:i2])
-          TBP[(k-year1+1),2]<-100000*sum(I[i1:i2,1:15],NI[i1:i2,1:15])/mean(psize014[i1:i2])
-          TBP[(k-year1+1),3]<-100000*sum(I[i1:i2,16:30],NI[i1:i2,16:30])/mean(psize1529[i1:i2])
-          TBP[(k-year1+1),4]<-100000*sum(I[i1:i2,31:45],NI[i1:i2,31:45])/mean(psize3044[i1:i2])
-          TBP[(k-year1+1),5]<-100000*sum(I[i1:i2,46:60],NI[i1:i2,46:60])/mean(psize4559[i1:i2])
-          TBP[(k-year1+1),6]<-100000*sum(I[i1:i2,61:Mnage],NI[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
-          TBP[(k-year1+1),7]<-100000*sum(I[i1:i2,56:Mnage],NI[i1:i2,56:Mnage])/mean(psize55plus[i1:i2])
-          
+          ### NEED TO FIX  ####
+#           
+#           TBP[(k-year1+1),1]<-100000*sum(I[i1:i2,],NI[i1:i2,])/mean(psize[i1:i2])
+#           TBP[(k-year1+1),2]<-100000*sum(I[i1:i2,1:15],NI[i1:i2,1:15])/mean(psize014[i1:i2])
+#           TBP[(k-year1+1),3]<-100000*sum(I[i1:i2,16:30],NI[i1:i2,16:30])/mean(psize1529[i1:i2])
+#           TBP[(k-year1+1),4]<-100000*sum(I[i1:i2,31:45],NI[i1:i2,31:45])/mean(psize3044[i1:i2])
+#           TBP[(k-year1+1),5]<-100000*sum(I[i1:i2,46:60],NI[i1:i2,46:60])/mean(psize4559[i1:i2])
+#           TBP[(k-year1+1),6]<-100000*sum(I[i1:i2,61:Mnage],NI[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
+#           TBP[(k-year1+1),7]<-100000*sum(I[i1:i2,56:Mnage],NI[i1:i2,56:Mnage])/mean(psize55plus[i1:i2])
+#           
           ## (4) TB bacteriologically positive prevalence rate - is comparable to the calibration data, so use this one 
-          TBPb[(k-year1+1),1]<-100000*sum(I[i1:i2,])/mean(psize[i1:i2])
-          TBPb[(k-year1+1),2]<-100000*sum(I[i1:i2,1:15])/mean(psize014[i1:i2])
-          TBPb[(k-year1+1),3]<-100000*sum(I[i1:i2,16:30])/mean(psize1529[i1:i2])
-          TBPb[(k-year1+1),4]<-100000*sum(I[i1:i2,31:45])/mean(psize3044[i1:i2])
-          TBPb[(k-year1+1),5]<-100000*sum(I[i1:i2,46:60])/mean(psize4559[i1:i2])
-          TBPb[(k-year1+1),6]<-100000*sum(I[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
-          TBPb[(k-year1+1),7]<-100000*sum(I[i1:i2,56:Mnage])/mean(psize55plus[i1:i2])
-          TBPb[(k-year1+1),8]<-100000*sum(I[i1:i2,16:Mnage])/mean(psize15plus[i1:i2])
+          ##point prevalence vs period prevalence vs average point prevalence??
+          ## 4a) average point prevalence
           
+          TBPb[(k-year1+1),1]<-100000*((sum(I[i1:i2,]))/(1/dt))/mean(psize[i1:i2])
+          TBPb[(k-year1+1),2]<-100000*((sum(I[i1:i2,1:15]))/(1/dt))/mean(psize014[i1:i2])
+          TBPb[(k-year1+1),3]<-100000*((sum(I[i1:i2,16:30]))/(1/dt))/mean(psize1529[i1:i2])
+          TBPb[(k-year1+1),4]<-100000*((sum(I[i1:i2,31:45]))/(1/dt))/mean(psize3044[i1:i2])
+          TBPb[(k-year1+1),5]<-100000*((sum(I[i1:i2,46:60]))/(1/dt))/mean(psize4559[i1:i2])
+          TBPb[(k-year1+1),6]<-100000*((sum(I[i1:i2,61:Mnage]))/(1/dt))/mean(psize60plus[i1:i2])
+          TBPb[(k-year1+1),7]<-100000*((sum(I[i1:i2,56:Mnage]))/(1/dt))/mean(psize55plus[i1:i2])
+          TBPb[(k-year1+1),8]<-100000*((sum(I[i1:i2,16:Mnage]))/(1/dt))/mean(psize15plus[i1:i2])
+          
+#           ## 4b) first timestep of year point prevalence  
+#           
+#           TBPb[(k-year1+1),1]<-100000*(sum(I[i1,]))/(psize[i1])
+#           TBPb[(k-year1+1),2]<-100000*(sum(I[i1,1:15]))/(psize014[i1])
+#           TBPb[(k-year1+1),3]<-100000*(sum(I[i1,16:30]))/(psize1529[i1])
+#           TBPb[(k-year1+1),4]<-100000*(sum(I[i1,31:45]))/(psize3044[i1])
+#           TBPb[(k-year1+1),5]<-100000*(sum(I[i1,46:60]))/(psize4559[i1])
+#           TBPb[(k-year1+1),6]<-100000*(sum(I[i1,61:Mnage]))/(psize60plus[i1])
+#           TBPb[(k-year1+1),7]<-100000*(sum(I[i1,56:Mnage]))/(psize55plus[i1])
+#           TBPb[(k-year1+1),8]<-100000*(sum(I[i1,16:Mnage]))/(psize15plus[i1])
+#           
+#           ## 4c) period prevalence
+#           
+#           ### how calculate?? take point prevalence of first timestep of the year then add on all incident cases, and use mean pop size as denominator???
+#           
+#           TBPb[(k-year1+1),1]<-100000*(((sum(I[i1,]))+(sum(new_actv[i3:i2,])))/mean(psize[i1:i2]))
+#           TBPb[(k-year1+1),2]<-100000*(((sum(I[i1,1:15]))+(sum(new_actv[i3:i2,1:15])))/mean(psize014[i1:i2]))
+#           TBPb[(k-year1+1),3]<-100000*(((sum(I[i1,16:30]))+(sum(new_actv[i3:i2,16:30])))/mean(psize1529[i1:i2]))
+#           TBPb[(k-year1+1),4]<-100000*(((sum(I[i1,31:45]))+(sum(new_actv[i3:i2,31:45])))/mean(psize3044[i1:i2]))
+#           TBPb[(k-year1+1),5]<-100000*(((sum(I[i1,46:60]))+(sum(new_actv[i3:i2,46:60])))/mean(psize4559[i1:i2]))
+#           TBPb[(k-year1+1),6]<-100000*(((sum(I[i1,61:Mnage]))+(sum(new_actv[i3:i2,61:Mnage])))/mean(psize60plus[i1:i2]))
+#           TBPb[(k-year1+1),7]<-100000*(((sum(I[i1,56:Mnage]))+(sum(new_actv[i3:i2,56:Mnage])))/mean(psize55plus[i1:i2]))
+#           TBPb[(k-year1+1),8]<-100000*(((sum(I[i1,16:Mnage]))+(sum(new_actv[i3:i2,16:Mnage])))/mean(psize15plus[i1:i2]))
+#           
           
           ## (5) TB mortality rate
           #print(c("IH",sum(new_IH[i,],new_NIH[i,]),TBI[i,2]))
@@ -771,8 +799,15 @@ print("done start year")
 #           TBPI[(k-year1+1),13]<-100*(((sum(L[i1:i2,61:70]))/2)/mean(psize6069[i1:i2]))
 #           TBPI[(k-year1+1),14]<-100*(((sum(L[i1:i2,71:Mnage]))/2)/mean(psize70plus[i1:i2]))
 #                                      
-#           
-          TBPI[(k-year1+1),1]<-100*(((sum(L[i1,])/psize[i1])+(sum(L[i2,])/psize[i2]))/2)
+#   
+
+#### THIS NEEDS ADAPTING IF TIMESTEP CHANGES !!!!  #########
+
+TBPI[(k-year1+1),1]<-100*(((sum(L[i1,])/psize[i1])+(sum(L[i2,])/psize[i2]))/2)
+#TBPI[(k-year1+1),1]<-100*(((sum(L[i1:i2,]))/2)/mean(psize[i1:i2]))
+#TBPI[(k-year1+1),1]<-100*(((sum(L[i1,])/psize[i1])+(sum(L[i2,])/psize[i2]))/2)
+
+
           TBPI[(k-year1+1),2]<-100*(((sum(L[i1,1:15])/psize014[i1])+(sum(L[i2,1:15])/psize014[i2]))/2)
           TBPI[(k-year1+1),3]<-100*(((sum(L[i1,16:55])/psize1554[i1])+(sum(L[i2,16:55])/psize1554[i2]))/2)
           TBPI[(k-year1+1),4]<-100*(((sum(L[i1,56:65])/psize5564[i1])+(sum(L[i2,56:65])/psize5564[i2]))/2)
@@ -866,11 +901,13 @@ print("done start year")
           TBProp[(k-year1+1),3]<-sum(I[i1:i2,56:65])/sum(I[i1:i2])
           TBProp[(k-year1+1),4]<-sum(I[i1:i2,66:Mnage])/sum(I[i1:i2])
           
+
+
           #(11) to calc PAF - number of new infections
-          #I1990[1,]<-sum(new_infect[181:182,])
-          #I2025[1,]<-sum(new_infect[251:252,])
-          #I2050[1,]<-sum(new_infect[301:302,])
-          I2050[1,]<-sum(new_infect[301:302,])
+          #I1990[1,]<-sum(new_infect[((1990-year1)*(1/dt)+1):((1990+1-year1)*(1/dt)),])
+          #I2025[1,]<-sum(new_infect[((2025-year1)*(1/dt)+1):((2025+1-year1)*(1/dt)),])
+          #I2050[1,]<-sum(new_infect[((2050-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),])
+          I2050[1,]<-sum(new_infect[((2050-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),])
 
 
           ###(12) New active cases and TB deaths per year
@@ -891,10 +928,11 @@ print("done start year")
 
 
 #           #av incidence rate in <55 and >55 for 2025-2050 for data check
-          TBIPGyng<-(sum(new_I_noconv[251:302,1:55],new_NI[251:302,1:55]))/26
-          TBIPGold<-(sum(new_I_noconv[251:302,56:Mnage],new_NI[251:302,56:Mnage]))/26
-          PsizePGyng<-mean(psize55minus[251:302])
-          PsizePGold<-mean(psize55plus[251:302])
+
+          TBIPGyng<-(sum(new_I_noconv[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),1:55],new_NI[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),1:55]))/26
+          TBIPGold<-(sum(new_I_noconv[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),56:Mnage],new_NI[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),56:Mnage]))/26
+          PsizePGyng<-mean(psize55minus[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt))])
+          PsizePGold<-mean(psize55plus[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt))])
           PGyng<-100000*TBIPGyng/PsizePGyng
           PGold<-100000*TBIPGold/PsizePGold
 
@@ -1041,16 +1079,16 @@ print("done assign")
   ## CUMULATIVE RESEARCH OUTCOMES 2025-2050
   
 
-  totmort[,1]<-sum(TBDeaths[251:302,])
-  totmort[,2]<-sum(TBDeaths[251:302,66:Mnage])
-  totmort[,3]<-sum(TBDeaths[251:302,56:Mnage])
-  totmort[,4]<-sum(TBDeaths[251:302,1:55])
+  totmort[,1]<-sum(TBDeaths[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),])
+  totmort[,2]<-sum(TBDeaths[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),66:Mnage])
+  totmort[,3]<-sum(TBDeaths[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),56:Mnage])
+  totmort[,4]<-sum(TBDeaths[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),1:55])
 print(totmort)
 
-  totcase[,1]<- sum(new_I_noconv[251:302,],new_NI[251:302,])
-  totcase[,2]<- sum(new_I_noconv[251:302,66:Mnage],new_NI[251:302,66:Mnage])
-  totcase[,3]<- sum(new_I_noconv[251:302,56:Mnage],new_NI[251:302,56:Mnage])
-  totcase[,4]<- sum(new_I_noconv[251:302,1:55],new_NI[251:302,1:55])
+  totcase[,1]<- sum(new_I_noconv[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),],new_NI[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),])
+  totcase[,2]<- sum(new_I_noconv[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),66:Mnage],new_NI[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),66:Mnage])
+  totcase[,3]<- sum(new_I_noconv[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),56:Mnage],new_NI[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),56:Mnage])
+  totcase[,4]<- sum(new_I_noconv[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),1:55],new_NI[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),1:55])
 print(totcase)
 
 
