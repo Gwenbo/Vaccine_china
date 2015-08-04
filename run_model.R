@@ -32,6 +32,7 @@ setwd(home)
   neta2<-neta # this parameter needs extra assigning for some annoying reason! 
   
   # Run the model with these parameters  
+  #4th setof terms, second entry of that term is the timestep
   system.time(Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,(1/12),c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0))   
   }
 

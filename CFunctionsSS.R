@@ -1,0 +1,1121 @@
+### All functions needed 
+
+
+#### MAIN Function to generate model output
+# Takes in country, vaccine details, fit parameters, initial values, time for simulation, whether to plot, cluster or not
+FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
+  # Cntry <- country name; 
+  # Vx <- vector of vaccine properties. c(vxtype, coverage, efficacy, duration). If blank then no vaccine (for fit)
+  # Fit <- 7 fit parameters
+  # InitV <- vector of initial values: Run number, timestep, proportion TB initially (either 1 or four = ? )
+  # TimeScale <- c(year1, yearend)
+  # Plot <- whether to plot or not (1 = yes)
+  
+  # C is the cluster parameter -> C==0 if on laptop
+  #if (C == 0){setwd("/Users/londonschool/Documents/My\ Documents/Vaccine/CEmodel/")}
+  #if (C == 1){setwd("/users/eidegkni/Documents/vaccine")}
+  
+  # Paranames in Fit and InitV
+  FitV<-c('psz1900','rmort','neta','rmortTB','CDRscale','CDRscaleE','alpha')
+  InitialV<-c('run','dt','prop') 
+  
+  #### Run model with these input parameters
+  # Assign parameters to values inputted
+  if(length(InitV)==3){for(i in 1:length(InitV)){assign(InitialV[i],InitV[i],envir = .GlobalEnv)}
+  } else {for(i in 1:2){assign(InitialV[i],as.numeric(InitV[i]),envir = .GlobalEnv)};assign(InitialV[3],as.numeric(InitV[3:6]),envir = .GlobalEnv)}
+  assign('cntry',cntry,envir = .GlobalEnv)
+  assign('year1',TimeScale[1],envir = .GlobalEnv); assign('yearend',TimeScale[2],envir = .GlobalEnv)
+  ## Parameters that are kept in but don't use in this version: different progression proportions from Stover
+  g<-x; gH<-xH;
+  hchild<-fchild; hadult<-fadult; hH<-fH; helderly<-felderly
+  
+  #identify number of years in each age category, create vectors of age-specific parameters for adults vs kids vs elderly
+  chiyrs<-15
+  aduyrs<-50
+  yaduyrs<-40
+  eldyrs<-(Mnage-chiyrs-aduyrs)
+  voldadu<-(vadult+velderly)/2
+  noldadu<-(n+nelderly)/2
+  roldadu<-(radult+relderly)/2
+  
+  
+  
+  p=c((rep(pchild, l=chiyrs)),(rep(padult, l=aduyrs)),(rep(pelderly, l=eldyrs)))
+  f=c((rep(fchild, l=chiyrs)),(rep(fadult, l=aduyrs)),(rep(felderly, l=eldyrs)))
+  h=c((rep(hchild, l=chiyrs)),(rep(hadult, l=aduyrs)),(rep(helderly, l=eldyrs)))
+  v=c((rep(vchild, l=chiyrs)),(rep(vadult, l=yaduyrs)),(rep(voldadu, l=(aduyrs-yaduyrs))), (rep(velderly, l=eldyrs)))
+  r=c((rep(rchild, l=chiyrs)),(rep(radult, l=yaduyrs)),(rep(roldadu, l=(aduyrs-yaduyrs))), (rep(relderly, l=eldyrs)))
+  n=c((rep(n, l=chiyrs)),(rep(n, l=yaduyrs)),(rep(noldadu, l=(aduyrs-yaduyrs))), (rep(nelderly, l=eldyrs)))
+  print("doneeldyears")
+  
+  # Timesteps with inputted start end and timestep
+  times<-seq(year1,(yearend+(1-dt)),dt);steps<-length(times);
+  
+  # Country data (may be overruled by FIT values)
+  source("#CountryCalc.R")
+  
+  print("done country calc")
+  for(i in 1:length(Fit)){assign(FitV[i],Fit[i],envir = .GlobalEnv)} # Only assign those variables that want to 
+  #print(c("neta",neta))
+  # FIT: rmortTB = proportion multiply TB mortality by. Range=[-1,1].
+  if(length(Fit)>3){if (rmortTB<0){ui<-rmortTB*(ui)+ui; uni<-rmortTB*(uni)+uni;
+  } else {ui<-rmortTB*(1-ui)+ui; uni<-rmortTB*(1-uni)+uni}
+  }
+  # u and ui use age dependent pattern and apply to existing number
+  
+  uichild<-ui*uiscaleC
+  uiadult<-ui*uiscaleA
+  uielderly<-ui*uiscaleE
+  unichild<-uni*uiscaleC
+  uniadult<-uni*uiscaleA
+  unielderly<-uni*uiscaleE
+  
+  ui<-c((rep(uichild, l=chiyrs)),(rep(uiadult, l=aduyrs)),(rep(uielderly, l=eldyrs)))
+  uni<-c((rep(unichild, l=chiyrs)),(rep(uniadult, l=aduyrs)),(rep(unielderly, l=eldyrs)))
+  
+  #print(ui)
+  # ui<-c(rep(ui,l=Mnage))
+  # uni<-c(rep(uni,l=Mnage))
+  #   
+  # If don't assign CDRscale set it to 1 (i.e. use data)
+  if(length(Fit)<5){CDRscale <- 1}
+  ## Generate Vaccine specific data using above eff and D if specified in input
+  if(length(Vx)>1){
+    assign('vaccine',Vx[1],envir = .GlobalEnv); assign('coverage',Vx[2],envir = .GlobalEnv); assign('eff',Vx[3],envir = .GlobalEnv); assign('D',Vx[4],envir = .GlobalEnv)
+    source("#VxGen.R")
+  } else {d<-matrix(0,steps,Mnage); 
+          thetaS<-matrix(0,steps,Mnage);
+          thetaL<-matrix(0,steps,Mnage)
+          thetaR<-matrix(0,steps,Mnage)
+          vaccine<-0;#thetaH<-theta;
+          eff<-0;Dur<-0;coverage<-0
+  }
+  print("Done vacc gen")
+  
+  ## Initialise
+  source("#Init.R")
+  
+  print("done init")
+  
+  ## To check with fitting vector
+  #yyy<-c(pchild,padult,pH,v,vH,x,xH,fchild,fadult,fH,w,n,nH,r,rH,e,g,gH,hchild,hadult,hH,LEHIV,LEART,effH,effHa,rmort,neta,rmortTB,CDRscale,alpha)
+  #if(sum(xxx-yyy)>0){print(c("AT",which(xxx-yyy>0),"yyy",yyy,"error with para"))}else{print("para match")}
+  
+  # # # # # # RUN 
+  for (k in year1:(yearend)){
+    print(k)
+    
+    #### •••••••••••••••••• Yearly parameters #••••••••••••••••••
+    # Only start marking years after 2009 
+    
+    if (k <= 2010){ yr <- 2010 } else { yr <- k }
+    
+    
+    #### MORTALITY. Runs from age 1 to age 101 (equiv 0-100yo)
+    # FIT: Rmort multiplies background death rates. Range [-1,1]
+    #is in k loop, so generates a new u (vector of length number of ages) each year
+    #make so mortality is higher in the past (1950s LE figures as elderly in 2010 were born latest 1945 (many before this)) and falls at same time to birthdrop
+    
+    mortdrop<-2000
+    
+    if (k < mortdrop){if (rmort < 0) {u<-as.vector(rmort*(mort[1,2:102]) + mort[1,2:102])} 
+                      else {u<-as.vector(rmort*(1-(mort[1,2:102])) + mort[1,2:102])}
+    } 
+    else{
+      if (k < 2010) { if (rmort < 0) {u<-as.vector(rmort*(mort[2,2:102]) + mort[2,2:102])} 
+                      else {u<-as.vector(rmort*(1-(mort[2,2:102])) + mort[2,2:102])}
+      } 
+      else { if (rmort < 0) {u<-as.vector(rmort*(mort[3+yr-2010,2:102]) + mort[3+yr-2010,2:102])} 
+             else {u<-as.vector(rmort*(1-(mort[3+yr-2010,2:102])) + mort[3+yr-2010,2:102])}
+      }
+    }
+    
+    
+    #     if (rmort < 0) {u<-as.vector(rmort*(mort[1+yr-2010,2:102]) + mort[1+yr-2010,2:102])#;names(u)<-NULL;#print(c("neg","u",u,"rmort",rmort)) 
+    #     } else {u<-as.vector(rmort*(1-(mort[1+yr-2010,2:102])) + mort[1+yr-2010,2:102])#;names(u)<-NULL;#print(c("u",u,"rmort",rmort))
+    #     }
+    
+    
+    #print(c("U",u,mort[1+yr-2010,2:102],rmort))
+    #u<-mort[1+yr-2010,2:102]
+    #print(u)
+    #### HIV MORTALITY (weighted by ART coverage)
+    #uH <- u + 1/( (1 - art[1+yr-2010]) * LEHIV + art[1+yr-2010] * LEART)
+    
+    #### HIV Incidence
+    # Take the same value before 2010, otherwise the year's values
+    #if (k == year1){ ind <- 1 } else { ind <- ( (1/dt) * (k - year1) ) }
+    # Population size in each of the groups (15-49yos, same but HIV+)
+    #psize1549<-sum(S[ind,15:49],L[ind,15:49],R[ind,15:49],I[ind,15:49],NI[ind,15:49],Sv[ind,15:49],Lv[ind,15:49],Rv[ind,15:49])
+    
+    #print(c(psize1549,psizeH1549,psize1549))
+    # Proportion who become HIV+ is then weighted to only be in the 15-49yo pop that is hiv-
+    #hiv<-hivI/(100*(psize1549/(psizeH1549+psize1549)))
+    
+    #### HIV specific parameters - yearly ART variation and vH (could go earlier)
+    # FIT: Alpha multiplies the progression rates for HIV+s. Range [-1,1] 
+    #if (length(Fit) > 5){if (alpha < 0) {pH2 <- alpha*pH + pH; vH2 <- alpha*vH + vH; rH2 <- alpha*rH + rH
+    #} else {pH2 <- alpha*(1 - pH) + pH; vH2 <- alpha*(1 - vH) + vH; rH2 <- alpha*(1 - rH) + rH
+    #}} else {pH2<-pH; vH2<-vH; rH2<-rH}
+    
+    # Calculate the ART weighted averages for progression
+    #pHA<-pH2*(1-art[1+yr-2010]) + art[1+yr-2010] * 0.35 * pH2 
+    #vHA<-vH2*(1-art[1+yr-2010]) + art[1+yr-2010] * 0.35 * vH2 
+    #rHA<-rH2*(1-art[1+yr-2010]) + art[1+yr-2010] * 0.35 * rH2 
+    #xHA<-xH*(1-art[1+yr-2010]) + art[1+yr-2010] * 0.35 * xH
+    #gHA<-gH*(1-art[1+yr-2010]) + art[1+yr-2010] * 0.35 * gH
+    
+    # And for mortality 
+    #uiHA<-(1-art[1+yr-2010])*uiH + art[1+yr-2010] * 0.25 * uiH 
+    #uniHA<-(1-art[1+yr-2010])*uniH + art[1+yr-2010] * 0.25 * uniH 
+    
+    # And vaccine efficacy
+    #effHA<-effH*(1-art[1+yr-2010]) + art[1+yr-2010] * effHa
+    #thetaH<-thetaH*effHA
+    
+    # print(c('ui',ui,'uiH',uiH,'uiHA',uiHA,'uniHA',uniHA))
+    # print(c('pH',pH,'pHA',pHA,'vHa',vHA,'xHA',xHA,'rHA',rHA,'art',art[20],'alpha',alpha))
+    
+    # yr changed for some parameters
+    if (k <= 1990){ CDR_yr <- 1990 } else { CDR_yr <- k }
+    if (k <= 1994){ CoT_yr <- 1994 } else { CoT_yr <- k }
+    
+    #### CDR & TREATMENT SUCCESS (a proportion of cases that are found and successfully treated)
+    # FIT: CDRscale multiplies the cdr value for both HIV+s and HIV-s
+    
+    #CDRscales<-c((rep(CDRscale, l=chiyrs)),(rep(CDRscale, l=aduyrs)),(rep(CDRscaleE, l=eldyrs)))
+    
+    if (CDRscale<0){CDRscaled<-CDRscale*(cdr[,1:(chiyrs+yaduyrs)])+cdr[,1:(chiyrs+yaduyrs)]} else {CDRscaled<-CDRscale*(1-cdr[,1:(chiyrs+yaduyrs)])+cdr[,1:(chiyrs+yaduyrs)]}
+    
+    if (CDRscaleO<0){CDRscaledO<-CDRscaleO*(cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)])+cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)]} else {CDRscaledO<-CDRscaleO*(1-cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)])+cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)]}
+    
+    if (CDRscaleE<0){CDRscaledE<-CDRscaleE*(cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]} else {CDRscaledE<-CDRscaleE*(1-cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]}
+    
+    CDRscaleT<-cbind(CDRscaled,CDRscaledO,CDRscaledE)
+    CDR<-CDRscaleT[1+CDR_yr-1990,]
+    #CDR_av[(year1-k),1]<-sum(CDR)/101
+    if (k==2010) {CDR2010<-CDRscaleT}
+    #CDRout[k,1:Mnage]<-CDR
+    
+    #CDRH<-CDRscale*cdrH[1+yr-2010];
+    CoT<-suctt[1+CoT_yr-1994];#CoTH<-sucttH[1+yr-2010];
+    #print(c(yr,'CDRH',CDRH,'CoT',CoT,'CoTH',CoTH,1+yr-2010))
+    
+    #### BIRTHS 
+    # Need to have 2010 birth RATE pre-2010 else won't get curve 
+    #added in a step pre-2010 to account for chinese one-child policy impact on population structure
+    #one child policy started in 1979. early numbers are 1980 population (984016) and av fertility in 1975-1980 (20887) (average number of births in the 1950-1980period would be 24000, so could go higher)
+    
+    e_bb<-20887
+    e_pop<-984016
+    #     e_bb<-20887
+    #     e_pop<-984016
+    
+    fertdrop<-1990
+    if (k < fertdrop){ br<-e_bb/e_pop
+                       if (k == year1){B<-round(br*psize[1]); bv<-c(bv,B);brate<-c(brate,br)}
+                       else { B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);brate<-c(brate,br)}} 
+    else{
+      if (k < 2010) { br<-bb[1]/(Popsize[1,cntry]);
+                      B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);brate<-c(brate,br);
+      } else { B<-bb[1+yr-2010]; brate<-c(brate,0) }}
+    
+    
+    
+    
+    #     if (k < 2010) { br<-bb[1]/(Popsize[1,cntry])
+    #                 
+    #                     if (k == year1){B<-round(br*psize[1]); bv<-c(bv,B)             
+    #                     } else { B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);}     
+    #     } else { B<-bb[1+yr-2010] }
+    print(c("BIRTHS",br,B,psize[((k-year1)*(1/dt))],((k-year1)*(1/dt))))
+    BIRTHS[i]<-B
+    ####•••••••••••••••••• END OF YEARLY PARAMETERS
+    
+    print("done params")
+    
+    #### Start of model run
+    if (k > year1){ # Start of year 1 is the initial condition
+      ## These are those where the time step is the first of the year
+      i = ((1/dt)*(k-year1)+1) # Time zero is first row
+      start <- 1 # whether first ts of year. All year dependent parameters must be last years.
+      # FIT: Takes in the neta defined as an input
+      print("pre-start lambda")
+      #lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
+      #1-exp turns rate->probability
+      #       
+      #PAF_year=2050
+      #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
+      #if (k>=PAF_year) {Imatrix[i-1,3]<-Imatno6080A[i-1]}
+      #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
+      #if (k>=PAF_year) {Imatrix[i-1,4]<-Imatno75up[i-1]}
+      
+      
+      
+      lambda[i-1,1:Mnage] <- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[i-1,1:4])/(psizematrix[i-1,1:4]))))))
+      
+      print("post-start lambda")
+      ####•••••••••••••••••• TB model ••••••••••••••••••
+      # Age 1, first time step of the year, all births occur
+      
+      j = 1; S[i,j]<-B #B is set by year by lines BIRTHS above    
+      
+      
+      S[i,2:Mnage] = S[i-1,1:(Mnage-1)] - (u[1:(Mnage-1)]+lambda[i-1,1:(Mnage-1)])*S[i-1,1:(Mnage-1)]*dt 
+      L[i,2:Mnage] = L[i-1,1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*(1 - p[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt - (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x + u[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt 
+      
+      new_infect[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*S[i-1,1:(Mnage-1)]*dt + lambda[i-1,1:(Mnage-1)]*(x*L[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt  
+      
+      
+      new_I_react[i,2:Mnage] = v[1:(Mnage-1)]*f[1:(Mnage-1)]*(L[i-1,1:(Mnage-1)])*dt + r[1:(Mnage-1)]*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt 
+      new_NI_react[i,2:Mnage] =  v[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
+      new_actv_react[i,2:Mnage] = v[1:(Mnage-1)]*(L[i-1,1:(Mnage-1)])*dt + r[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt 
+      new_actv_inf[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*S[i-1,1:(Mnage-1)]*dt + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x*(L[i-1,1:(Mnage-1)])*dt + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*g*R[i-1,1:(Mnage-1)]*dt 
+      
+      
+      new_I[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*f[1:(Mnage-1)]*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*f[1:(Mnage-1)]*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt + w*NI[i-1,1:(Mnage-1)]*dt
+      new_I_noconv[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*f[1:(Mnage-1)]*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*f[1:(Mnage-1)]*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*h[1:(Mnage-1)]*R[i-1,1:(Mnage-1)]*dt
+      new_NI[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*(1 - f[1:(Mnage-1)])*(S[i-1,1:(Mnage-1)] + g*R[i-1,1:(Mnage-1)])*dt + (v[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*(1 - f[1:(Mnage-1)])*L[i-1,1:(Mnage-1)]*dt + r[1:(Mnage-1)]*(1 - h[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt  
+      new_actv[i,2:Mnage] = lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*S[i-1,1:(Mnage-1)]*dt + (v[1:(Mnage-1)] +lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*x)*L[i-1,1:(Mnage-1)]*dt + (r[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*p[1:(Mnage-1)]*g)*R[i-1,1:(Mnage-1)]*dt
+      
+      
+      new_actv_chk[i,2:Mnage] = new_actv_react[i,2:Mnage] + new_actv_inf[i,2:Mnage]
+      
+      #number of notifications defined as number detected. Have removed CoT from expression as is irrelevant to nnumber detected. e is scaling down of notification for NI as less likely to be detected.
+      new_notif[i,2:Mnage] = CDR[1:(Mnage-1)]*(new_I[i,2:Mnage] + e*new_NI[i,2:Mnage])
+      
+      R[i,2:Mnage] = R[i-1,1:(Mnage-1)] + n[1:(Mnage-1)]*(I[i-1,1:(Mnage-1)] + NI[i-1,1:(Mnage-1)])*dt + CDR[1:(Mnage-1)]*CoT*(new_I[i,2:Mnage] + e*new_NI[i,2:Mnage]) - (r[1:(Mnage-1)] + g*lambda[i-1,1:(Mnage-1)] + u[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt 
+      I[i,2:Mnage] = I[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(new_I[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + ui[1:(Mnage-1)])*I[i-1,1:(Mnage-1)]*dt
+      NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(e*new_NI[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + uni[1:(Mnage-1)] + w)*NI[i-1,1:(Mnage-1)]*dt                    
+      
+      
+      #if(I[i,2] < I[i-1,1]){print(c(i,I[i,2],I[i-1,1],"stop",(n + u[1:13] + ui),"cdr",CDR,CoT))}
+      if (k==2010) {print(CDR)}
+      ####•••••••••••••••••••• TB HIV model •••••••••••••••••
+      
+      #SH[i,15:Mnage] = SH[i-1,14:(Mnage-1)] - (uH[14:(Mnage-1)] + lambda[i-1,1:Mnage])*SH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*S[i-1,14:(Mnage-1)]*dt 
+      #LH[i,15:Mnage] = LH[i-1,14:(Mnage-1)] + lambda[i-1,1:Mnage]*(1 - pHA)*(SH[i-1,14:(Mnage-1)] + gHA*RH[i-1,14:(Mnage-1)])*dt - (vHA + lambda[i-1,1:Mnage]*pHA*xHA + uH[14:(Mnage-1)])*LH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*L[i-1,14:(Mnage-1)]*dt 
+      
+      #new_IH[i,15:Mnage] = lambda[i-1,1:Mnage]*pHA*fH*(SH[i-1,14:(Mnage-1)] + gHA*RH[i-1,14:(Mnage-1)])*dt + (vHA + lambda[i-1,1:Mnage]*pHA*xHA)*fH*LH[i-1,14:(Mnage-1)]*dt + rHA*hH*RH[i-1,14:(Mnage-1)]*dt + w*NIH[i-1,14:(Mnage-1)]*dt
+      #new_NIH[i,15:Mnage] = lambda[i-1,1:Mnage]*pHA*(1 - fH)*(SH[i-1,14:(Mnage-1)] + gHA*RH[i-1,14:(Mnage-1)])*dt + (vHA + lambda[i-1,1:Mnage]*pHA*xHA)*(1 - fH)*LH[i-1,14:(Mnage-1)]*dt + rHA*(1 - hH)*RH[i-1,14:(Mnage-1)]*dt  
+      
+      #RH[i,15:Mnage] = RH[i-1,14:(Mnage-1)] + nH*(IH[i-1,14:(Mnage-1)] + NIH[i-1,14:(Mnage-1)])*dt + CDRH*CoTH*(new_IH[i-1,14:(Mnage-1)] + e*new_NIH[i-1,14:(Mnage-1)]) - (rHA + gHA*lambda[i-1,1:Mnage] + uH[14:(Mnage-1)])*RH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*R[i-1,14:(Mnage-1)]*dt
+      #IH[i,15:Mnage] = IH[i-1,14:(Mnage-1)] + (1 - CDRH*CoTH)*(new_IH[i-1,14:(Mnage-1)]) - (nH + uH[14:(Mnage-1)] + uiHA)*IH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*I[i-1,14:(Mnage-1)]*dt
+      #NIH[i,15:Mnage] = NIH[i-1,14:(Mnage-1)] + (1 - CDRH*CoTH)*(e*new_NIH[i-1,14:(Mnage-1)]) - (nH + uH[14:(Mnage-1)] + uniHA + w)*NIH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*NI[i-1,14:(Mnage-1)]*dt                
+      
+      ####•••••••••••••••••••••••••••••••••••••••••••••••••••••••• VACCINE STRATA AGING + INFECTION •••••••••••••••••••••••••
+      ## Others have aged so need these to be reset to zero
+      Sv[i,1] = 0;Lv[i,1] = 0;Rv[i,1] = 0; #SvH[i,1] = 0;LvH[i,1] = 0;RvH[i,1] = 0;
+      
+      Sv[i,2:Mnage] = Sv[i-1,1:(Mnage-1)] - (u[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)])*Sv[i-1,1:(Mnage-1)]*dt
+      Lv[i,2:Mnage] = Lv[i-1,1:(Mnage-1)] - (u[1:(Mnage-1)])*Lv[i-1,1:(Mnage-1)]*dt + lambda[i-1,1:(Mnage-1)]*(Sv[i-1,1:(Mnage-1)] + g*Rv[i-1,1:(Mnage-1)])*dt
+      Rv[i,2:Mnage] = Rv[i-1,1:(Mnage-1)] - (u[1:(Mnage-1)] + lambda[i-1,1:(Mnage-1)]*g)*Rv[i-1,1:(Mnage-1)]*dt
+      
+      #SvH[i,15:Mnage] = SvH[i-1,14:(Mnage-1)] + hiv[14:(Mnage-1)]*Sv[i-1,14:(Mnage-1)]*dt - (uH[14:(Mnage-1)])*SvH[i-1,14:(Mnage-1)]*dt - lambda[i-1,1:Mnage]*(SvH[i-1,14:(Mnage-1)])*dt
+      #LvH[i,15:Mnage] = LvH[i-1,14:(Mnage-1)] + hiv[14:(Mnage-1)]*Lv[i-1,14:(Mnage-1)]*dt - (uH[14:(Mnage-1)])*LvH[i-1,14:(Mnage-1)]*dt + lambda[i-1,1:Mnage]*(SvH[i-1,14:(Mnage-1)] + gHA*RvH[i-1,14:(Mnage-1)])*dt
+      #RvH[i,15:Mnage] = RvH[i-1,14:(Mnage-1)] + hiv[14:(Mnage-1)]*Rv[i-1,14:(Mnage-1)]*dt - (uH[14:(Mnage-1)])*RvH[i-1,14:(Mnage-1)]*dt - lambda[i-1,1:Mnage]*(gHA*RvH[i-1,14:(Mnage-1)])*dt          
+      
+      ###•••••••••••••••••• Vaccine coverage and duration ••••••••••••••••
+      # NUMBER OF VACCINES (column 1=infant, 2=10yos, 3=mass)
+      if(vaccine == 0){VX[i,1:3]<-0}
+      #if(vaccine == 1){VX[i,1]<-sum(thetaV1[i,]*(S[i,]+L[i,]+R[i,]))}
+      if(vaccine == 2){VX[i,1]<-(sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]))+sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,])));VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
+      if(vaccine == 3){VX[i,1]<-(sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]))+sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,])));VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
+      if(vaccine == 4){VX[i,1]<-(sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]))+sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,])));VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
+      
+      
+      ##•••••••••••••••••• Vaccination campaign: age everyone and then implement (both vaccination and return)
+      S2 = S[i,] + Sv[i,]*(d[i,]*(1-thetaS[i,])) - thetaS[i,]*S[i,]
+      L2 = L[i,] + Lv[i,]*(d[i,]*(1-thetaL[i,])) - thetaL[i,]*L[i,]
+      R2 = R[i,] + Rv[i,]*(d[i,]*(1-thetaR[i,])) - thetaR[i,]*R[i,]
+      
+      #SH2 = SH[i,] + SvH[i,]*(d[i,]*(1-theta[i,])) - thetaH[i,]*SH[i,]
+      #LH2 = LH[i,] + LvH[i,]*(d[i,]*(1-theta[i,])) - thetaH[i,]*LH[i,]
+      #RH2 = RH[i,] + RvH[i,]*(d[i,]*(1-theta[i,])) - thetaH[i,]*RH[i,]
+      
+      Sv2 = Sv[i,] - Sv[i,]*(d[i,]*(1-thetaS[i,])) + thetaS[i,]*S[i,]
+      Lv2 = Lv[i,] - Lv[i,]*(d[i,]*(1-thetaL[i,])) + thetaL[i,]*L[i,]
+      Rv2 = Rv[i,] - Rv[i,]*(d[i,]*(1-thetaR[i,])) + thetaR[i,]*R[i,]
+      
+      #SvH2 = SvH[i,] - SvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*SH[i,]
+      #LvH2 = LvH[i,] - LvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*LH[i,]
+      #RvH2 = RvH[i,] - RvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*RH[i,]
+      
+      ##calculate the number just vaccinated before the S gets replaced by S2 etc. Everyone except active cases included.
+      if (vaccine==2){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV2[i,]}
+      if (vaccine==3){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV2[i,]}
+      if (vaccine==4){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV2[i,]}
+      if (vaccine==5){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV4[i,]}
+      if (vaccine==6){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV4[i,]}
+      if (vaccine==7){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV4[i,]}
+      
+      
+      
+      #replace S etc with the new number post-vaccination campaign
+      S[i,]<-S2;L[i,]<-L2;R[i,]<-R2;       #SH[i,]<-SH2;LH[i,]<-LH2;RH[i,]<-RH2;
+      Sv[i,]<-Sv2;Lv[i,]<-Lv2;Rv[i,]<-Rv2; #SvH[i,]<-SvH2;LvH[i,]<-LvH2;RvH[i,]<-RvH2;
+      
+      ####•••••••••••••••••• Economic Output ••••••••••••••••••
+      #### Output for cost-effectiveness 
+      ## POPULATION SIZE
+      psize[i]<-sum(S[i,],L[i,],R[i,],I[i,],NI[i,],Sv[i,],Lv[i,],Rv[i,])
+      #print(c("PSIZE",i,psize[i]))
+      #what is ind??? also, was written as 15-49 for 15-49, but isnt age 0 j=1, so should be 16:50 for age 15-49???
+      #ages needed to fit to incidence and population size
+      psize014[i]<-sum(S[i,1:15],L[i,1:15],R[i,1:15],I[i,1:15],NI[i,1:15],Sv[i,1:15],Lv[i,1:15],Rv[i,1:15])
+      psize1554[i]<-sum(S[i,16:55],L[i,16:55],R[i,16:55],I[i,16:55],NI[i,16:55],Sv[i,16:55],Lv[i,16:55],Rv[i,16:55])
+      psize5564[i]<-sum(S[i,56:65],L[i,56:65],R[i,56:65],I[i,56:65],NI[i,56:65],Sv[i,56:65],Lv[i,56:65],Rv[i,56:65])
+      psize65plus[i]<-sum(S[i,66:Mnage],L[i,66:Mnage],R[i,66:Mnage],I[i,66:Mnage],NI[i,66:Mnage],Sv[i,66:Mnage],Lv[i,66:Mnage],Rv[i,66:Mnage])
+      psize55plus[i]<-sum(S[i,56:Mnage],L[i,56:Mnage],R[i,56:Mnage],I[i,56:Mnage],NI[i,56:Mnage],Sv[i,56:Mnage],Lv[i,56:Mnage],Rv[i,56:Mnage])
+      psize55minus[i]<-sum(S[i,1:55],L[i,1:55],R[i,1:55],I[i,1:55],NI[i,1:55],Sv[i,1:55],Lv[i,1:55],Rv[i,1:55])
+      psize5574[i]<-sum(S[i,56:76],L[i,56:76],R[i,56:76],I[i,56:76],NI[i,56:76],Sv[i,56:76],Lv[i,56:76],Rv[i,56:76])
+      
+      #ages needed to fit to mort  and prevalence as have different groupings
+      psize1559[i]<-sum(S[i,16:60],L[i,16:60],R[i,16:60],I[i,16:60],NI[i,16:60],Sv[i,16:60],Lv[i,16:60],Rv[i,16:60])
+      psize1529[i]<-sum(S[i,16:30],L[i,16:30],R[i,16:30],I[i,16:30],NI[i,16:30],Sv[i,16:30],Lv[i,16:30],Rv[i,16:30])
+      psize3044[i]<-sum(S[i,31:45],L[i,31:45],R[i,31:45],I[i,31:45],NI[i,31:45],Sv[i,31:45],Lv[i,31:45],Rv[i,31:45])
+      psize4559[i]<-sum(S[i,46:60],L[i,46:60],R[i,46:60],I[i,46:60],NI[i,46:60],Sv[i,46:60],Lv[i,46:60],Rv[i,46:60])
+      psize60plus[i]<-sum(S[i,61:Mnage],L[i,61:Mnage],R[i,61:Mnage],I[i,61:Mnage],NI[i,61:Mnage],Sv[i,61:Mnage],Lv[i,61:Mnage],Rv[i,61:Mnage])
+      #ages and incidence for contact matrices
+      psizematrix[i,1]<-sum(S[i,1:6],L[i,1:6],R[i,1:6],I[i,1:6],NI[i,1:6],Sv[i,1:6],Lv[i,1:6],Rv[i,1:6])
+      psizematrix[i,2]<-sum(S[i,7:20],L[i,7:20],R[i,7:20],I[i,7:20],NI[i,7:20],Sv[i,7:20],Lv[i,7:20],Rv[i,7:20])
+      psizematrix[i,3]<-sum(S[i,21:65],L[i,21:65],R[i,21:65],I[i,21:65],NI[i,21:65],Sv[i,21:65],Lv[i,21:65],Rv[i,21:65])
+      psizematrix[i,4]<-sum(S[i,66:Mnage],L[i,66:Mnage],R[i,66:Mnage],I[i,66:Mnage],NI[i,66:Mnage],Sv[i,66:Mnage],Lv[i,66:Mnage],Rv[i,66:Mnage])
+      
+      #other ages
+      psize0509[i]<-sum(S[i,6:10],L[i,6:10],R[i,6:10],I[i,6:10],NI[i,6:10],Sv[i,6:10],Lv[i,6:10],Rv[i,6:10])
+      psize1019[i]<-sum(S[i,11:20],L[i,11:20],R[i,11:20],I[i,11:20],NI[i,11:20],Sv[i,11:20],Lv[i,11:20],Rv[i,11:20])
+      psize2029[i]<-sum(S[i,21:30],L[i,21:30],R[i,21:30],I[i,21:30],NI[i,21:30],Sv[i,21:30],Lv[i,21:30],Rv[i,21:30])
+      psize3039[i]<-sum(S[i,31:40],L[i,31:40],R[i,31:40],I[i,31:40],NI[i,31:40],Sv[i,31:40],Lv[i,31:40],Rv[i,31:40])
+      psize4049[i]<-sum(S[i,41:50],L[i,41:50],R[i,41:50],I[i,41:50],NI[i,41:50],Sv[i,41:50],Lv[i,41:50],Rv[i,41:50])
+      psize5059[i]<-sum(S[i,51:60],L[i,51:60],R[i,51:60],I[i,51:60],NI[i,51:60],Sv[i,51:60],Lv[i,51:60],Rv[i,51:60])
+      psize6069[i]<-sum(S[i,61:70],L[i,61:70],R[i,61:70],I[i,61:70],NI[i,61:70],Sv[i,61:70],Lv[i,61:70],Rv[i,61:70])
+      psize70plus[i]<-sum(S[i,71:Mnage],L[i,71:Mnage],R[i,71:Mnage],I[i,71:Mnage],NI[i,71:Mnage],Sv[i,71:Mnage],Lv[i,71:Mnage],Rv[i,71:Mnage])
+      psize5574[i]<-sum(S[i,56:75],L[i,56:75],R[i,56:75],I[i,56:75],NI[i,56:75],Sv[i,56:75],Lv[i,56:75],Rv[i,56:75])
+      psize75plus[i]<-sum(S[i,76:Mnage],L[i,76:Mnage],R[i,76:Mnage],I[i,76:Mnage],NI[i,76:Mnage],Sv[i,76:Mnage],Lv[i,76:Mnage],Rv[i,76:Mnage])
+      psize1524[i]<-sum(S[i,16:25],L[i,16:25],R[i,16:25],I[i,16:25],NI[i,16:25],Sv[i,16:25],Lv[i,16:25],Rv[i,16:25])
+      psize2554[i]<-sum(S[i,26:55],L[i,26:55],R[i,26:55],I[i,26:55],NI[i,26:55],Sv[i,26:55],Lv[i,26:55],Rv[i,26:55])
+      psize15plus[i]<-sum(S[i,16:Mnage],L[i,16:Mnage],R[i,16:Mnage],I[i,16:Mnage],NI[i,16:Mnage],Sv[i,16:Mnage],Lv[i,16:Mnage],Rv[i,16:Mnage])
+      
+      
+      Imatrix[i,1]<-sum(I[i,1:6])
+      Imatrix[i,2]<-sum(I[i,7:20])
+      Imatrix[i,3]<-sum(I[i,21:65])
+      Imatrix[i,4]<-sum(I[i,66:Mnage])
+      
+      Imatno6080A[i]<-sum(I[i,21:55])
+      Imatno6080B[i]<-sum(I[i,76:Mnage])
+      Imatno75up[i]<-sum(I[i,66:75])
+      
+      
+      
+      
+      print ("done psize start yr")
+      
+      ## number vaccinated
+      #need to set up matrix for psizevacc to be recorded in to**  not needed as in econout???
+      #psizevacc[i]<-sum(Sv[i,],Lv[i,],Rv[i,])
+      #nmbvacc<-psizevacc[i]-psizevacc[i-1]
+      
+      
+      ## Death markers
+      # Number of TB deaths in HIV-, in HIV+, all form HIV deaths
+      #TBDeaths[i,]=dt*((ui)*I[i-1,]+(uni)*NI[i-1,]);
+      TBDeaths[i,1:Mnage]=dt*((ui[1:Mnage]*I[i-1,1:Mnage])+(uni[1:Mnage]*NI[i-1,1:Mnage]));
+      
+      
+      #TBDeathsH[i,]=dt*(uiHA*IH[i-1,]+(uniHA)*NIH[i-1,]);
+      #AllDeathsH[i,]=dt*((uH+uiHA)*IH[i-1,]+(uH+uniHA)*NIH[i-1,]);
+      print ("done TB deaths")
+      
+      # Age deaths HIV-, HIV+
+      ADeaths[i,]=dt*(u*S[i-1,]+u*L[i-1,]+(u+ui)*I[i-1,]+(u+uni)*NI[i-1,]+u*R[i-1,]+u*Sv[i-1,]+u*Lv[i-1,]+u*Rv[i-1,])
+      #ADeathsH[i,]=dt*(uH*SH[i-1,]+uH*LH[i-1,]+(uH+uiHA)*IH[i-1,]+(uH+uniHA)*NIH[i-1,]+uH*RH[i-1,]+u*SvH[i-1,]+u*LvH[i-1,]+u*RvH[i-1,])
+      print ("done Adeaths")
+      
+      # Deaths matrix holds all death indices
+      # Columns: Number deaths HIV-, av. age death, number HIV+ deaths, av age HIV+ death, av. age death
+      Deaths[i,1]=sum(ADeaths[i,]);   Deaths[i,2]=sum(ADeaths[i,]*seq(1:Mnage))/sum(ADeaths[i,])
+      #Deaths[i,3]=sum(ADeathsH[i,]);  Deaths[i,4]=sum(ADeathsH[i,]*seq(1:Mnage))/sum(ADeathsH[i,])
+      #Deaths[i,5]=sum((ADeathsH[i,]+ADeaths[i,])*seq(1:Mnage))/sum(ADeathsH[i,]+ADeaths[i,])
+      print ("done deaths 1 2")
+      
+      ## NUMBER ON TREATMENT & NUMBER SUCCESSFULLY TREATED
+      # TBRx columns: HIV- detected, successfully treated, HIV+ detected, successfully treated
+      #TBRx[i,1]=CDR*(sum(new_I[i-1,])+e*sum(new_NI[i-1,]));    TBRx[i,2]=CDR*(CoT)*(sum(new_I[i-1,])+e*sum(new_NI[i-1,]))
+      #TBRx[i,3]=CDRH*(sum(new_IH[i-1,])+e*sum(new_NIH[i-1,]));  TBRx[i,4]=CDRH*(CoTH)*(sum(new_IH[i-1,])+e*sum(new_NI[i-1,]))
+      
+      
+      #} 
+    } ####•••••••••••••••••• END OF START OF YEAR RUNS
+    
+    print("done start year")
+    
+    ####•••••••••••••••••• MIDDLE OF YEAR RUNS
+    
+    for (i in (2+(1/dt)*(k-year1)):((1/dt)*(k-year1)+1/dt)){
+      start <- 0 # Not the start of the year
+      #lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
+      print("pre-post lambda")
+      
+      #PAF_year=2050
+      #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
+      #if (k>=PAF_year) {Imatrix[i-1,3]<-Imatno6080A[i-1]}
+      #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
+      #if (k>=PAF_year) {Imatrix[i-1,4]<-Imatno75up[i-1]}
+      
+      
+      lambda[i-1,1:Mnage] <- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[i-1,1:4])/(psizematrix[i-1,1:4]))))))
+      
+      print("post-lambda")
+      #print(lambda)
+      ####•••••••••••••••••• TB model ••••••••••••••••••
+      ## If the time step is not the first of the year 
+      #save(S,file="S1.RData")
+      S[i,1:Mnage] = S[i-1,1:Mnage] - (u[1:Mnage]+lambda[i-1,1:Mnage])*S[i-1,1:Mnage]*dt
+      #print("1")
+      #save(S,file="S.RData")
+      L[i,1:Mnage] = L[i-1,1:Mnage] + lambda[i-1,1:Mnage]*(1 - p[1:Mnage])*(S[i-1,1:Mnage] + g*R[i-1,1:Mnage])*dt - (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*x + u[1:Mnage])*L[i-1,1:Mnage]*dt 
+      #print("1")
+      new_infect[i,1:Mnage] = lambda[i-1,1:(Mnage)]*S[i-1,1:(Mnage)]*dt + lambda[i-1,1:(Mnage)]*(x*L[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt  
+      
+      new_I_react[i,1:Mnage] = v[1:Mnage]*f[1:(Mnage)]*(L[i-1,1:(Mnage)])*dt + r[1:Mnage]*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt 
+      #print("1")
+      new_NI_react[i,1:Mnage] =  v[1:Mnage]*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
+      
+      new_actv_react[i,1:Mnage] = v[1:Mnage]*(L[i-1,1:Mnage])*dt + r[1:Mnage]*R[i-1,1:Mnage]*dt 
+      new_actv_inf[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*S[i-1,1:Mnage]*dt + lambda[i-1,1:Mnage]*p[1:Mnage]*x*(L[i-1,1:Mnage])*dt + lambda[i-1,1:Mnage]*p[1:Mnage]*g*R[i-1,1:Mnage]*dt 
+      
+      #print("1")
+      new_I[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*f[1:Mnage]*(S[i-1,1:Mnage] + g*R[i-1,1:(Mnage)])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*f[1:(Mnage)]*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*h[1:(Mnage)]*R[i-1,1:(Mnage)]*dt + w*NI[i-1,1:(Mnage)]*dt
+      new_I_noconv[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*f[1:Mnage]*(S[i-1,1:Mnage] + g*R[i-1,1:Mnage])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*x)*f[1:Mnage]*L[i-1,1:Mnage]*dt + r[1:Mnage]*h[1:Mnage]*R[i-1,1:Mnage]*dt
+      
+      
+      #print("1")
+      new_NI[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:(Mnage)]*(1 - f[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
+      #print("1")
+      new_actv[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*S[i-1,1:Mnage]*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*x)*L[i-1,1:Mnage]*dt + (r[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*g)*R[i-1,1:Mnage]*dt
+      new_actv_chk[i,1:Mnage] = new_actv_react[i,1:Mnage] + new_actv_inf[i,1:Mnage]
+      
+      new_notif[i,1:Mnage] = CDR[1:(Mnage)]*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage])
+      #print("1")
+      R[i,1:Mnage] = R[i-1,1:Mnage] + n[1:Mnage]*(I[i-1,1:(Mnage)] + NI[i-1,1:(Mnage)])*dt + CDR[1:Mnage]*CoT*(new_I[i,1:Mnage] + e*new_NI[i,1:Mnage]) - (r[1:Mnage] + g*lambda[i-1,1:Mnage] + u[1:(Mnage)])*R[i-1,1:(Mnage)]*dt 
+      #print("1")
+      I[i,1:Mnage] = I[i-1,1:Mnage] + (1 - CDR[1:Mnage]*CoT)*(new_I[i,1:Mnage]) - (n[1:Mnage] + u[1:(Mnage)] + ui[1:Mnage])*I[i-1,1:Mnage]*dt
+      #print("1")
+      NI[i,1:Mnage] = NI[i-1,1:Mnage] + (1 - CDR[1:Mnage]*CoT)*(e*new_NI[i,1:Mnage]) - (n[1:Mnage] + u[1:Mnage] + uni[1:Mnage] + w)*NI[i-1,1:(Mnage)]*dt                    
+      
+      print("done nonvacc")                        
+      
+      ####•••••••••••••••••••• TB HIV model •••••••••••••••••
+      #SH[i,15:Mnage] = SH[i-1,15:Mnage] - (uH[15:Mnage] + lambda[i-1,1:Mnage])*SH[i-1,15:Mnage]*dt + hiv[15:Mnage]*S[i-1,15:Mnage]*dt 
+      #LH[i,15:Mnage] = LH[i-1,15:Mnage] + lambda[i-1,1:Mnage]*(1 - pHA)*(SH[i-1,15:Mnage] + gHA*RH[i-1,15:Mnage])*dt - (vHA + lambda[i-1,1:Mnage]*pHA*xHA + uH[15:Mnage])*LH[i-1,15:Mnage]*dt + hiv[15:Mnage]*L[i-1,15:Mnage]*dt 
+      
+      #new_IH[i,15:Mnage] = lambda[i-1,1:Mnage]*pHA*fH*(SH[i-1,15:Mnage] + gHA*RH[i-1,15:Mnage])*dt + (vHA + lambda[i-1,1:Mnage]*pHA*xHA)*fH*LH[i-1,15:Mnage]*dt + rHA*hH*RH[i-1,15:Mnage]*dt + w*NIH[i-1,15:Mnage]*dt
+      #new_NIH[i,15:Mnage] = lambda[i-1,1:Mnage]*pHA*(1 - fH)*(SH[i-1,15:Mnage] + gHA*RH[i-1,15:Mnage])*dt + (vHA + lambda[i-1,1:Mnage]*pHA*xHA)*(1 - fH)*LH[i-1,15:Mnage]*dt + rHA*(1 - hH)*RH[i-1,15:Mnage]*dt  
+      
+      #RH[i,15:Mnage] = RH[i-1,15:Mnage] + nH*(IH[i-1,15:Mnage] + NIH[i-1,15:Mnage])*dt + CDRH*CoTH*(new_IH[i-1,15:Mnage] + e*new_NIH[i-1,15:Mnage]) - (rHA + gHA*lambda[i-1,1:Mnage] + uH[15:Mnage])*RH[i-1,15:Mnage]*dt + hiv[15:Mnage]*R[i-1,15:Mnage]*dt
+      #IH[i,15:Mnage] = IH[i-1,15:Mnage] + (1 - CDRH*CoTH)*(new_IH[i-1,15:Mnage]) - (nH + uH[15:Mnage] + uiHA)*IH[i-1,15:Mnage]*dt + hiv[15:Mnage]*I[i-1,15:Mnage]*dt
+      #NIH[i,15:Mnage] = NIH[i-1,15:Mnage] + (1 - CDRH*CoTH)*(e*new_NIH[i-1,15:Mnage]) - (nH + uH[15:Mnage] + uniHA + w)*NIH[i-1,15:Mnage]*dt + hiv[15:Mnage]*NI[i-1,15:Mnage]*dt                
+      
+      #### •••••••••••••••••••• VACCINE AGING •••••••••••••••••••••••••
+      
+      Sv[i,1:Mnage] = Sv[i-1,1:Mnage] - (u[1:Mnage])*Sv[i-1,1:Mnage]*dt - lambda[i-1,1:Mnage]*(Sv[i-1,1:Mnage])*dt 
+      Lv[i,1:Mnage] = Lv[i-1,1:Mnage] - (u[1:Mnage])*Lv[i-1,1:Mnage]*dt + lambda[i-1,1:Mnage]*(Sv[i-1,1:Mnage] + g*Rv[i-1,1:Mnage])*dt 
+      Rv[i,1:Mnage] = Rv[i-1,1:Mnage] - (u[1:Mnage])*Rv[i-1,1:Mnage]*dt - lambda[i-1,1:Mnage]*(g*Rv[i-1,1:Mnage])*dt
+      
+      #SvH[i,15:Mnage] = SvH[i-1,15:Mnage] + hiv[15:Mnage]*Sv[i-1,15:Mnage]*dt - (uH[15:Mnage])*SvH[i-1,15:Mnage]*dt - lambda[i-1,1:Mnage]*(SvH[i-1,15:Mnage])*dt 
+      #LvH[i,15:Mnage] = LvH[i-1,15:Mnage] + hiv[15:Mnage]*Lv[i-1,15:Mnage]*dt - (uH[15:Mnage])*LvH[i-1,15:Mnage]*dt + lambda[i-1,1:Mnage]*(SvH[i-1,15:Mnage] + gHA*RvH[i-1,15:Mnage])*dt 
+      #RvH[i,15:Mnage] = RvH[i-1,15:Mnage] + hiv[15:Mnage]*Rv[i-1,15:Mnage]*dt - (uH[15:Mnage])*RvH[i-1,15:Mnage]*dt - lambda[i-1,1:Mnage]*(gHA*RvH[i-1,15:Mnage])*dt 
+      print("done vacc")
+      ###•••••••••••••••••• Vaccine coverage and duration ••••••••••••••••
+      # NUMBER OF VACCINES
+      if(vaccine == 0){VX[i,1:3]<-0}
+      #if(vaccine == 1){VX[i,1]<-sum(thetaV1[i,]*(S[i,]+L[i,]+R[i,]))}
+      if(vaccine == 2){VX[i,1]<-(sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]))+sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,])));VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
+      if(vaccine == 3){VX[i,1]<-(sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]))+sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,])));VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
+      if(vaccine == 4){VX[i,1]<-(sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]))+sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,])));VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
+      
+      
+      print("done vacc assignment")
+      ####•••••••••••••••••• Vaccination and Removal of protection
+      
+      S2 = S[i,] + Sv[i,]*(d[i,]*(1-thetaS[i,])) - thetaS[i,]*S[i,]  #should this theta be k???
+      L2 = L[i,] + Lv[i,]*(d[i,]*(1-thetaL[i,])) - thetaL[i,]*L[i,]
+      R2 = R[i,] + Rv[i,]*(d[i,]*(1-thetaR[i,])) - thetaR[i,]*R[i,]
+      
+      #SH2 = SH[i,] + SvH[i,]*(d[i,]*(1-theta[i,])) - thetaH[i,]*SH[i,]
+      #LH2 = LH[i,] + LvH[i,]*(d[i,]*(1-theta[i,])) - thetaH[i,]*LH[i,]
+      #RH2 = RH[i,] + RvH[i,]*(d[i,]*(1-theta[i,])) - thetaH[i,]*RH[i,]
+      
+      Sv2 = Sv[i,] - Sv[i,]*(d[i,]*(1-thetaS[i,])) + thetaS[i,]*S[i,]
+      Lv2 = Lv[i,] - Lv[i,]*(d[i,]*(1-thetaL[i,])) + thetaL[i,]*L[i,]
+      Rv2 = Rv[i,] - Rv[i,]*(d[i,]*(1-thetaR[i,])) + thetaR[i,]*R[i,]
+      
+      #SvH2 = SvH[i,] - SvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*SH[i,]
+      #LvH2 = LvH[i,] - LvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*LH[i,]
+      #RvH2 = RvH[i,] - RvH[i,]*(d[i,]*(1-thetaH[i,])) + thetaH[i,]*RH[i,]
+      
+      ##calculate the number just vaccinated before the S gets replaced by S2 etc. Everyone except active cases included.
+      if (vaccine==2){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV2[i,]}
+      if (vaccine==3){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV2[i,]}
+      if (vaccine==4){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV2[i,]}
+      if (vaccine==5){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV4[i,]}
+      if (vaccine==6){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV4[i,]}
+      if (vaccine==7){num_vac[i,] = (S[i,] + L[i,] + R[i,] + Sv[i,] + Lv[i,] + Rv[i,])*thetaV4[i,]}
+      
+      
+      
+      S[i,]<-S2;L[i,]<-L2;R[i,]<-R2;       #SH[i,]<-SH2;LH[i,]<-LH2;RH[i,]<-RH2;
+      Sv[i,]<-Sv2;Lv[i,]<-Lv2;Rv[i,]<-Rv2; #SvH[i,]<-SvH2;LvH[i,]<-LvH2;RvH[i,]<-RvH2;
+      
+      print("end of eqns")
+      ####•••••••••••••••••• Economic Output ••••••••••••••••••
+      #### Output for cost-effectiveness 
+      ## POPULATION SIZE 
+      psize[i]<-sum(S[i,],L[i,],R[i,],I[i,],NI[i,],Sv[i,],Lv[i,],Rv[i,])
+      #print(c("PSIZE",i,psize[i]))
+      
+      #ages needed to fit to incidence and population size
+      psize014[i]<-sum(S[i,1:15],L[i,1:15],R[i,1:15],I[i,1:15],NI[i,1:15],Sv[i,1:15],Lv[i,1:15],Rv[i,1:15])
+      psize1554[i]<-sum(S[i,16:55],L[i,16:55],R[i,16:55],I[i,16:55],NI[i,16:55],Sv[i,16:55],Lv[i,16:55],Rv[i,16:55])
+      psize5564[i]<-sum(S[i,56:65],L[i,56:65],R[i,56:65],I[i,56:65],NI[i,56:65],Sv[i,56:65],Lv[i,56:65],Rv[i,56:65])
+      psize65plus[i]<-sum(S[i,66:Mnage],L[i,66:Mnage],R[i,66:Mnage],I[i,66:Mnage],NI[i,66:Mnage],Sv[i,66:Mnage],Lv[i,66:Mnage],Rv[i,66:Mnage])
+      #psize65plus[i]<-sum(S[i,66:86],L[i,66:86],R[i,66:86],I[i,66:86],NI[i,66:86],Sv[i,66:86],Lv[i,66:86],Rv[i,66:86])
+      
+      #inset check of pop size
+      #ages needed to fit to mort  and prevalence as have different groupings
+      psize1559[i]<-sum(S[i,16:60],L[i,16:60],R[i,16:60],I[i,16:60],NI[i,16:60],Sv[i,16:60],Lv[i,16:60],Rv[i,16:60])
+      psize1529[i]<-sum(S[i,16:30],L[i,16:30],R[i,16:30],I[i,16:30],NI[i,16:30],Sv[i,16:30],Lv[i,16:30],Rv[i,16:30])
+      psize3044[i]<-sum(S[i,31:45],L[i,31:45],R[i,31:45],I[i,31:45],NI[i,31:45],Sv[i,31:45],Lv[i,31:45],Rv[i,31:45])
+      psize4559[i]<-sum(S[i,46:60],L[i,46:60],R[i,46:60],I[i,46:60],NI[i,46:60],Sv[i,46:60],Lv[i,46:60],Rv[i,46:60])
+      psize60plus[i]<-sum(S[i,61:Mnage],L[i,61:Mnage],R[i,61:Mnage],I[i,61:Mnage],NI[i,61:Mnage],Sv[i,61:Mnage],Lv[i,61:Mnage],Rv[i,61:Mnage])
+      psize55plus[i]<-sum(S[i,56:Mnage],L[i,56:Mnage],R[i,56:Mnage],I[i,56:Mnage],NI[i,56:Mnage],Sv[i,56:Mnage],Lv[i,56:Mnage],Rv[i,56:Mnage])
+      psize55minus[i]<-sum(S[i,1:55],L[i,1:55],R[i,1:55],I[i,1:55],NI[i,1:55],Sv[i,1:55],Lv[i,1:55],Rv[i,1:55])
+      psize5574[i]<-sum(S[i,56:75],L[i,56:75],R[i,56:75],I[i,56:75],NI[i,56:75],Sv[i,56:75],Lv[i,56:75],Rv[i,56:75])
+      psize75plus[i]<-sum(S[i,76:Mnage],L[i,76:Mnage],R[i,76:Mnage],I[i,76:Mnage],NI[i,76:Mnage],Sv[i,76:Mnage],Lv[i,76:Mnage],Rv[i,76:Mnage])
+      psize1524[i]<-sum(S[i,16:25],L[i,16:25],R[i,16:25],I[i,16:25],NI[i,16:25],Sv[i,16:25],Lv[i,16:25],Rv[i,16:25])
+      psize2554[i]<-sum(S[i,26:55],L[i,26:55],R[i,26:55],I[i,26:55],NI[i,26:55],Sv[i,26:55],Lv[i,26:55],Rv[i,26:55])      
+      psize15plus[i]<-sum(S[i,16:Mnage],L[i,16:Mnage],R[i,16:Mnage],I[i,16:Mnage],NI[i,16:Mnage],Sv[i,16:Mnage],Lv[i,16:Mnage],Rv[i,16:Mnage])
+      
+      
+      #ages needed to fit prev of infection
+      psize0509[i]<-sum(S[i,6:10],L[i,6:10],R[i,6:10],I[i,6:10],NI[i,6:10],Sv[i,6:10],Lv[i,6:10],Rv[i,6:10])
+      psize1019[i]<-sum(S[i,11:20],L[i,11:20],R[i,11:20],I[i,11:20],NI[i,11:20],Sv[i,11:20],Lv[i,11:20],Rv[i,11:20])
+      psize2029[i]<-sum(S[i,21:30],L[i,21:30],R[i,21:30],I[i,21:30],NI[i,21:30],Sv[i,21:30],Lv[i,21:30],Rv[i,21:30])
+      psize3039[i]<-sum(S[i,31:40],L[i,31:40],R[i,31:40],I[i,31:40],NI[i,31:40],Sv[i,31:40],Lv[i,31:40],Rv[i,31:40])
+      psize4049[i]<-sum(S[i,41:50],L[i,41:50],R[i,41:50],I[i,41:50],NI[i,41:50],Sv[i,41:50],Lv[i,41:50],Rv[i,41:50])
+      psize5059[i]<-sum(S[i,51:60],L[i,51:60],R[i,51:60],I[i,51:60],NI[i,51:60],Sv[i,51:60],Lv[i,51:60],Rv[i,51:60])
+      psize6069[i]<-sum(S[i,61:70],L[i,61:70],R[i,61:70],I[i,61:70],NI[i,61:70],Sv[i,61:70],Lv[i,61:70],Rv[i,61:70])
+      psize70plus[i]<-sum(S[i,71:Mnage],L[i,71:Mnage],R[i,71:Mnage],I[i,71:Mnage],NI[i,71:Mnage],Sv[i,71:Mnage],Lv[i,71:Mnage],Rv[i,71:Mnage])
+      
+      
+      print("psize pre-matrix")
+      #ages and incidence for contact matrices
+      psizematrix[i,1]<-sum(S[i,1:6],L[i,1:6],R[i,1:6],I[i,1:6],NI[i,1:6],Sv[i,1:6],Lv[i,1:6],Rv[i,1:6])
+      psizematrix[i,2]<-sum(S[i,7:20],L[i,7:20],R[i,7:20],I[i,7:20],NI[i,7:20],Sv[i,7:20],Lv[i,7:20],Rv[i,7:20])
+      psizematrix[i,3]<-sum(S[i,21:65],L[i,21:65],R[i,21:65],I[i,21:65],NI[i,21:65],Sv[i,21:65],Lv[i,21:65],Rv[i,21:65])
+      psizematrix[i,4]<-sum(S[i,66:Mnage],L[i,66:Mnage],R[i,66:Mnage],I[i,66:Mnage],NI[i,66:Mnage],Sv[i,66:Mnage],Lv[i,66:Mnage],Rv[i,66:Mnage])
+      print("psize post-matrix")
+      Imatrix[i,1]<-sum(I[i,1:6])
+      Imatrix[i,2]<-sum(I[i,7:20])
+      Imatrix[i,3]<-sum(I[i,21:65])
+      Imatrix[i,4]<-sum(I[i,66:Mnage])
+      
+      Imatno6080A[i]<-sum(I[i,21:55])
+      Imatno6080B[i]<-sum(I[i,76:Mnage])
+      Imatno75up[i]<-sum(I[i,66:75])
+      
+      
+      print("imatrix post-matrix")
+      
+      print("done pop")
+      
+      ## number vaccinated
+      #need to set up matrix for psizevacc to be recorded in to**
+      #psizevacc[i]<-sum(Sv[i,],Lv[i,],Rv[i,])
+      #nmbvacc<-psizevacc[i]-psizevacc[i-1]
+      
+      
+      
+      ## Death markers
+      # Number of TB deaths
+      TBDeaths[i,1:Mnage]=dt*((ui[1:Mnage]*I[i-1,1:Mnage])+(uni[1:Mnage]*NI[i-1,1:Mnage]));
+      
+      # All deaths TB and background ##add in by age???
+      ADeaths[i,1:Mnage]=dt*(u[1:Mnage]*S[i-1,1:Mnage]+u[1:Mnage]*L[i-1,1:Mnage]+(u[1:Mnage]+ui[1:Mnage])*I[i-1,1:Mnage]+(u[1:Mnage]+uni[1:Mnage])*NI[i-1,1:Mnage]+u[1:Mnage]*R[i-1,1:Mnage]+u[1:Mnage]*Sv[i-1,1:Mnage]+u[1:Mnage]*Lv[i-1,1:Mnage]+u[1:Mnage]*Rv[i-1,1:Mnage])
+      
+      # Deaths matrix holds all death indices
+      # Columns: Number deaths HIV-, av age at death av. age HIV death, number HIV+ deaths, av age HIV+ death, av. age death
+      Deaths[i,1]=sum(ADeaths[i,]);   Deaths[i,2]=sum(ADeaths[i,]*seq(1:Mnage))/sum(ADeaths[i,])
+      #Deaths[i,3]=sum(ADeathsH[i,]);  Deaths[i,4]=sum(ADeathsH[i,]*seq(1:Mnage))/sum(ADeathsH[i,])
+      #Deaths[i,5]=sum((ADeathsH[i,]+ADeaths[i,])*seq(1:Mnage))/sum(ADeathsH[i,]+ADeaths[i,])
+      
+      ## NUMBER ON TREATMENT & NUMBER SUCCESSFULLY TREATED
+      # TBRx columns: HIV- detected, successfully treated, HIV+ detected, successfully treated
+      #TBRx[i,1]=CDR*(sum(new_I[i-1,])+e*sum(new_NI[i-1,]));    TBRx[i,2]=CDR*(CoT)*(sum(new_I[i-1,])+e*sum(new_NI[i-1,]))
+      #TBRx[i,3]=CDRH*(sum(new_IH[i-1,])+e*sum(new_NIH[i-1,]));  TBRx[i,4]=CDRH*(CoTH)*(sum(new_IH[i-1,])+e*sum(new_NI[i-1,]))
+      
+      # If last timestep of the year
+      
+      if(i == ((1/dt)*(k-year1)+1/dt)){
+        
+        print("last time step")
+        #i1 is number of first time step of the yr, i2 is number of last timestep of the yr
+        i1<-((1/dt)*(k-year1)+1); i2<-((1/dt)*(k-year1)+1/dt)
+        # TB INCIDENCE AND MORTALITY etc for MODEL FITTING and RESEARCH OUTCOMES
+        #print(c(i,TBI[1,],sum(new_I[i1:i2,],new_NI[i1:i2,]),mean(psize[i1:i2])))
+        # Yearly average PSIZE, Incidence and mortality
+        ## (1) population size 
+        PSIZEy[(k-year1+1),1]<-mean(psize[i1:i2]);
+        PSIZEy[(k-year1+1),2]<-mean(psize014[i1:i2])
+        PSIZEy[(k-year1+1),3]<-mean(psize1554[i1:i2])
+        PSIZEy[(k-year1+1),4]<-mean(psize5564[i1:i2])
+        PSIZEy[(k-year1+1),5]<-mean(psize65plus[i1:i2])
+        PSIZEy[(k-year1+1),6]<-mean(psize1559[i1:i2])
+        PSIZEy[(k-year1+1),7]<-mean(psize1529[i1:i2])
+        PSIZEy[(k-year1+1),8]<-mean(psize3044[i1:i2])
+        PSIZEy[(k-year1+1),9]<-mean(psize4559[i1:i2])
+        PSIZEy[(k-year1+1),10]<-mean(psize60plus[i1:i2])
+        PSIZEy[(k-year1+1),11]<-mean(psize55plus[i1:i2])
+        PSIZEy[(k-year1+1),12]<-mean(psize0509[i1:i2])
+        PSIZEy[(k-year1+1),13]<-mean(psize1019[i1:i2])
+        PSIZEy[(k-year1+1),14]<-mean(psize2029[i1:i2])
+        PSIZEy[(k-year1+1),15]<-mean(psize3039[i1:i2])
+        PSIZEy[(k-year1+1),16]<-mean(psize4049[i1:i2])
+        PSIZEy[(k-year1+1),17]<-mean(psize5059[i1:i2])
+        PSIZEy[(k-year1+1),18]<-mean(psize6069[i1:i2])
+        PSIZEy[(k-year1+1),19]<-mean(psize70plus[i1:i2])
+        PSIZEy[(k-year1+1),20]<-mean(psize5574[i1:i2])
+        PSIZEy[(k-year1+1),21]<-mean(psize75plus[i1:i2])
+        PSIZEy[(k-year1+1),22]<-mean(psize1524[i1:i2])
+        PSIZEy[(k-year1+1),23]<-mean(psize2554[i1:i2])
+        PSIZEy[(k-year1+1),24]<-mean(psize15plus[i1:i2])
+        
+        
+        print("k2")
+        
+        ## (2) TB incidence rate
+        TBI[(k-year1+1),1]<-100000*sum(new_I_noconv[i1:i2,],new_NI[i1:i2,])/mean(psize[i1:i2])
+        TBI[(k-year1+1),2]<-100000*sum(new_I_noconv[i1:i2,1:15],new_NI[i1:i2,1:15])/mean(psize014[i1:i2])
+        TBI[(k-year1+1),3]<-100000*sum(new_I_noconv[i1:i2,16:55],new_NI[i1:i2,16:55])/mean(psize1554[i1:i2])
+        TBI[(k-year1+1),4]<-100000*sum(new_I_noconv[i1:i2,56:65],new_NI[i1:i2,56:65])/mean(psize5564[i1:i2])
+        TBI[(k-year1+1),5]<-100000*sum(new_I_noconv[i1:i2,66:Mnage],new_NI[i1:i2,66:Mnage])/mean(psize65plus[i1:i2])
+        TBI[(k-year1+1),6]<-100000*sum(new_I_noconv[i1:i2,56:Mnage],new_NI[i1:i2,56:Mnage])/mean(psize55plus[i1:i2])
+        TBI[(k-year1+1),7]<-100000*sum(new_I_noconv[i1:i2,1:55],new_NI[i1:i2,1:55])/mean(psize55minus[i1:i2])
+        TBI[(k-year1+1),8]<-100000*sum(new_I_noconv[i1:i2,16:25],new_NI[i1:i2,16:25])/mean(psize1524[i1:i2])
+        TBI[(k-year1+1),9]<-100000*sum(new_I_noconv[i1:i2,26:55],new_NI[i1:i2,26:55])/mean(psize2554[i1:i2])
+        
+        
+        
+        
+        
+        ## (2b) TB notification rate
+        TBN[(k-year1+1),1]<-100000*sum(new_notif[i1:i2,]/mean(psize[i1:i2]))
+        TBN[(k-year1+1),2]<-100000*sum(new_notif[i1:i2,1:15]/mean(psize014[i1:i2]))
+        TBN[(k-year1+1),3]<-100000*sum(new_notif[i1:i2,16:55]/mean(psize1554[i1:i2]))
+        TBN[(k-year1+1),4]<-100000*sum(new_notif[i1:i2,56:65]/mean(psize5564[i1:i2]))
+        TBN[(k-year1+1),5]<-100000*sum(new_notif[i1:i2,66:Mnage]/mean(psize65plus[i1:i2]))  
+        TBN[(k-year1+1),6]<-100000*sum(new_notif[i1:i2,56:Mnage]/mean(psize55plus[i1:i2]))  
+        TBN[(k-year1+1),7]<-100000*sum(new_notif[i1:i2,1:55]/mean(psize55minus[i1:i2]))  
+        
+        
+        
+        ## (3) TB prevalence rate 
+        TBP[(k-year1+1),1]<-100000*sum(I[i1:i2,],NI[i1:i2,])/mean(psize[i1:i2])
+        TBP[(k-year1+1),2]<-100000*sum(I[i1:i2,1:15],NI[i1:i2,1:15])/mean(psize014[i1:i2])
+        TBP[(k-year1+1),3]<-100000*sum(I[i1:i2,16:30],NI[i1:i2,16:30])/mean(psize1529[i1:i2])
+        TBP[(k-year1+1),4]<-100000*sum(I[i1:i2,31:45],NI[i1:i2,31:45])/mean(psize3044[i1:i2])
+        TBP[(k-year1+1),5]<-100000*sum(I[i1:i2,46:60],NI[i1:i2,46:60])/mean(psize4559[i1:i2])
+        TBP[(k-year1+1),6]<-100000*sum(I[i1:i2,61:Mnage],NI[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
+        TBP[(k-year1+1),7]<-100000*sum(I[i1:i2,56:Mnage],NI[i1:i2,56:Mnage])/mean(psize55plus[i1:i2])
+        
+        ## (4) TB bacteriologically positive prevalence rate - is comparable to the calibration data, so use this one 
+        TBPb[(k-year1+1),1]<-100000*sum(I[i1:i2,])/mean(psize[i1:i2])
+        TBPb[(k-year1+1),2]<-100000*sum(I[i1:i2,1:15])/mean(psize014[i1:i2])
+        TBPb[(k-year1+1),3]<-100000*sum(I[i1:i2,16:30])/mean(psize1529[i1:i2])
+        TBPb[(k-year1+1),4]<-100000*sum(I[i1:i2,31:45])/mean(psize3044[i1:i2])
+        TBPb[(k-year1+1),5]<-100000*sum(I[i1:i2,46:60])/mean(psize4559[i1:i2])
+        TBPb[(k-year1+1),6]<-100000*sum(I[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
+        TBPb[(k-year1+1),7]<-100000*sum(I[i1:i2,56:Mnage])/mean(psize55plus[i1:i2])
+        TBPb[(k-year1+1),8]<-100000*sum(I[i1:i2,16:Mnage])/mean(psize15plus[i1:i2])
+        
+        
+        ## (5) TB mortality rate
+        #print(c("IH",sum(new_IH[i,],new_NIH[i,]),TBI[i,2]))
+        TBM[(k-year1+1),1]<-100000*sum(TBDeaths[i1:i2,])/mean(psize[i1:i2])
+        TBM[(k-year1+1),2]<-100000*sum(TBDeaths[i1:i2,1:15])/mean(psize014[i1:i2])
+        TBM[(k-year1+1),3]<-100000*sum(TBDeaths[i1:i2,16:55])/mean(psize1554[i1:i2])
+        TBM[(k-year1+1),4]<-100000*sum(TBDeaths[i1:i2,56:65])/mean(psize5564[i1:i2])
+        TBM[(k-year1+1),5]<-100000*sum(TBDeaths[i1:i2,66:Mnage])/mean(psize65plus[i1:i2])
+        TBM[(k-year1+1),6]<-100000*sum(TBDeaths[i1:i2,16:60])/mean(psize1559[i1:i2])
+        TBM[(k-year1+1),7]<-100000*sum(TBDeaths[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
+        TBM[(k-year1+1),8]<-100000*sum(TBDeaths[i1:i2,56:Mnage])/mean(psize55plus[i1:i2])
+        TBM[(k-year1+1),9]<-100000*sum(TBDeaths[i1:i2,1:55])/mean(psize55minus[i1:i2])
+        TBM[(k-year1+1),10]<-100000*sum(TBDeaths[i1:i2,16:25])/mean(psize1524[i1:i2])
+        TBM[(k-year1+1),11]<-100000*sum(TBDeaths[i1:i2,26:55])/mean(psize2554[i1:i2])
+        
+        ## (6) Prevalence of latent infection - in case get data to fit to. WHAT ABOUT RECOVERDS - is ok as data excluded recovereds by excluding those with TB history from the study
+        #           TBPI[(k-year1+1),1]<-100*(((sum(L[i1:i2,]))/2)/mean(psize[i1:i2]))
+        #           TBPI[(k-year1+1),2]<-100*(((sum(L[i1:i2,1:15]))/2)/mean(psize014[i1:i2]))
+        #           TBPI[(k-year1+1),3]<-100*(((sum(L[i1:i2,16:55]))/2)/mean(psize1554[i1:i2]))
+        #           TBPI[(k-year1+1),4]<-100*(((sum(L[i1:i2,56:65]))/2)/mean(psize5564[i1:i2]))
+        #           TBPI[(k-year1+1),5]<-100*(((sum(L[i1:i2,66:Mnage]))/2)/mean(psize65plus[i1:i2]))
+        #           TBPI[(k-year1+1),6]<-100*(((sum(L[i1:i2,56:Mnage]))/2)/mean(psize55plus[i1:i2]))
+        #           TBPI[(k-year1+1),7]<-100*(((sum(L[i1:i2,6:10]))/2)/mean(psize0509[i1:i2]))  
+        #           TBPI[(k-year1+1),8]<-100*(((sum(L[i1:i2,11:20]))/2)/mean(psize1019[i1:i2]))
+        #           TBPI[(k-year1+1),9]<-100*(((sum(L[i1:i2,21:30]))/2)/mean(psize2029[i1:i2]))
+        #           TBPI[(k-year1+1),10]<-100*(((sum(L[i1:i2,31:40]))/2)/mean(psize3039[i1:i2]))
+        #           TBPI[(k-year1+1),11]<-100*(((sum(L[i1:i2,41:50]))/2)/mean(psize4049[i1:i2]))
+        #           TBPI[(k-year1+1),12]<-100*(((sum(L[i1:i2,51:60]))/2)/mean(psize5059[i1:i2]))
+        #           TBPI[(k-year1+1),13]<-100*(((sum(L[i1:i2,61:70]))/2)/mean(psize6069[i1:i2]))
+        #           TBPI[(k-year1+1),14]<-100*(((sum(L[i1:i2,71:Mnage]))/2)/mean(psize70plus[i1:i2]))
+        #                                      
+        #           
+        TBPI[(k-year1+1),1]<-100*(((sum(L[i1,])/psize[i1])+(sum(L[i2,])/psize[i2]))/2)
+        TBPI[(k-year1+1),2]<-100*(((sum(L[i1,1:15])/psize014[i1])+(sum(L[i2,1:15])/psize014[i2]))/2)
+        TBPI[(k-year1+1),3]<-100*(((sum(L[i1,16:55])/psize1554[i1])+(sum(L[i2,16:55])/psize1554[i2]))/2)
+        TBPI[(k-year1+1),4]<-100*(((sum(L[i1,56:65])/psize5564[i1])+(sum(L[i2,56:65])/psize5564[i2]))/2)
+        TBPI[(k-year1+1),5]<-100*(((sum(L[i1,66:Mnage])/psize65plus[i1])+(sum(L[i2,66:Mnage])/psize65plus[i2]))/2)
+        TBPI[(k-year1+1),6]<-100*(((sum(L[i1,56:Mnage])/psize55plus[i1])+(sum(L[i2,56:Mnage])/psize55plus[i2]))/2)
+        TBPI[(k-year1+1),7]<-100*(((sum(L[i1,6:10])/psize0509[i1])+(sum(L[i2,6:10])/psize0509[i2]))/2)
+        TBPI[(k-year1+1),8]<-100*(((sum(L[i1,11:20])/psize1019[i1])+(sum(L[i2,11:20])/psize1019[i2]))/2)
+        TBPI[(k-year1+1),9]<-100*(((sum(L[i1,21:30])/psize2029[i1])+(sum(L[i2,21:30])/psize2029[i2]))/2)
+        TBPI[(k-year1+1),10]<-100*(((sum(L[i1,31:40])/psize3039[i1])+(sum(L[i2,31:40])/psize3039[i2]))/2)
+        TBPI[(k-year1+1),11]<-100*(((sum(L[i1,41:50])/psize4049[i1])+(sum(L[i2,41:50])/psize4049[i2]))/2)
+        TBPI[(k-year1+1),12]<-100*(((sum(L[i1,51:60])/psize5059[i1])+(sum(L[i2,51:60])/psize5059[i2]))/2)
+        TBPI[(k-year1+1),13]<-100*(((sum(L[i1,61:70])/psize6069[i1])+(sum(L[i2,61:70])/psize6069[i2]))/2)
+        TBPI[(k-year1+1),14]<-100*(((sum(L[i1,71:Mnage])/psize70plus[i1])+(sum(L[i2,71:Mnage])/psize70plus[i2]))/2)
+        TBPI[(k-year1+1),15]<-100*(((sum(L[i1,66:75])/(psize5574[i1]-psize5564[i1]))+(sum(L[i2,66:75])/(psize5574[i1]-psize5564[i1])))/2)
+        TBPI[(k-year1+1),16]<-100*(((sum(L[i1,76:Mnage])/psize75plus[i1])+(sum(L[i2,76:Mnage])/psize75plus[i2]))/2)
+        TBPI[(k-year1+1),17]<-100*(((sum(L[i1,16:25])/psize1524[i1])+(sum(L[i2,16:25])/psize1524[i2]))/2)
+        
+        
+        
+        
+        
+        
+        ## (7) % reactivation
+        #           TBRa[(k-year1+1),1]<-100*((sum(new_I_react[i1:i2,]))/(sum(new_I[i1:i2,])))
+        #           TBRa[(k-year1+1),2]<-100*((sum(new_I_react[i1:i2,1:15]))/(sum(new_I[i1:i2,1:15])))
+        #           TBRa[(k-year1+1),3]<-100*((sum(new_I_react[i1:i2,16:55]))/(sum(new_I[i1:i2,16:55])))
+        #           TBRa[(k-year1+1),4]<-100*((sum(new_I_react[i1:i2,56:65]))/(sum(new_I[i1:i2,56:65])))
+        #           TBRa[(k-year1+1),5]<-100*((sum(new_I_react[i1:i2,66:Mnage]))/(sum(new_I[i1:i2,66:Mnage])))
+        #           TBRa[(k-year1+1),6]<-100*((sum(new_I_react[i1:i2,56:Mnage]))/(sum(new_I[i1:i2,56:Mnage])))
+        #           
+        TBRa[(k-year1+1),1]<-100*((sum(new_actv_react[i1:i2,]))/(sum(new_actv[i1:i2,])))
+        TBRa[(k-year1+1),2]<-100*((sum(new_actv_react[i1:i2,1:15]))/(sum(new_actv[i1:i2,1:15])))
+        TBRa[(k-year1+1),3]<-100*((sum(new_actv_react[i1:i2,16:55]))/(sum(new_actv[i1:i2,16:55])))
+        TBRa[(k-year1+1),4]<-100*((sum(new_actv_react[i1:i2,56:65]))/(sum(new_actv[i1:i2,56:65])))
+        TBRa[(k-year1+1),5]<-100*((sum(new_actv_react[i1:i2,66:Mnage]))/(sum(new_actv[i1:i2,66:Mnage])))
+        TBRa[(k-year1+1),6]<-100*((sum(new_actv_react[i1:i2,56:Mnage]))/(sum(new_actv[i1:i2,56:Mnage])))
+        
+        TBRa2[(k-year1+1),1]<-100*((sum(new_I_react[i1:i2,]))/(sum(new_I_noconv[i1:i2,])))
+        TBRa2[(k-year1+1),2]<-100*((sum(new_I_react[i1:i2,1:15]))/(sum(new_I_noconv[i1:i2,1:15])))
+        TBRa2[(k-year1+1),3]<-100*((sum(new_I_react[i1:i2,16:55]))/(sum(new_I_noconv[i1:i2,16:55])))
+        TBRa2[(k-year1+1),4]<-100*((sum(new_I_react[i1:i2,56:65]))/(sum(new_I_noconv[i1:i2,56:65])))
+        TBRa2[(k-year1+1),5]<-100*((sum(new_I_react[i1:i2,66:Mnage]))/(sum(new_I_noconv[i1:i2,66:Mnage])))
+        TBRa2[(k-year1+1),6]<-100*((sum(new_I_react[i1:i2,56:Mnage]))/(sum(new_I_noconv[i1:i2,56:Mnage])))
+        
+        
+        
+        ## (8) % new/reinfection
+        #           TBRi[(k-year1+1),1]<-100-(TBRa[(k-year1+1),1])
+        #           TBRi[(k-year1+1),2]<-100-(TBRa[(k-year1+1),2])
+        #           TBRi[(k-year1+1),3]<-100-(TBRa[(k-year1+1),3])
+        #           TBRi[(k-year1+1),4]<-100-(TBRa[(k-year1+1),4])
+        #           TBRi[(k-year1+1),5]<-100-(TBRa[(k-year1+1),5])
+        #           TBRi[(k-year1+1),6]<-100-(TBRa[(k-year1+1),6])
+        #           
+        TBRi[(k-year1+1),1]<-100-(TBRa[(k-year1+1),1])
+        TBRi[(k-year1+1),2]<-100-(TBRa[(k-year1+1),2])
+        TBRi[(k-year1+1),3]<-100-(TBRa[(k-year1+1),3])
+        TBRi[(k-year1+1),4]<-100-(TBRa[(k-year1+1),4])
+        TBRi[(k-year1+1),5]<-100-(TBRa[(k-year1+1),5])
+        TBRi[(k-year1+1),6]<-100-(TBRa[(k-year1+1),6])
+        
+        TBRi2[(k-year1+1),1]<-100-(TBRa2[(k-year1+1),1])
+        TBRi2[(k-year1+1),2]<-100-(TBRa2[(k-year1+1),2])
+        TBRi2[(k-year1+1),3]<-100-(TBRa2[(k-year1+1),3])
+        TBRi2[(k-year1+1),4]<-100-(TBRa2[(k-year1+1),4])
+        TBRi2[(k-year1+1),5]<-100-(TBRa2[(k-year1+1),5])
+        TBRi2[(k-year1+1),6]<-100-(TBRa2[(k-year1+1),6])
+        
+        
+        
+        ## (9) number newly infected ppl
+        TBInew[(k-year1+1),1]<-sum(new_infect[i1:i2,])
+        TBInew[(k-year1+1),2]<-sum(new_infect[i1:i2,1:15])
+        TBInew[(k-year1+1),3]<-sum(new_infect[i1:i2,16:55])
+        TBInew[(k-year1+1),4]<-sum(new_infect[i1:i2,56:65])
+        TBInew[(k-year1+1),5]<-sum(new_infect[i1:i2,66:Mnage])
+        TBInew[(k-year1+1),6]<-sum(new_infect[i1:i2,56:Mnage])
+        
+        ##(9b) ARI - annual risk of infection
+        ARI[(k-year1+1),1]<-(sum(new_infect[i1:i2,]))/mean(psize[i1:i2])*100
+        ARI[(k-year1+1),2]<-(sum(new_infect[i1:i2,1:15]))/mean(psize014[i1:i2])*100
+        ARI[(k-year1+1),3]<-(sum(new_infect[i1:i2,16:55]))/mean(psize1554[i1:i2])*100
+        ARI[(k-year1+1),4]<-(sum(new_infect[i1:i2,56:Mnage]))/mean(psize55plus[i1:i2])*100
+        
+        
+        
+        ## (10) proortion of prevalent cases by age
+        ##needs fixing!
+        TBProp[(k-year1+1),1]<-sum(I[i1:i2,1:15])/sum(I[i1:i2])
+        TBProp[(k-year1+1),2]<-sum(I[i1:i2,16:55])/sum(I[i1:i2])
+        TBProp[(k-year1+1),3]<-sum(I[i1:i2,56:65])/sum(I[i1:i2])
+        TBProp[(k-year1+1),4]<-sum(I[i1:i2,66:Mnage])/sum(I[i1:i2])
+        
+        #(11) to calc PAF - number of new infections
+        #I1990[1,]<-sum(new_infect[181:182,])
+        #I2025[1,]<-sum(new_infect[251:252,])
+        #I2050[1,]<-sum(new_infect[301:302,])
+        I2050[1,]<-sum(new_infect[301:302,])
+        
+        
+        ###(12) New active cases and TB deaths per year
+        TBAc[(k-year1+1),1]<-sum(new_actv[i1:i2,])
+        
+        TBAc_age[(k-year1+1),1]<-sum(new_actv[i1:i2,1:15])
+        TBAc_age[(k-year1+1),2]<-sum(new_actv[i1:i2,16:25])
+        TBAc_age[(k-year1+1),3]<-sum(new_actv[i1:i2,26:55])
+        TBAc_age[(k-year1+1),4]<-sum(new_actv[i1:i2,56:65])
+        TBAc_age[(k-year1+1),5]<-sum(new_actv[i1:i2,66:Mnage])
+        
+        TBMo[(k-year1+1),1]<-sum(TBDeaths[i1:i2,])
+        
+        ##(13) number receiving vaccine
+        NV[(k-year1+1),1]<-sum(num_vac[i1:i2,])
+        
+        
+        
+        
+        #           #av incidence rate in <55 and >55 for 2025-2050 for data check
+        TBIPGyng<-(sum(new_I_noconv[251:302,1:55],new_NI[251:302,1:55]))/26
+        TBIPGold<-(sum(new_I_noconv[251:302,56:Mnage],new_NI[251:302,56:Mnage]))/26
+        PsizePGyng<-mean(psize55minus[251:302])
+        PsizePGold<-mean(psize55plus[251:302])
+        PGyng<-100000*TBIPGyng/PsizePGyng
+        PGold<-100000*TBIPGold/PsizePGold
+        
+        #           to be able to do NNV by yr
+        #           if (k>=2025) {
+        #           vaccgiveyr[,(k-2025+1)]<-sum(VX[i1:i2,1])
+        #           totmortyr[(k-2025+1),1]<-sum(TBDeaths[251:i,])
+        #           totmortyr[(k-2025+1),2]<-sum(TBDeaths[251:i,66:Mnage])
+        #           totmortyr[(k-2025+1),3]<-sum(TBDeaths[251:i,56:Mnage])
+        #           
+        #           totcaseyr[(k-2025+1),1]<- sum(new_I_noconv[251:i,],new_NI[251:i,])
+        #           totcaseyr[(k-2025+1),2]<- sum(new_I_noconv[251:i,66:Mnage],new_NI[251:i,66:Mnage])
+        #           totcaseyr[(k-2025+1),3]<- sum(new_I_noconv[251:i,56:Mnage],new_NI[251:i,56:Mnage])
+        #           
+        #           cumuloutyr[(k-2025+1),]<-c(totmortyr[(k-2025+1),],totcaseyr[(k-2025+1),])
+        #           }
+        #           
+        #for last time step of the model calc number of vaccines delivered
+        if (i==(length(seq(year1,(yearend+(1-dt)),dt)))){ # LAST TIME STEP of the model
+          
+          vaccgive<-colSums(VX)
+          
+          # First is for whole population, second for HIV positives only... 
+          #         Out<-cbind(Deaths,psize,rowSums(S),rowSums(L),rowSums(R),rowSums(I),rowSums(NI),rowSums(Sv),rowSums(Lv),rowSums(Rv),rowSums(thetaS),rowSums(thetaL),rowSums(thetaR),rowSums(d),VX[,1],VX[,2],VX[,3])
+          #         nms<-c("Deaths","Psz","S","L","R","I","NI","Sv","Lv","Rv","thetaS","thetaL","thetaR","d","vacctot","vaccroutine","vaccmass")
+          #         Out<-as.data.frame(Out);colnames(Out)<-nms
+          #         print(head(Out))
+          #         print ("done out and nms")
+          
+          
+          
+          #### FOR CE OUTPUT
+          #yrcount<-seq(1,(yearend-year1)*(1/dt)+1,(1/dt))
+          
+          #print ("done year count")
+          #EconOut<-matrix(0,length(yrcount)-1,9)
+          #EconOut[,1]<-seq(year1,yearend-1)
+          #nns<-c("Year","HIV-cases","HIV+cases","TBDeaths","AvAgeD","VaccDTP3","Vacc10","VaccMass","Treatments")
+          #EconOut<-as.data.frame(EconOut); colnames(EconOut)<-nns
+          
+          #hbcOut<-matrix(0,length(yrcount)-1,6)
+          #hbcOut[,1]<-seq(year1,yearend-1)
+          #nns2<-c("Year","Psize","negcases","poscases","negdeaths","posdeaths")
+          #hbcOut<-as.data.frame(hbcOut); colnames(hbcOut)<-nns2
+          
+          # Calculate that years average
+          
+          # for (i in 1:(length(yrcount)-1)){
+          #gives first and last timestep of a year??? no as first timestep of year runs. so why need??? calcs for the last year
+          #           #i1<-yrcount[i]; i2<-yrcount[i+1]-1
+          #           #EconOut[i,"AvAgeD"]=sum(colSums(ADeathsH[i1:i2,]+ADeaths[i1:i2,])*seq(1:Mnage))/sum(ADeathsH[i1:i2,]+ADeaths[i1:i2,])
+          #           #EconOut[i,"TBDeaths"]=sum(TBDeaths[i1:i2,]+TBDeathsH[i1:i2,])
+          #           #EconOut[i,"HIV-cases"]=sum(new_I[i1:i2,]+new_NI[i1:i2,])
+          #          # EconOut[i,"HIV+cases"]=sum(new_IH[i1:i2,]+new_NIH[i1:i2,])
+          #           EconOut[i,"VaccDTP3"]=sum(VX[i1:i2,1])
+          #           EconOut[i,"Vacc10"]=sum(VX[i1:i2,2])
+          #           EconOut[i,"VaccMass"]=sum(VX[i1:i2,3])
+          #           EconOut[i,"Treatments"]=sum(TBRx[i1:i2,1]+TBRx[i1:i2,3])
+          #           
+          #           hbcOut[i,"Psize"] = mean(psize[i1:i2])
+          #           hbcOut[i,"negcases"] = sum(new_I[i1:i2,]+new_NI[i1:i2,])
+          #           #hbcOut[i,"poscases"] = sum(new_IH[i1:i2,]+new_NIH[i1:i2,])
+          #           hbcOut[i,"negdeaths"] =sum(TBDeaths[i1:i2,])
+          #           #hbcOut[i,"posdeaths"] = sum(TBDeathsH[i1:i2,])
+        }
+      }
+      ####••••••••••••••••• END OF MIDDLE YEAR RUNS
+    }
+    
+    print("done mid year")
+  } 
+  
+  ## Outputs - in R, allows output to be seen without expressly wanting it 
+  assign('S',S,envir = .GlobalEnv);assign('L',L,envir = .GlobalEnv);assign('I',I,envir = .GlobalEnv);assign('NI',NI,envir = .GlobalEnv);assign('R',R,envir = .GlobalEnv);assign('new_I',new_I,envir = .GlobalEnv);assign('new_I_noconv',new_I_noconv,envir = .GlobalEnv);assign('new_NI',new_NI,envir = .GlobalEnv);assign('new_notif',new_notif,envir = .GlobalEnv)
+  assign('NBirths',BIRTHS,envir=.GlobalEnv);  assign('brate',brate,envir=.GlobalEnv)  
+  #assign('SH',SH,envir = .GlobalEnv);assign('LH',LH,envir = .GlobalEnv);#assign('IH',IH,envir = .GlobalEnv);assign('NIH',NIH,envir = .GlobalEnv);assign('RH',RH,envir = .GlobalEnv);assign('new_IH',new_IH,envir = .GlobalEnv);assign('new_NIH',new_NIH,envir = .GlobalEnv)
+  assign('Sv',Sv,envir = .GlobalEnv);assign('Lv',Lv,envir = .GlobalEnv);assign('Rv',Rv,envir = .GlobalEnv);#assign('SvH',SvH,envir = .GlobalEnv);assign('LvH',LvH,envir = .GlobalEnv);assign('RvH',RvH,envir = .GlobalEnv);
+  assign('lambda',lambda,envir=.GlobalEnv);assign('thetaS',thetaS,envir=.GlobalEnv);assign('thetaL',thetaL,envir=.GlobalEnv);assign('thetaR',thetaR,envir=.GlobalEnv);
+  assign('d',d,envir=.GlobalEnv);
+  assign('TBDeaths',TBDeaths,envir=.GlobalEnv);#assign('TBDeathsH',TBDeathsH,envir=.GlobalEnv);
+  #assign('AllDeathsH',AllDeathsH,envir=.GlobalEnv);
+  assign('ADeaths',ADeaths,envir=.GlobalEnv);#assign('ADeathsH',ADeathsH,envir=.GlobalEnv);
+  assign('Deaths',Deaths,envir=.GlobalEnv);assign('u',u,envir=.GlobalEnv);#assign('hiv',hiv,envir=.GlobalEnv);
+  assign('psize',psize,envir=.GlobalEnv);assign('bv',bv,envir=.GlobalEnv);#assign('prevHIV',prevHIV,envir=.GlobalEnv);assign('prevHIV1549',prevHIV1549,envir=.GlobalEnv);
+  assign('psize014',psize014,envir=.GlobalEnv)
+  assign('psize1529',psize1529,envir=.GlobalEnv)
+  assign('psize1554',psize1554,envir=.GlobalEnv)
+  assign('psize1559',psize1559,envir=.GlobalEnv)
+  assign('psize3044',psize3044,envir=.GlobalEnv)
+  assign('psize4559',psize4559,envir=.GlobalEnv)
+  assign('psize5564',psize5564,envir=.GlobalEnv)
+  assign('psize60plus',psize60plus,envir=.GlobalEnv)
+  assign('psize65plus',psize65plus,envir=.GlobalEnv)
+  assign('psize55plus',psize55plus,envir=.GlobalEnv)
+  assign('psize55minus',psize55minus,envir=.GlobalEnv)
+  assign('psize0509',psize0509,envir=.GlobalEnv)
+  assign('psize1019',psize1019,envir=.GlobalEnv)
+  assign('psize2029',psize2029,envir=.GlobalEnv)
+  assign('psize3039',psize3039,envir=.GlobalEnv)
+  assign('psize4049',psize4049,envir=.GlobalEnv)
+  assign('psize5059',psize5059,envir=.GlobalEnv)
+  assign('psize6069',psize6069,envir=.GlobalEnv)
+  assign('psize70plus',psize70plus,envir=.GlobalEnv)
+  assign('psize5574',psize5574,envir=.GlobalEnv)
+  assign('psize75plus',psize75plus,envir=.GlobalEnv)
+  assign('psize1524',psize1524,envir=.GlobalEnv)
+  assign('psize2554',psize2554,envir=.GlobalEnv)
+  assign('psize15plus',psize15plus,envir=.GlobalEnv)
+  
+  
+  
+  assign('TBI',TBI,envir=.GlobalEnv);assign('TBN',TBN,envir=.GlobalEnv);assign('TBM',TBM,envir=.GlobalEnv);assign('TBRx',TBRx,envir=.GlobalEnv);assign('VX',VX,envir=.GlobalEnv);
+  assign('TBP',TBP,envir=.GlobalEnv);assign('TBPb',TBPb,envir=.GlobalEnv)
+  assign('TBPI',TBPI,envir=.GlobalEnv);assign('PSIZEy',PSIZEy,envir=.GlobalEnv);
+  assign('TBRa',TBRa,envir=.GlobalEnv);assign('TBRi',TBRi,envir=.GlobalEnv); 
+  assign('TBRa2',TBRa2,envir=.GlobalEnv);assign('TBRi2',TBRi2,envir=.GlobalEnv);
+  assign('TBInew',TBInew,envir=.GlobalEnv);assign('PGyng',PGyng,envir=.GlobalEnv);assign('PGold',PGold,envir=.GlobalEnv);
+  assign('ARI',ARI,envir=.GlobalEnv);assign('TBAc',TBAc,envir=.GlobalEnv);assign('TBAc_age',TBAc_age,envir=.GlobalEnv); assign('TBMo',TBMo,envir=.GlobalEnv);assign('num_vac',num_vac,envir=.GlobalEnv); assign('NV',NV,envir=.GlobalEnv);
+  assign('CDR',CDR,envir=.GlobalEnv);assign('CDR2010',CDR2010,envir=.GlobalEnv);
+  #assign('CDRout',CDRout,envir=.GlobalEnv);
+  assign('TBProp',TBProp,envir=.GlobalEnv);
+  assign('new_actv',new_actv, envir=.GlobalEnv);
+  #   assign('I1990',I1990,envir=.GlobalEnv);
+  #   assign('I2020',I2020,envir=.GlobalEnv);
+  assign('I2050',I2050,envir=.GlobalEnv);
+  assign('CDR_av',CDR_av,envir=.GlobalEnv);
+  
+  
+  assign('Imatrix',Imatrix,envir=.GlobalEnv);
+  
+  #assign('ui',ui,envir=.GlobalEnv);
+  #assign('uni',uni,envir=.GlobalEnv);
+  #assign('n',n,envir=.GlobalEnv);
+  
+  #assign('Econout',EconOut,envir=.GlobalEnv);
+  #assign('Out',Out,envir=.GlobalEnv);
+  assign('vaccgive',vaccgive,envir=.GlobalEnv);
+  assign('vaccgiveyr',vaccgiveyr,envir=.GlobalEnv);
+  
+  #assign('hbcout',hbcOut,envir=.GlobalEnv);
+  
+  print("done assign")
+  
+  ## CUMULATIVE RESEARCH OUTCOMES 2025-2050
+  
+  
+  totmort[,1]<-sum(TBDeaths[251:302,])
+  totmort[,2]<-sum(TBDeaths[251:302,66:Mnage])
+  totmort[,3]<-sum(TBDeaths[251:302,56:Mnage])
+  totmort[,4]<-sum(TBDeaths[251:302,1:55])
+  print(totmort)
+  
+  totcase[,1]<- sum(new_I_noconv[251:302,],new_NI[251:302,])
+  totcase[,2]<- sum(new_I_noconv[251:302,66:Mnage],new_NI[251:302,66:Mnage])
+  totcase[,3]<- sum(new_I_noconv[251:302,56:Mnage],new_NI[251:302,56:Mnage])
+  totcase[,4]<- sum(new_I_noconv[251:302,1:55],new_NI[251:302,1:55])
+  print(totcase)
+  
+  
+  cumulout<-cbind(totmort,totcase)
+  print(cumulout)
+  colnames(cumulout)<-c("All agesM", "65+M","55+M","<55M","All agesI", "65+I","55+I","<55I")
+  assign('cumulout',cumulout,envir=.GlobalEnv) 
+  assign('totmort',totmort,envir=.GlobalEnv) 
+  assign('totcase',totcase,envir=.GlobalEnv) 
+  assign('cumuloutyr',cumuloutyr,envir=.GlobalEnv) 
+  
+  
+  
+  
+  print("done tot case")
+  colnames(TBI)<-c("All ages","0-14", "15-54","55-64","65+","55+","<55","15-24","25-54")
+  colnames(TBN)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+","<55")
+  colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+", "55+", "<55","15-24","25-54")
+  colnames(TBP)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+")
+  colnames(TBPb)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+","15+")
+  colnames(TBPI)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+","6574", "75+","1524")
+  colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+", "55+","5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+", "55-74", "75+","15-24", "25-54","15+")
+  
+  ## Actual Output required (collected as progressed with model)
+  # need to update this. what does Ana do???
+  X<-cbind(psize,rowSums(S),S[,1],rowSums(I),rowSums(NI),rowSums(L),rowSums(R),rowSums(new_I),rowSums(new_NI),
+           rowSums(new_I_react),rowSums(new_NI_react), 
+           rowSums(Sv),rowSums(Lv),rowSums(Rv),
+           TBI[,1],TBI[,2], TBI[,3], TBI[,4], TBI[,5], TBI[,6], TBI[,7], 
+           TBN[,1],TBN[,2], TBN[,3], TBN[,4], TBN[,5], TBN[,6], TBN[,7],
+           TBM[,1],TBM[,2],TBM[,3], TBM[,4], TBM[,5], TBM[,6], TBM[,7],TBM[,8],TBM[,9], 
+           TBP[,1],TBP[,2],TBP[,3], TBP[,4], TBP[,5], TBP[,6],TBP[,7], 
+           TBPb[,1],TBPb[,2],TBPb[,3], TBPb[,4], TBPb[,5], TBPb[,6],TBPb[,7],
+           TBPI[,1],TBPI[,2],TBPI[,3], TBPI[,4], TBPI[,5],  TBPI[,6], TBPI[,7],TBPI[,8],TBPI[,9], TBPI[,10], TBPI[,11],  TBPI[,12], TBPI[,13], TBPI[,14],
+           PSIZEy[,1],PSIZEy[,2], PSIZEy[,3], PSIZEy[,4], PSIZEy[,5], PSIZEy[,6], PSIZEy[,7], PSIZEy[,8], PSIZEy[,9], PSIZEy[,10], PSIZEy[,11], PSIZEy[,12], PSIZEy[,13], PSIZEy[,14], PSIZEy[,15], PSIZEy[,16], PSIZEy[,17], PSIZEy[,18], PSIZEy[,19],PSIZEy[,20], PSIZEy[,21], PSIZEy[,22], PSIZEy[,23],
+           TBI[,8], TBI[,9],TBM[,10],TBM[,11],TBPb[,8],PSIZEy[,24])
+  colnames(X)<-c("PSIZE","S","Births","I","NI","L","R","new_I","new_NI","new_I_react","new_NI_react", "Sv","Lv","Rv",
+                 "TBItot","TBI0-14","TBI15-54","TBI55-64","TBI65+","TBI55+","TBI<55",
+                 "TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBN55+","TBN<55",
+                 "TBMtot","TBM0-14", "TBM15-54", "TBM55-64", "TBM65+", "TBM15-59", "TBM60+","TBM55+","TBM<55",
+                 "TBPtot","TBP0-14", "TBP15-29", "TBP30-44", "TBP45-59", "TBP60+", "TBP55+",
+                 "TBPbtot","TBPb0-14", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBPb55+", 
+                 "TBPItot","TBPI0-14", "TBPI15-54", "TBPI55-64", "TBPI65+", "TBPI55+", "TBPI5-9", "TBPI10-19", "TBPI20-29", "TBPI30-39", "TBPI40-49", "TBPI50-59", "TBPI60-69", "TBPI70+",
+                 "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+", "YearPsize55+", "YearPsize5-9", "YearPsize10-19", "YearPsize20-29", "YearPsize30-39", "YearPsize40-49", "YearPsize50-59", "YearPsize60-69", "YearPsize70+","YearPsize55-74", "YearPsize75+", "YearPsize15-24","YearPsize25-54",
+                 "TBI15-24","TBI25-54","TBM15-24","TBM25-54","TBPb15+","YearPsize15plus")
+  print("X")
+  #X<-data.frame(X)
+  # To show
+  # reads in what fitting to???
+  #   Ana<-matrix(0,4,6);Ana[,1:2]<-Popsize[1:2,cntry];Ana[,3]<-as.numeric(unlist(TBIm[cntry]));Ana[,4]<-as.numeric(TBMm[cntry]);Ana[,5]<-as.numeric(TBIHIVm[cntry]);Ana[,6]<-as.numeric(TBMHIVm[cntry]);
+  #   show<-c("FIT",round(Fit,2),"TBI/M/psz 2010/psz 2050/TBIH/TBMH",round(TBI[2010-year1+1,1],2),round(TBM[2010-year1+1,1],2),round(psize[(2010-year1)*(1/dt)+1],2),round(psize[(2050-year1)*(1/dt)+1],2),round(TBI[2010-year1+1,2],2),round(TBM[2010-year1+1,2],2),"Data",round(Ana,2),"prop",round(prop,2))
+  #   #print(show)
+  
+  # Record of every run
+  #if (C==0){setwd(paste("/Users/londonschool/Documents/My\ Documents/Vaccine/CEmodel/fitout/",cntry,"/",sep=''))
+  #          write.csv(t(show),paste(date(),'.csv',sep=''))
+  #          setwd("/Users/londonschool/Documents/My\ Documents/Vaccine/CEmodel")}
+  #if (C==1){setwd(paste("/users/eidegkni/Documents/vaccine/fit/fitout/",cntry,"/",sep=''))
+  #          write.csv(t(show),paste(date(),'.csv',sep=''))
+  #          setwd("/users/eidegkni/Documents/vaccine")}
+  
+  # If want to see plots 
+  #if (Plot==1){source("#Plot.R")}
+  
+  # What outputting
+  return(X)
+}
+

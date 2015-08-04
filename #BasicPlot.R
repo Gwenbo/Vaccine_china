@@ -105,11 +105,11 @@ legend("center",c("Overall","0-14 years","15-54 years","55-64 years","≥65 year
 # points(seq(1990,2050),TBI[91:151,4],type='l',col='green')
 # points(seq(1990,2050),TBI[91:151,5],type='l',col='pink')
 # points(yrplot2010,incidence2010)
-
+# 
 # plot(seq(1900,2050),TBI[1:151,1], ylab="Incidence/100,000pop/yr",xlab="year", ylim=c(0,200),type='l')
 # plot(seq(1900,2050),Xn[,"new_I"][1:151], ylim=c(0,1000))
 # plot(seq(1900,2050,0.5),Xn[,"new_I"], ylim=c(0,1000))
-#plot(Xn[,"TBMtot"],ylim=c(0,max(Xn[,"TBMtot"])))
+# plot(Xn[,"TBMtot"],ylim=c(0,max(Xn[,"TBMtot"])))
 
 #CDR plot
 # par(mfrow=c(1,1))
@@ -337,5 +337,13 @@ rownames(PcPop)<-c("2025 % population", "2025 %cases","2050 % population", "2050
 setwd("Outputs")
 write.table(PcPop,'Percent pop_cases per agegrp.csv',sep=",",row.names=TRUE,col.names=TRUE)
 setwd(home)
+
+
+
+par(mfrow=c(1,1))
+plot(seq(1,1812),Xn$I, ylab="Cases",xlab="Year", ylim=c(0,2700),type='l',col='orange')
+lines(seq(1,1812),Xn$NI,lty=5,col='green')
+lines(seq(1,1812),Xn$I,lty=5,col='blue')
+
 
 

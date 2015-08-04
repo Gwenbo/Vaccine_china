@@ -3,13 +3,15 @@
 home<-"/Users/Rebecca/Vaccine_china" # Could also set up and output folder
 setwd(home)
 source('#DataGrab.R')
+setwd(home)
+source('CFunctions.R')
 cntry<-"China"
 nm<-c(pararange[,1],"p0") # The parameter ranges
 
 ### Generate Parameter Sets ###
 
 ##number of parameter sets - will increase later
-n_p<-50
+n_p<-1
 
 ##generate matrix for storing parameter sets (later will want to store these as the file that you call for the model)
 
@@ -37,13 +39,15 @@ setwd(home);setwd("Data")
 para<-read.csv(paste("paraout_",cntry,".csv",sep=''))[-1]
 setwd(home)
 
+dt<-(1/12)
+
 typen<-0 #temporary
-year<-c(seq(1900,2050,1),rep(0,151))
+year<-c(seq(year1,yearend,1),rep(0,((1/dt)*(yearend-year1+1)-(yearend-year1+1))))
 
 count<-1 #remove once doing vacc scenarios
 nn<-1 #remove once doing vacc scenarios
 nmbr<-count*nn #use this once doing vaccine scenarios
-xout<-mat.or.vec(((yearend-year1+1)*2*n_p*(typen+1)),99) #(94+run number+vacc type+vacc effic) would need changing if extra outputs added
+xout<-mat.or.vec(((yearend-year1+1)*(1/dt)*n_p*(typen+1)),99) #(94+run number+vacc type+vacc effic) would need changing if extra outputs added
 colnames(xout)<-c(colnames(X),"timestep","year","type","vxint","fit") #timestep is for params where given by timestep, year is for where output is summary of annual
 
 par(mfrow=c(2,2))
@@ -56,40 +60,39 @@ for (kkk in 1:n_p)
     neta2<-neta # this parameter needs extra assigning for some annoying reason! 
     
     # Run the model with these parameters  
-    Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,0.5,c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)   
-    xout[(((yearend-year1+1)*2*kkk*nmbr)-(2*(yearend-year1+1)-1)):(2*(yearend-year1+1)*kkk*nmbr),]<-cbind(Xn,times,year,nn,count,kkk)
+    Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,(1/12),c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)   
+    xout[((((yearend-year1+1)*(1/dt)*kkk*nmbr)-((1/dt)*(yearend-year1+1)-1)):((1/dt)*(yearend-year1+1)*kkk*nmbr)),]<-cbind(Xn,times,year,(rep(nn,length(times))),(rep(count,length(times))),(rep(kkk,length(times))))
 
     
-    popcheck<-xout[(((yearend-year1+1)*2*kkk*nmbr)-(2*(yearend-year1+1)-1)):(2*(yearend-year1+1)*kkk*nmbr),(1:7)]
+    popcheck<-xout[((((yearend-year1+1)*(1/dt)*kkk*nmbr)-((1/dt)*(yearend-year1+1)-1)):((1/dt)*(yearend-year1+1)*kkk*nmbr)),(1:7)]
     popcheck<-as.data.frame(popcheck)
-    plot(seq(1,302),popcheck$PSIZE, ylab="Size",xlab="Timestep", main=kkk, ylim=c(0,1800000),xlim=c(0,302),type='l',col='purple')
-    lines(seq(1,302),popcheck$S,type='l',col='red')
-    lines(seq(1,302),popcheck$L,type='l',col='orange')
-    lines(seq(1,302),popcheck$NI,type='l',col='yellow')
-    lines(seq(1,302),popcheck$I,type='l',col='green')
-    lines(seq(1,302),popcheck$R,type='l',col='blue')
-    lines(seq(1,302),popcheck$Births,type='l',col='pink')
+    plot(seq(1,((yearend-year1+1)*(1/dt))),popcheck$PSIZE, ylab="Size",xlab="Timestep", main=kkk, ylim=c(0,1800000),xlim=c(0,((yearend-year1+1)*(1/dt))),type='l',col='purple')
+    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$S,type='l',col='red')
+    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$L,type='l',col='orange')
+    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$NI,type='l',col='yellow')
+    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$I,type='l',col='green')
+    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$R,type='l',col='blue')
+    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$Births,type='l',col='pink')
 #     plot.new()
 #     legend("center",c("Psize","S","L","NI","I","R","Births"), lty=1,col=c("purple","red","orange","yellow","green","blue","pink"))
 #  
     
     
-    plot(seq(1,302),popcheck$PSIZE, ylab="Size",xlab="Timestep",main=kkk, ylim=c(0,100000),xlim=c(0,302),type='l',col='purple')
-    lines(seq(1,302),popcheck$S,type='l',col='red')
-    lines(seq(1,302),popcheck$L,type='l',col='orange')
-    lines(seq(1,302),popcheck$NI,type='l',col='yellow')
-    lines(seq(1,302),popcheck$I,type='l',col='green')
-    lines(seq(1,302),popcheck$R,type='l',col='blue')
-    lines(seq(1,302),popcheck$Births,type='l',col='pink')
+    plot(seq(1,(yearend-year1+1)*(1/dt)),popcheck$PSIZE, ylab="Size",xlab="Timestep",main=kkk, ylim=c(0,100000),xlim=c(0,((yearend-year1+1)*(1/dt))),type='l',col='purple')
+    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$S,type='l',col='red')
+    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$L,type='l',col='orange')
+    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$NI,type='l',col='yellow')
+    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$I,type='l',col='green')
+    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$R,type='l',col='blue')
+    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$Births,type='l',col='pink')
 #     plot.new()
 #     legend("center",c("Psize","S","L","NI","I","R","Births"), lty=1,col=c("purple","red","orange","yellow","green","blue","pink"))
 #     
 
-plot(seq(1,302),lambda[1:302,1], ylab="lambda",xlab="Timestep",main=kkk,type='l')
-for (i in 2:101){
-  lines(seq(1,302),lambda[,i],type='l')
-}
-
+# plot(seq(1,302),lambda[1:302,1], ylab="lambda",xlab="Timestep",main=kkk,type='l')
+# for (i in 2:101){
+#   lines(seq(1,302),lambda[,i],type='l')
+# }
 
 }
 
