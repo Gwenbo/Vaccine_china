@@ -210,11 +210,11 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 
     #CDRscales<-c((rep(CDRscale, l=chiyrs)),(rep(CDRscale, l=aduyrs)),(rep(CDRscaleE, l=eldyrs)))
  
-    if (CDRscale<0){CDRscaled<-CDRscale*(cdr[,1:(chiyrs+yaduyrs)])+cdr[,1:(chiyrs+yaduyrs)]} else {CDRscaled<-CDRscale*(1-cdr[,1:(chiyrs+yaduyrs)])+cdr[,1:(chiyrs+yaduyrs)]}
+    if (CDRscale<0){CDRscaled<-min((CDRscale*(cdr[,1:(chiyrs+yaduyrs)])+cdr[,1:(chiyrs+yaduyrs)]),1)} else {CDRscaled<-min((CDRscale*(1-cdr[,1:(chiyrs+yaduyrs)])+cdr[,1:(chiyrs+yaduyrs)]),1)}
 
-    if (CDRscaleO<0){CDRscaledO<-CDRscaleO*(cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)])+cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)]} else {CDRscaledO<-CDRscaleO*(1-cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)])+cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)]}
+    if (CDRscaleO<0){CDRscaledO<-min((CDRscaleO*(cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)])+cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)]),1)} else {CDRscaledO<-min((CDRscaleO*(1-cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)])+cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)]),1)}
 
-    if (CDRscaleE<0){CDRscaledE<-CDRscaleE*(cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]} else {CDRscaledE<-CDRscaleE*(1-cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]}
+    if (CDRscaleE<0){CDRscaledE<-min((CDRscaleE*(cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]),1)} else {CDRscaledE<-min((CDRscaleE*(1-cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]),1)}
 
     CDRscaleT<-cbind(CDRscaled,CDRscaledO,CDRscaledE)
     CDR<-CDRscaleT[1+CDR_yr-1990,]
@@ -768,6 +768,13 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
           TBPb[(k-year1+1),6]<-100000*((sum(I[i1:i2,61:Mnage]))/(1/dt))/mean(psize60plus[i1:i2])
           TBPb[(k-year1+1),7]<-100000*((sum(I[i1:i2,56:Mnage]))/(1/dt))/mean(psize55plus[i1:i2])
           TBPb[(k-year1+1),8]<-100000*((sum(I[i1:i2,16:Mnage]))/(1/dt))/mean(psize15plus[i1:i2])
+          
+          print(sum(I[i1:i2,16:30]))
+          print(sum(I[i1:i2,1:15]))
+          print(sum(I[i1:i2,]))
+          print(mean(psize1529[i1:i2]))
+          print(I[i1,])
+          print(I[i2,])
           
 #           ## 4b) first timestep of year point prevalence  
 #           
