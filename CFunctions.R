@@ -286,7 +286,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 
       R[i,2:Mnage] = R[i-1,1:(Mnage-1)] + n[1:(Mnage-1)]*(I[i-1,1:(Mnage-1)] + NI[i-1,1:(Mnage-1)])*dt + CDR[1:(Mnage-1)]*CoT*(new_I[i,2:Mnage] + e*new_NI[i,2:Mnage]) - (r[1:(Mnage-1)] + g*lambda[i-1,1:(Mnage-1)] + u[1:(Mnage-1)])*R[i-1,1:(Mnage-1)]*dt 
       I[i,2:Mnage] = I[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(new_I[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + ui[1:(Mnage-1)])*I[i-1,1:(Mnage-1)]*dt
-      NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(e*new_NI[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + uni[1:(Mnage-1)] + w)*NI[i-1,1:(Mnage-1)]*dt                    
+      NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + ((1 - CDR[1:(Mnage-1)]*CoT*e)*new_NI[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + uni[1:(Mnage-1)] + w)*NI[i-1,1:(Mnage-1)]*dt                    
       
 
       #if(I[i,2] < I[i-1,1]){print(c(i,I[i,2],I[i-1,1],"stop",(n + u[1:13] + ui),"cdr",CDR,CoT))}
@@ -492,6 +492,7 @@ print("done start year")
         
         #print("1")
         new_NI[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:(Mnage)]*(1 - f[1:(Mnage)])*(S[i-1,1:(Mnage)] + g*R[i-1,1:(Mnage)])*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:(Mnage)]*x)*(1 - f[1:(Mnage)])*L[i-1,1:(Mnage)]*dt + r[1:Mnage]*(1 - h[1:(Mnage)])*R[i-1,1:(Mnage)]*dt  
+       
         #print("1")
         new_actv[i,1:Mnage] = lambda[i-1,1:Mnage]*p[1:Mnage]*S[i-1,1:Mnage]*dt + (v[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*x)*L[i-1,1:Mnage]*dt + (r[1:Mnage] + lambda[i-1,1:Mnage]*p[1:Mnage]*g)*R[i-1,1:Mnage]*dt
         new_actv_chk[i,1:Mnage] = new_actv_react[i,1:Mnage] + new_actv_inf[i,1:Mnage]
@@ -502,7 +503,7 @@ print("done start year")
         #print("1")
         I[i,1:Mnage] = I[i-1,1:Mnage] + (1 - CDR[1:Mnage]*CoT)*(new_I[i,1:Mnage]) - (n[1:Mnage] + u[1:(Mnage)] + ui[1:Mnage])*I[i-1,1:Mnage]*dt
         #print("1")
-        NI[i,1:Mnage] = NI[i-1,1:Mnage] + (1 - CDR[1:Mnage]*CoT)*(e*new_NI[i,1:Mnage]) - (n[1:Mnage] + u[1:Mnage] + uni[1:Mnage] + w)*NI[i-1,1:(Mnage)]*dt                    
+        NI[i,1:Mnage] = NI[i-1,1:Mnage] + ((1 - CDR[1:Mnage]*CoT*e)*new_NI[i,1:Mnage]) - (n[1:Mnage] + u[1:Mnage] + uni[1:Mnage] + w)*NI[i-1,1:(Mnage)]*dt                    
         
         print("done nonvacc")                        
         
@@ -721,16 +722,15 @@ print("done start year")
           
           
           ## (3) TB prevalence rate 
-          ### NEED TO FIX  ####
-#           
-#           TBP[(k-year1+1),1]<-100000*sum(I[i1:i2,],NI[i1:i2,])/mean(psize[i1:i2])
-#           TBP[(k-year1+1),2]<-100000*sum(I[i1:i2,1:15],NI[i1:i2,1:15])/mean(psize014[i1:i2])
-#           TBP[(k-year1+1),3]<-100000*sum(I[i1:i2,16:30],NI[i1:i2,16:30])/mean(psize1529[i1:i2])
-#           TBP[(k-year1+1),4]<-100000*sum(I[i1:i2,31:45],NI[i1:i2,31:45])/mean(psize3044[i1:i2])
-#           TBP[(k-year1+1),5]<-100000*sum(I[i1:i2,46:60],NI[i1:i2,46:60])/mean(psize4559[i1:i2])
-#           TBP[(k-year1+1),6]<-100000*sum(I[i1:i2,61:Mnage],NI[i1:i2,61:Mnage])/mean(psize60plus[i1:i2])
-#           TBP[(k-year1+1),7]<-100000*sum(I[i1:i2,56:Mnage],NI[i1:i2,56:Mnage])/mean(psize55plus[i1:i2])
-#           
+          
+          TBP[(k-year1+1),1]<-100000*(sum(I[i1:i2,],NI[i1:i2,])/(1/dt))/mean(psize[i1:i2])
+          TBP[(k-year1+1),2]<-100000*(sum(I[i1:i2,1:15],NI[i1:i2,1:15])/(1/dt))/mean(psize014[i1:i2])
+          TBP[(k-year1+1),3]<-100000*(sum(I[i1:i2,16:30],NI[i1:i2,16:30])/(1/dt))/mean(psize1529[i1:i2])
+          TBP[(k-year1+1),4]<-100000*(sum(I[i1:i2,31:45],NI[i1:i2,31:45])/(1/dt))/mean(psize3044[i1:i2])
+          TBP[(k-year1+1),5]<-100000*(sum(I[i1:i2,46:60],NI[i1:i2,46:60])/(1/dt))/mean(psize4559[i1:i2])
+          TBP[(k-year1+1),6]<-100000*(sum(I[i1:i2,61:Mnage],NI[i1:i2,61:Mnage])/(1/dt))/mean(psize60plus[i1:i2])
+          TBP[(k-year1+1),7]<-100000*(sum(I[i1:i2,56:Mnage],NI[i1:i2,56:Mnage])/(1/dt))/mean(psize55plus[i1:i2])
+          
           ## (4) TB bacteriologically positive prevalence rate - is comparable to the calibration data, so use this one 
           ##point prevalence vs period prevalence vs average point prevalence??
           ## 4a) average point prevalence
