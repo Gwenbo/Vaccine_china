@@ -46,7 +46,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   v=c((rep(vchild, l=chiyrs)),(rep(vadult, l=yaduyrs)),(rep(voldadu, l=(aduyrs-yaduyrs))), (rep(velderly, l=eldyrs)))
   r=c((rep(rchild, l=chiyrs)),(rep(radult, l=yaduyrs)),(rep(roldadu, l=(aduyrs-yaduyrs))), (rep(relderly, l=eldyrs)))
   n=c((rep(n, l=chiyrs)),(rep(n, l=yaduyrs)),(rep(noldadu, l=(aduyrs-yaduyrs))), (rep(nelderly, l=eldyrs)))
-  print("doneeldyears")
+  #print("doneeldyears")
   
   # Timesteps with inputted start end and timestep
   times<-seq(year1,(yearend+(1-dt)),dt);steps<-length(times);
@@ -54,7 +54,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   # Country data (may be overruled by FIT values)
   source("#CountryCalc.R")
   
-  print("done country calc")
+  #print("done country calc")
   for(i in 1:length(Fit)){assign(FitV[i],Fit[i],envir = .GlobalEnv)} # Only assign those variables that want to 
   #print(c("neta",neta))
   # FIT: rmortTB = proportion multiply TB mortality by. Range=[-1,1].
@@ -63,17 +63,42 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   }
   # u and ui use age dependent pattern and apply to existing number
   
-  uichild<-ui*uiscaleC
-  uiadult<-ui*uiscaleA
-  uielderly<-ui*uiscaleE
-  unichild<-uni*uiscaleC
-  uniadult<-uni*uiscaleA
-  unielderly<-uni*uiscaleE
-    
+  #scaling of the ui/uni for each age group
+  if (uiscaleC<0){uichild<-(uiscaleC*ui)+ui; unichild<-(uniscaleC*uni)+uni;
+  } else {uichild<-uiscaleC*(1-ui)+ui; unichild<-uiscaleC*(1-uni)+uni}
+
+  if (uiscaleA<0){uiadult<-(uiscaleA*ui)+ui; uniadult<-(uniscaleA*uni)+uni;
+  } else {uiadult<-uiscaleA*(1-ui)+ui; uniadult<-uiscaleA*(1-uni)+uni}
+  
+  if (uiscaleE<0){uielderly<-(uiscaleE*ui)+ui; unielderly<-(uniscaleE*uni)+uni;
+  } else {uielderly<-uiscaleE*(1-ui)+ui; unielderly<-uiscaleE*(1-uni)+uni}
+  
+  
+  ##WRONG!!!!###
+#   uichild<-ui*uiscaleC
+#   uiadult<-ui*uiscaleA
+#   uielderly<-ui*uiscaleE
+#   unichild<-uni*uiscaleC
+#   uniadult<-uni*uiscaleA
+#   unielderly<-uni*uiscaleE
+#   
+  
+  print(uichild)  
+  print(uiadult)  
+  print(uielderly)  
+  print(unichild)  
+  print(uniadult)  
+  print(unielderly)  
+  
   ui<-c((rep(uichild, l=chiyrs)),(rep(uiadult, l=aduyrs)),(rep(uielderly, l=eldyrs)))
   uni<-c((rep(unichild, l=chiyrs)),(rep(uniadult, l=aduyrs)),(rep(unielderly, l=eldyrs)))
   
-  #print(ui)
+  uicheck<-ui
+  unicheck<-uni
+
+  print("ui")
+  print(ui)
+  print(uni)
 # ui<-c(rep(ui,l=Mnage))
 # uni<-c(rep(uni,l=Mnage))
 #   
@@ -90,12 +115,12 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
           vaccine<-0;#thetaH<-theta;
           eff<-0;Dur<-0;coverage<-0
           }
-  print("Done vacc gen")
+  #print("Done vacc gen")
   
   ## Initialise
   source("#Init.R")
   
-  print("done init")
+  #print("done init")
   
   ## To check with fitting vector
   #yyy<-c(pchild,padult,pH,v,vH,x,xH,fchild,fadult,fH,w,n,nH,r,rH,e,g,gH,hchild,hadult,hH,LEHIV,LEART,effH,effHa,rmort,neta,rmortTB,CDRscale,alpha)
@@ -228,11 +253,11 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 #                     if (k == year1){B<-round(br*psize[1]); bv<-c(bv,B)             
 #                     } else { B<-round(br*psize[((k-year1)*(1/dt))]); bv<-c(bv,B);}     
 #     } else { B<-bb[1+yr-2010] }
-    print(c("BIRTHS",br,B,psize[((k-year1)*(1/dt))],((k-year1)*(1/dt))))
+    #print(c("BIRTHS",br,B,psize[((k-year1)*(1/dt))],((k-year1)*(1/dt))))
     BIRTHS[i]<-B
     ####•••••••••••••••••• END OF YEARLY PARAMETERS
     
-    print("done params")
+   # print("done params")
     
     #### Start of model run
     if (k > year1){ # Start of year 1 is the initial condition
@@ -240,7 +265,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       i = ((1/dt)*(k-year1)+1) # Time zero is first row
       start <- 1 # whether first ts of year. All year dependent parameters must be last years.
       # FIT: Takes in the neta defined as an input
-      print("pre-start lambda")
+      #print("pre-start lambda")
       #lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
       #1-exp turns rate->probability
 #       
@@ -254,7 +279,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 
       lambda[i-1,1:Mnage] <- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[i-1,1:4])/(psizematrix[i-1,1:4]))))))
                       
-      print("post-start lambda")
+#       print("post-start lambda")
       ####•••••••••••••••••• TB model ••••••••••••••••••
       # Age 1, first time step of the year, all births occur
       
@@ -408,7 +433,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       Imatno75up[i]<-sum(I[i,66:75])
 
 
-      print ("done psize start yr")
+      #print ("done psize start yr")
       
       ## number vaccinated
       #need to set up matrix for psizevacc to be recorded in to**  not needed as in econout???
@@ -424,19 +449,19 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 
       #TBDeathsH[i,]=dt*(uiHA*IH[i-1,]+(uniHA)*NIH[i-1,]);
       #AllDeathsH[i,]=dt*((uH+uiHA)*IH[i-1,]+(uH+uniHA)*NIH[i-1,]);
-      print ("done TB deaths")
+      #print ("done TB deaths")
       
       # Age deaths HIV-, HIV+
       ADeaths[i,]=dt*(u*S[i-1,]+u*L[i-1,]+(u+ui)*I[i-1,]+(u+uni)*NI[i-1,]+u*R[i-1,]+u*Sv[i-1,]+u*Lv[i-1,]+u*Rv[i-1,])
       #ADeathsH[i,]=dt*(uH*SH[i-1,]+uH*LH[i-1,]+(uH+uiHA)*IH[i-1,]+(uH+uniHA)*NIH[i-1,]+uH*RH[i-1,]+u*SvH[i-1,]+u*LvH[i-1,]+u*RvH[i-1,])
-      print ("done Adeaths")
+      #print ("done Adeaths")
       
       # Deaths matrix holds all death indices
       # Columns: Number deaths HIV-, av. age death, number HIV+ deaths, av age HIV+ death, av. age death
       Deaths[i,1]=sum(ADeaths[i,]);   Deaths[i,2]=sum(ADeaths[i,]*seq(1:Mnage))/sum(ADeaths[i,])
       #Deaths[i,3]=sum(ADeathsH[i,]);  Deaths[i,4]=sum(ADeathsH[i,]*seq(1:Mnage))/sum(ADeathsH[i,])
       #Deaths[i,5]=sum((ADeathsH[i,]+ADeaths[i,])*seq(1:Mnage))/sum(ADeathsH[i,]+ADeaths[i,])
-      print ("done deaths 1 2")
+      #print ("done deaths 1 2")
       
       ## NUMBER ON TREATMENT & NUMBER SUCCESSFULLY TREATED
       # TBRx columns: HIV- detected, successfully treated, HIV+ detected, successfully treated
@@ -447,14 +472,14 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       #} 
     } ####•••••••••••••••••• END OF START OF YEAR RUNS
     
-print("done start year")
+#print("done start year")
 
     ####•••••••••••••••••• MIDDLE OF YEAR RUNS
     
       for (i in (2+(1/dt)*(k-year1)):((1/dt)*(k-year1)+1/dt)){
         start <- 0 # Not the start of the year
         #lambda[i-1] <- (1 - exp(-(neta) * z * ((sum(I[i-1,])/(psize[i-1])))))
-        print("pre-post lambda")
+        #print("pre-post lambda")
       
         
         #PAF_year=2050
@@ -466,7 +491,7 @@ print("done start year")
         
         lambda[i-1,1:Mnage] <- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[i-1,1:4])/(psizematrix[i-1,1:4]))))))
         
-        print("post-lambda")
+        #print("post-lambda")
         #print(lambda)
         ####•••••••••••••••••• TB model ••••••••••••••••••
         ## If the time step is not the first of the year 
@@ -505,7 +530,7 @@ print("done start year")
         #print("1")
         NI[i,1:Mnage] = NI[i-1,1:Mnage] + ((1 - CDR[1:Mnage]*CoT*e)*new_NI[i,1:Mnage]) - (n[1:Mnage] + u[1:Mnage] + uni[1:Mnage] + w)*NI[i-1,1:(Mnage)]*dt                    
         
-        print("done nonvacc")                        
+        #print("done nonvacc")                        
         
         ####•••••••••••••••••••• TB HIV model •••••••••••••••••
         #SH[i,15:Mnage] = SH[i-1,15:Mnage] - (uH[15:Mnage] + lambda[i-1,1:Mnage])*SH[i-1,15:Mnage]*dt + hiv[15:Mnage]*S[i-1,15:Mnage]*dt 
@@ -527,7 +552,7 @@ print("done start year")
         #SvH[i,15:Mnage] = SvH[i-1,15:Mnage] + hiv[15:Mnage]*Sv[i-1,15:Mnage]*dt - (uH[15:Mnage])*SvH[i-1,15:Mnage]*dt - lambda[i-1,1:Mnage]*(SvH[i-1,15:Mnage])*dt 
         #LvH[i,15:Mnage] = LvH[i-1,15:Mnage] + hiv[15:Mnage]*Lv[i-1,15:Mnage]*dt - (uH[15:Mnage])*LvH[i-1,15:Mnage]*dt + lambda[i-1,1:Mnage]*(SvH[i-1,15:Mnage] + gHA*RvH[i-1,15:Mnage])*dt 
         #RvH[i,15:Mnage] = RvH[i-1,15:Mnage] + hiv[15:Mnage]*Rv[i-1,15:Mnage]*dt - (uH[15:Mnage])*RvH[i-1,15:Mnage]*dt - lambda[i-1,1:Mnage]*(gHA*RvH[i-1,15:Mnage])*dt 
-        print("done vacc")
+        #print("done vacc")
         ###•••••••••••••••••• Vaccine coverage and duration ••••••••••••••••
         # NUMBER OF VACCINES
         if(vaccine == 0){VX[i,1:3]<-0}
@@ -537,7 +562,7 @@ print("done start year")
         if(vaccine == 4){VX[i,1]<-(sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,]))+sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,])));VX[i,2]<-sum(thetaV2a[i,]*(S[i,]+L[i,]+R[i,])); VX[i,3]<-sum(thetaV2m[i,]*(S[i,]+L[i,]+R[i,]))}
         
         
-        print("done vacc assignment")
+        #print("done vacc assignment")
         ####•••••••••••••••••• Vaccination and Removal of protection
         
         S2 = S[i,] + Sv[i,]*(d[i,]*(1-thetaS[i,])) - thetaS[i,]*S[i,]  #should this theta be k???
@@ -569,7 +594,7 @@ print("done start year")
         S[i,]<-S2;L[i,]<-L2;R[i,]<-R2;       #SH[i,]<-SH2;LH[i,]<-LH2;RH[i,]<-RH2;
         Sv[i,]<-Sv2;Lv[i,]<-Lv2;Rv[i,]<-Rv2; #SvH[i,]<-SvH2;LvH[i,]<-LvH2;RvH[i,]<-RvH2;
         
-        print("end of eqns")
+        #print("end of eqns")
         ####•••••••••••••••••• Economic Output ••••••••••••••••••
         #### Output for cost-effectiveness 
         ## POPULATION SIZE 
@@ -610,13 +635,13 @@ print("done start year")
         psize70plus[i]<-sum(S[i,71:Mnage],L[i,71:Mnage],R[i,71:Mnage],I[i,71:Mnage],NI[i,71:Mnage],Sv[i,71:Mnage],Lv[i,71:Mnage],Rv[i,71:Mnage])
         
       
-        print("psize pre-matrix")
+        #print("psize pre-matrix")
         #ages and incidence for contact matrices
         psizematrix[i,1]<-sum(S[i,1:6],L[i,1:6],R[i,1:6],I[i,1:6],NI[i,1:6],Sv[i,1:6],Lv[i,1:6],Rv[i,1:6])
         psizematrix[i,2]<-sum(S[i,7:20],L[i,7:20],R[i,7:20],I[i,7:20],NI[i,7:20],Sv[i,7:20],Lv[i,7:20],Rv[i,7:20])
         psizematrix[i,3]<-sum(S[i,21:65],L[i,21:65],R[i,21:65],I[i,21:65],NI[i,21:65],Sv[i,21:65],Lv[i,21:65],Rv[i,21:65])
         psizematrix[i,4]<-sum(S[i,66:Mnage],L[i,66:Mnage],R[i,66:Mnage],I[i,66:Mnage],NI[i,66:Mnage],Sv[i,66:Mnage],Lv[i,66:Mnage],Rv[i,66:Mnage])
-        print("psize post-matrix")
+        #print("psize post-matrix")
         Imatrix[i,1]<-sum(I[i,1:6])
         Imatrix[i,2]<-sum(I[i,7:20])
         Imatrix[i,3]<-sum(I[i,21:65])
@@ -627,9 +652,9 @@ print("done start year")
         Imatno75up[i]<-sum(I[i,66:75])
         
         
-        print("imatrix post-matrix")
+        #print("imatrix post-matrix")
         
-        print("done pop")
+        #print("done pop")
         
         ## number vaccinated
         #need to set up matrix for psizevacc to be recorded in to**
@@ -660,7 +685,7 @@ print("done start year")
         
         if(i == ((1/dt)*(k-year1)+1/dt)){
           
-          print("last time step")
+          #print("last time step")
           #i1 is number of first time step of the yr, i2 is number of last timestep of the yr, i3 is second timestep of the yesr
           i1<-((1/dt)*(k-year1)+1); i2<-((1/dt)*(k-year1)+1/dt); i3<-((1/dt)*(k-year1)+2)
           # TB INCIDENCE AND MORTALITY etc for MODEL FITTING and RESEARCH OUTCOMES
@@ -693,7 +718,7 @@ print("done start year")
           PSIZEy[(k-year1+1),24]<-mean(psize15plus[i1:i2])
           
           
-          print("k2")
+          #print("k2")
           
           ## (2) TB incidence rate
           TBI[(k-year1+1),1]<-100000*sum(new_I_noconv[i1:i2,],new_NI[i1:i2,])/mean(psize[i1:i2])
@@ -1002,7 +1027,7 @@ TBPI[(k-year1+1),1]<-100*(((sum(L[i1,])/psize[i1])+(sum(L[i2,])/psize[i2]))/2)
         ####••••••••••••••••• END OF MIDDLE YEAR RUNS
       }
     
-  print("done mid year")
+  #print("done mid year")
   } 
 
   ## Outputs - in R, allows output to be seen without expressly wanting it 
@@ -1071,10 +1096,12 @@ TBPI[(k-year1+1),1]<-100*(((sum(L[i1,])/psize[i1])+(sum(L[i2,])/psize[i2]))/2)
   #assign('Out',Out,envir=.GlobalEnv);
   assign('vaccgive',vaccgive,envir=.GlobalEnv);
   assign('vaccgiveyr',vaccgiveyr,envir=.GlobalEnv);
+  assign('uicheck',uicheck,envir=.GlobalEnv);
+  assign('unicheck',unicheck,envir=.GlobalEnv);
 
   #assign('hbcout',hbcOut,envir=.GlobalEnv);
   
-print("done assign")
+#print("done assign")
 
   ## CUMULATIVE RESEARCH OUTCOMES 2025-2050
   
@@ -1083,17 +1110,17 @@ print("done assign")
   totmort[,2]<-sum(TBDeaths[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),66:Mnage])
   totmort[,3]<-sum(TBDeaths[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),56:Mnage])
   totmort[,4]<-sum(TBDeaths[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),1:55])
-print(totmort)
+#print(totmort)
 
   totcase[,1]<- sum(new_I_noconv[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),],new_NI[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),])
   totcase[,2]<- sum(new_I_noconv[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),66:Mnage],new_NI[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),66:Mnage])
   totcase[,3]<- sum(new_I_noconv[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),56:Mnage],new_NI[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),56:Mnage])
   totcase[,4]<- sum(new_I_noconv[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),1:55],new_NI[((2025-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),1:55])
-print(totcase)
+#print(totcase)
 
 
   cumulout<-cbind(totmort,totcase)
-print(cumulout)
+#print(cumulout)
   colnames(cumulout)<-c("All agesM", "65+M","55+M","<55M","All agesI", "65+I","55+I","<55I")
   assign('cumulout',cumulout,envir=.GlobalEnv) 
   assign('totmort',totmort,envir=.GlobalEnv) 
@@ -1103,7 +1130,7 @@ print(cumulout)
 
 
 
-  print("done tot case")
+  #print("done tot case")
   colnames(TBI)<-c("All ages","0-14", "15-54","55-64","65+","55+","<55","15-24","25-54")
   colnames(TBN)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+","<55")
   colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+", "55+", "<55","15-24","25-54")
@@ -1134,7 +1161,7 @@ print(cumulout)
                  "TBPItot","TBPI0-14", "TBPI15-54", "TBPI55-64", "TBPI65+", "TBPI55+", "TBPI5-9", "TBPI10-19", "TBPI20-29", "TBPI30-39", "TBPI40-49", "TBPI50-59", "TBPI60-69", "TBPI70+",
                  "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+", "YearPsize55+", "YearPsize5-9", "YearPsize10-19", "YearPsize20-29", "YearPsize30-39", "YearPsize40-49", "YearPsize50-59", "YearPsize60-69", "YearPsize70+","YearPsize55-74", "YearPsize75+", "YearPsize15-24","YearPsize25-54",
                  "TBI15-24","TBI25-54","TBM15-24","TBM25-54","TBPb15+","YearPsize15plus")
-  print("X")
+  #print("X")
 #X<-data.frame(X)
   # To show
   # reads in what fitting to???
