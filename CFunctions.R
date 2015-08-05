@@ -64,13 +64,13 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   # u and ui use age dependent pattern and apply to existing number
   
   #scaling of the ui/uni for each age group
-  if (uiscaleC<0){uichild<-(uiscaleC*ui)+ui; unichild<-(uniscaleC*uni)+uni;
+  if (uiscaleC<0){uichild<-(uiscaleC*ui)+ui; unichild<-(uiscaleC*uni)+uni;
   } else {uichild<-uiscaleC*(1-ui)+ui; unichild<-uiscaleC*(1-uni)+uni}
 
-  if (uiscaleA<0){uiadult<-(uiscaleA*ui)+ui; uniadult<-(uniscaleA*uni)+uni;
+  if (uiscaleA<0){uiadult<-(uiscaleA*ui)+ui; uniadult<-(uiscaleA*uni)+uni;
   } else {uiadult<-uiscaleA*(1-ui)+ui; uniadult<-uiscaleA*(1-uni)+uni}
   
-  if (uiscaleE<0){uielderly<-(uiscaleE*ui)+ui; unielderly<-(uniscaleE*uni)+uni;
+  if (uiscaleE<0){uielderly<-(uiscaleE*ui)+ui; unielderly<-(uiscaleE*uni)+uni;
   } else {uielderly<-uiscaleE*(1-ui)+ui; unielderly<-uiscaleE*(1-uni)+uni}
   
   
