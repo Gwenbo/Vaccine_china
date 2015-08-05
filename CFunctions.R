@@ -210,16 +210,25 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 
     #CDRscales<-c((rep(CDRscale, l=chiyrs)),(rep(CDRscale, l=aduyrs)),(rep(CDRscaleE, l=eldyrs)))
  
-    if (CDRscale<0){CDRscaled<-min((CDRscale*(cdr[,1:(chiyrs+yaduyrs)])+cdr[,1:(chiyrs+yaduyrs)]),1)} else {CDRscaled<-min((CDRscale*(1-cdr[,1:(chiyrs+yaduyrs)])+cdr[,1:(chiyrs+yaduyrs)]),1)}
+    if (CDRscale<0){CDRscaled<-rep(min((CDRscale*cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,],1), (chiyrs+yaduyrs))} else {CDRscaled<-rep(min((CDRscale*(1-cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),(chiyrs+yaduyrs))}
 
-    if (CDRscaleO<0){CDRscaledO<-min((CDRscaleO*(cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)])+cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)]),1)} else {CDRscaledO<-min((CDRscaleO*(1-cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)])+cdr[,(chiyrs+yaduyrs+1):(Mnage-eldyrs)]),1)}
+    if (CDRscaleO<0){CDRscaledO<-rep(min((CDRscaleO*cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,],1),(Mnage-(eldyrs+chiyrs+yaduyrs)))} else {CDRscaledO<-rep(min((CDRscaleO*(1-cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),(Mnage-(eldyrs+chiyrs+yaduyrs)))}
 
-    if (CDRscaleE<0){CDRscaledE<-min((CDRscaleE*(cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]),1)} else {CDRscaledE<-min((CDRscaleE*(1-cdr[,(Mnage-eldyrs+1):Mnage])+cdr[,(Mnage-eldyrs+1):Mnage]),1)}
+    if (CDRscaleE<0){CDRscaledE<-rep(min((CDRscaleE*(cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),eldyrs)} else {CDRscaledE<-rep(min((CDRscaleE*(1-cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),eldyrs)}
 
-    CDRscaleT<-cbind(CDRscaled,CDRscaledO,CDRscaledE)
-    CDR<-CDRscaleT[1+CDR_yr-1990,]
+    # print(CDRscaled)
+    # print(CDRscaledO)
+    # print(CDRscaledE)
+    # print(CDR_yr)
+    # print(1+CDR_yr-1990)
+
+    
+    CDR<-c(CDRscaled,CDRscaledO,CDRscaledE)
+    print("CDR")
+    print(CDR)
+
     #CDR_av[(year1-k),1]<-sum(CDR)/101
-    if (k==2010) {CDR2010<-CDRscaleT}
+    if (k==2010) {CDR2010<-CDR}
     #CDRout[k,1:Mnage]<-CDR
 
     #CDRH<-CDRscale*cdrH[1+yr-2010];
