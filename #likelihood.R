@@ -1,11 +1,13 @@
+#### Calc of likelihoods following on from parasamp.R  ####
 
+library(ggplot2)
 
 #what is the likelihood of that parameter given the data (i.e. the prev etc that we're trying to fit to)
 
 #first need to call in data to fit to
 
 FitDataP<-matrix(c(178,92,119,213,596,116,59,73,133,346),nrow=1, ncol=10, byrow=TRUE)
-colnames(FitDataP)<-c("Overall(15+)2000","15-29 years2000","30-44 years2000","45-59 years2000","≥60 years2000","Overall(15+)","15-29 years","30-44 years","45-59 years","≥60 years")
+colnames(FitDataP)<-c("Overall2000","1529years2000","3044years2000","4559years2000","60plusyears2000","Overal2010","1529years10","3044years10","4559years10","60plusyears10")
 
 FitDataN<-matrix(c(63.91,2.72,64.62,104.36,143.07),nrow=1, ncol=5, byrow=TRUE)
 colnames(FitDataN)<-c("Overall","0-14 years","15-54 years","55-64 years","≥65 years")
@@ -58,6 +60,8 @@ var<-c((sdp^2),(sdp2^2),(sdn^2),(sdm^2),(sdi^2))
 #colnames(var)<-c("TBPb15+2000","TBPb15-29_2000","TBPb30-44_2000","TBPb45-59_2000","TBPb60+_2000","TBPb15+","TBPb15-29","TBPb30-44","TBPb45-59","TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")
 
 
+#neww<-read.csv("neww.csv")
+
 
 # have model outcomes to be fitted to in easily readible format 
 new00<-xout[which(xout[,"year"]%in%2000),c("type","vxint","fit","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+")]
@@ -69,6 +73,7 @@ View(neww)
 #colnames(neww)<-NULL
 
 neww<-neww[,4:23]
+write.table(neww,"neww.csv",sep=",",row.names=FALSE)
 
 ## then calc likelihood of that parameter given the data (i.e. the prev etc that we're trying to fit to)
 
@@ -99,7 +104,7 @@ L<-(-1/L)
 
 #retunr vector indicating which rows are complete (i.e. no NaNs)
 missing<-as.vector(complete.cases(L))
-
+table(missing)
 ## make those that didnt work zeros so they wont be selected
 
 for(i in 1:n_p)
@@ -117,6 +122,7 @@ for(kkk in 1:n_p){
 
 negs<-rowSums(test)
 
+table(negs)
 
 
 ### Sample the runs with a weight based upon the calculated likelihood of that run's parameters
@@ -179,11 +185,25 @@ for (i in 1:(length(nm)-1))
 
 
 # ###over time, need xout?? NO as need to plot the fitted ones.
-# par(mfrow=c(1,1))
-# 
+ par(mfrow=c(1,1))
+
+#ggplot needs data frame 
 xout<-as.data.frame(xout)
-plot(xout[xout$fit==9,"year"],xout[xout$fit==9,"TBPbtot"], type="l",col="grey",ylim=c(0,100), xlim=c(1900,2050))     # plot all  outputs as grey lines
-# points(FitData[,1],col="red")                  # plot the data as red dots
+FitDataP<-as.data.frame(FitDataP)
+
+
+pl<-ggplot(data=xout,aes(x=year,y=TBPbtot,group=fit))+geom_line(colour="black")+
+    xlim(1995,2015)+
+    xlab("Years")+
+    ylim(0,500)+
+    ylab("Prevalence Rate of Bacteriologically Confirmed TB (/100,000pop)")+
+    geom_point(data=FitDataP,aes(x=2000,y=Overall2000, group=1),colour="red")+
+    geom_point(data=FitDataP,aes(x=2010,y=Overal2010,group=1),colour="red")
+pl
+
+
+
+
 # lines(model[,which.max(L)],col="red")   # plot the best fit as a red line
 # lines(model_m,col="black",lty=2)        # plot the median and 95% CI
 # lines(model_u,col="black")      
