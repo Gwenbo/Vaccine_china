@@ -162,7 +162,7 @@ lambda[1,1:Mnage]<- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatr
 
 # Number of births,b rate
 birthsnum<-matrix(0,steps,1); bv<-c(); brate<-c();
-
+trackbirths<-c()
 
 ## Matrices for cost-effectiveness
 # Age of death, age of death with HIV

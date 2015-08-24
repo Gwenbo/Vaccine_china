@@ -12,8 +12,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   # Plot <- whether to plot or not (1 = yes)
   
   # C is the cluster parameter -> C==0 if on laptop
-  #if (C == 0){setwd("/Users/londonschool/Documents/My\ Documents/Vaccine/CEmodel/")}
-  #if (C == 1){setwd("/users/eidegkni/Documents/vaccine")}
+  if (C == 0){setwd("/Users/Rebecca/Vaccine_china")}
+  if (C == 1){setwd("/users/lsh355020/China/")}
   
   # Paranames in Fit and InitV
   FitV<-c('psz1900','rmort','neta','rmortTB','CDRscale','CDRscaleE','alpha')
@@ -83,12 +83,12 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 #   unielderly<-uni*uiscaleE
 #   
   
-  print(uichild)  
-  print(uiadult)  
-  print(uielderly)  
-  print(unichild)  
-  print(uniadult)  
-  print(unielderly)  
+#   print(uichild)  
+#   print(uiadult)  
+#   print(uielderly)  
+#   print(unichild)  
+#   print(uniadult)  
+#   print(unielderly)  
   
   ui<-c((rep(uichild, l=chiyrs)),(rep(uiadult, l=aduyrs)),(rep(uielderly, l=eldyrs)))
   uni<-c((rep(unichild, l=chiyrs)),(rep(uniadult, l=aduyrs)),(rep(unielderly, l=eldyrs)))
@@ -96,9 +96,9 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   uicheck<-ui
   unicheck<-uni
 
-  print("ui")
-  print(ui)
-  print(uni)
+#   print("ui")
+#   print(ui)
+#   print(uni)
 # ui<-c(rep(ui,l=Mnage))
 # uni<-c(rep(uni,l=Mnage))
 #   
@@ -224,8 +224,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 
     
     CDR<-c(CDRscaled,CDRscaledO,CDRscaledE)
-    print("CDR")
-    print(CDR)
+#     print("CDR")
+#     print(CDR)
 
     #CDR_av[(year1-k),1]<-sum(CDR)/101
     if (k==2010) {CDR2010<-CDR}
@@ -264,6 +264,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 #     } else { B<-bb[1+yr-2010] }
     #print(c("BIRTHS",br,B,psize[((k-year1)*(1/dt))],((k-year1)*(1/dt))))
     BIRTHS[i]<-B
+    #print(B)
+    #trackbirths<-rbind(trackbirths,B)
     ####•••••••••••••••••• END OF YEARLY PARAMETERS
     
    # print("done params")
@@ -324,7 +326,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       
 
       #if(I[i,2] < I[i-1,1]){print(c(i,I[i,2],I[i-1,1],"stop",(n + u[1:13] + ui),"cdr",CDR,CoT))}
-      if (k==2010) {print(CDR)}
+      #if (k==2010) {print(CDR)}
       ####•••••••••••••••••••• TB HIV model •••••••••••••••••
       
       #SH[i,15:Mnage] = SH[i-1,14:(Mnage-1)] - (uH[14:(Mnage-1)] + lambda[i-1,1:Mnage])*SH[i-1,14:(Mnage-1)]*dt + hiv[14:(Mnage-1)]*S[i-1,14:(Mnage-1)]*dt 
@@ -777,13 +779,13 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
           TBPb[(k-year1+1),6]<-100000*((sum(I[i1:i2,61:Mnage]))/(1/dt))/mean(psize60plus[i1:i2])
           TBPb[(k-year1+1),7]<-100000*((sum(I[i1:i2,56:Mnage]))/(1/dt))/mean(psize55plus[i1:i2])
           TBPb[(k-year1+1),8]<-100000*((sum(I[i1:i2,16:Mnage]))/(1/dt))/mean(psize15plus[i1:i2])
-          
-          print(sum(I[i1:i2,16:30]))
-          print(sum(I[i1:i2,1:15]))
-          print(sum(I[i1:i2,]))
-          print(mean(psize1529[i1:i2]))
-          print(I[i1,])
-          print(I[i2,])
+#           
+#           print(sum(I[i1:i2,16:30]))
+#           print(sum(I[i1:i2,1:15]))
+#           print(sum(I[i1:i2,]))
+#           print(mean(psize1529[i1:i2]))
+#           print(I[i1,])
+#           print(I[i2,])
           
 #           ## 4b) first timestep of year point prevalence  
 #           

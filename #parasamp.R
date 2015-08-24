@@ -11,7 +11,7 @@ nm<-c(pararange[,1],"p0") # The parameter ranges
 ### Generate Parameter Sets ###
 
 ##number of parameter sets - will increase later
-n_p<-1
+n_p<-1000
 
 ##generate matrix for storing parameter sets (later will want to store these as the file that you call for the model)
 
@@ -39,7 +39,7 @@ setwd(home);setwd("Data")
 para<-read.csv(paste("paraout_",cntry,".csv",sep=''))[-1]
 setwd(home)
 
-dt<-(1/12)
+dt<-(1/2)
 
 typen<-0 #temporary
 year<-c(seq(year1,yearend,1),rep(0,((1/dt)*(yearend-year1+1)-(yearend-year1+1))))
@@ -60,9 +60,10 @@ for (kkk in 1:n_p)
     neta2<-neta # this parameter needs extra assigning for some annoying reason! 
     
     # Run the model with these parameters  
-    Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,(1/12),c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0)   
+    TIME<-system.time(Xn<-FitGo(cntry,1,c(p0,rmort,neta2,rmortTB,CDRscale,CDRscaleE,alpha),c(2,(1/2),c(0.02,0.02,0.8,0.07)),c(1900,2050),0,0))   
     xout[((((yearend-year1+1)*(1/dt)*kkk*nmbr)-((1/dt)*(yearend-year1+1)-1)):((1/dt)*(yearend-year1+1)*kkk*nmbr)),]<-cbind(Xn,times,year,(rep(nn,length(times))),(rep(count,length(times))),(rep(kkk,length(times))))
 
+    #write.table(lambda,paste("lambda",kkk,".csv",sep=''),sep=",",row.names=FALSE)
     
     popcheck<-xout[((((yearend-year1+1)*(1/dt)*kkk*nmbr)-((1/dt)*(yearend-year1+1)-1)):((1/dt)*(yearend-year1+1)*kkk*nmbr)),(1:7)]
     popcheck<-as.data.frame(popcheck)
@@ -89,6 +90,7 @@ for (kkk in 1:n_p)
 #     legend("center",c("Psize","S","L","NI","I","R","Births"), lty=1,col=c("purple","red","orange","yellow","green","blue","pink"))
 #     
 
+
 # plot(seq(1,302),lambda[1:302,1], ylab="lambda",xlab="Timestep",main=kkk,type='l')
 # for (i in 2:101){
 #   lines(seq(1,302),lambda[,i],type='l')
@@ -96,7 +98,15 @@ for (kkk in 1:n_p)
 
 }
 
+#remove plots
+#check below
+#write.table(xout,paste("xout","_",t,".csv",sep="",row.names=FALSE)
+write.table(xout,"xout.csv",sep=",",row.names=FALSE)
+                        
+                        
+#xout<-read.csv("xout.csv",header=TRUE,check.names=F)
+#newo<-ddply(eee,.(Year,fit),summarise,psize=Psize,tbi=100000*(negcases)/Psize,tbm=100000*(negdeaths)/Psize,tbih=100000*(poscases)/Psize,tbmh=100000*(posdeaths)/Psize)
+#newo<-ddply(eee,.(Year,fit),summarise,psize=Psize,tbi=100000*(negcases)/Psize,tbm=100000*(negdeaths)/Psize,tbih=100000*(poscases)/Psize,tbmh=100000*(posdeaths)/Psize)
+View(xout)
 
-#newo<-ddply(eee,.(Year,fit),summarise,psize=Psize,tbi=100000*(negcases)/Psize,tbm=100000*(negdeaths)/Psize,tbih=100000*(poscases)/Psize,tbmh=100000*(posdeaths)/Psize)
-#newo<-ddply(eee,.(Year,fit),summarise,psize=Psize,tbi=100000*(negcases)/Psize,tbm=100000*(negdeaths)/Psize,tbih=100000*(poscases)/Psize,tbmh=100000*(posdeaths)/Psize)
 
