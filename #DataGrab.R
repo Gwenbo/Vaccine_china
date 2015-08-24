@@ -1,7 +1,8 @@
 ## Grabs the needed parameters from data files and does initial manipulation (of ART coverage etc)
 
-## Needs to be the address of the data file
-input<-"/Users/Rebecca/Vaccine_china/Data"
+## Needs to be the address of the data file, in cluster or computer
+if (C == 0){input<-"/Users/Rebecca/Vaccine_china/Data"}
+if (C == 1){input<-"/users/lsh355020/China/Data"}
 setwd(input)
 
 ## ******* READ IN DATA
