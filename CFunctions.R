@@ -12,9 +12,9 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   # Plot <- whether to plot or not (1 = yes)
   
   # C is the cluster parameter -> C==0 if on laptop
-  if (C == 0){setwd("/Users/Rebecca/Vaccine_china")}
-  if (C == 1){setwd("/users/lsh355020/China/")}
-  
+#   if (C == 0){setwd("/Users/Rebecca/Vaccine_china")}
+#   if (C == 1){setwd("/home/lsh355020/China/")}
+#   
   # Paranames in Fit and InitV
   FitV<-c('psz1900','rmort','neta','rmortTB','CDRscale','CDRscaleE','alpha')
   InitialV<-c('run','dt','prop') 
@@ -63,26 +63,31 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   }
   # u and ui use age dependent pattern and apply to existing number
   
-  #scaling of the ui/uni for each age group
-  if (uiscaleC<0){uichild<-(uiscaleC*ui)+ui; unichild<-(uiscaleC*uni)+uni;
-  } else {uichild<-uiscaleC*(1-ui)+ui; unichild<-uiscaleC*(1-uni)+uni}
 
-  if (uiscaleA<0){uiadult<-(uiscaleA*ui)+ui; uniadult<-(uiscaleA*uni)+uni;
-  } else {uiadult<-uiscaleA*(1-ui)+ui; uniadult<-uiscaleA*(1-uni)+uni}
+  ## below was wrong as was giving negatives as scale was -0.9 to 2. Had rewritten the code as below that
+  ## but then get v low disease rates when have positivie values. Therefore, to be able to scale mortality 
+  ## between 0 and 1, have stuck to original code, but limited the range of uiscale to 0-2 (dont need to place
+  ## upper limit as highest in range is 2, and is *dt in the eqns, so that would mean wouldnt be multiplied by more than 1
+  ## BIOUT WOULDNT THIS MEAN ui CAN ONLY BECOME SMALLER THAN THE DATA??
   
-  if (uiscaleE<0){uielderly<-(uiscaleE*ui)+ui; unielderly<-(uiscaleE*uni)+uni;
-  } else {uielderly<-uiscaleE*(1-ui)+ui; unielderly<-uiscaleE*(1-uni)+uni}
+  uichild<-ui*uiscaleC
+  uiadult<-ui*uiscaleA
+  uielderly<-ui*uiscaleE
+  unichild<-uni*uiscaleC
+  uniadult<-uni*uiscaleA
+  unielderly<-uni*uiscaleE
   
-  
-  ##WRONG!!!!###
-#   uichild<-ui*uiscaleC
-#   uiadult<-ui*uiscaleA
-#   uielderly<-ui*uiscaleE
-#   unichild<-uni*uiscaleC
-#   uniadult<-uni*uiscaleA
-#   unielderly<-uni*uiscaleE
-#   
-  
+  #scaling of the ui/uni for each age group
+  #   if (uiscaleC<0){uichild<-(uiscaleC*ui)+ui; unichild<-(uiscaleC*uni)+uni;
+  #   } else {uichild<-uiscaleC*(1-ui)+ui; unichild<-uiscaleC*(1-uni)+uni}
+  # 
+  #   if (uiscaleA<0){uiadult<-(uiscaleA*ui)+ui; uniadult<-(uiscaleA*uni)+uni;
+  #   } else {uiadult<-uiscaleA*(1-ui)+ui; uniadult<-uiscaleA*(1-uni)+uni}
+  #   
+  #   if (uiscaleE<0){uielderly<-(uiscaleE*ui)+ui; unielderly<-(uiscaleE*uni)+uni;
+  #   } else {uielderly<-uiscaleE*(1-ui)+ui; unielderly<-uiscaleE*(1-uni)+uni}
+  #   
+  #   
 #   print(uichild)  
 #   print(uiadult)  
 #   print(uielderly)  
@@ -210,11 +215,11 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 
     #CDRscales<-c((rep(CDRscale, l=chiyrs)),(rep(CDRscale, l=aduyrs)),(rep(CDRscaleE, l=eldyrs)))
  
-    if (CDRscale<0){CDRscaled<-rep(min((CDRscale*cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,],1), (chiyrs+yaduyrs))} else {CDRscaled<-rep(min((CDRscale*(1-cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),(chiyrs+yaduyrs))}
+    if (CDRscale<0){CDRscaled<-rep(min(((CDRscale*cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),(chiyrs+yaduyrs))} else {CDRscaled<-rep(min((CDRscale*(1-cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),(chiyrs+yaduyrs))}
 
-    if (CDRscaleO<0){CDRscaledO<-rep(min((CDRscaleO*cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,],1),(Mnage-(eldyrs+chiyrs+yaduyrs)))} else {CDRscaledO<-rep(min((CDRscaleO*(1-cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),(Mnage-(eldyrs+chiyrs+yaduyrs)))}
+    if (CDRscaleO<0){CDRscaledO<-rep(min(((CDRscaleO*cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),(Mnage-(eldyrs+chiyrs+yaduyrs)))} else {CDRscaledO<-rep(min((CDRscaleO*(1-cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),(Mnage-(eldyrs+chiyrs+yaduyrs)))}
 
-    if (CDRscaleE<0){CDRscaledE<-rep(min((CDRscaleE*(cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),eldyrs)} else {CDRscaledE<-rep(min((CDRscaleE*(1-cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),eldyrs)}
+    if (CDRscaleE<0){CDRscaledE<-rep(min(((CDRscaleE*cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),eldyrs)} else {CDRscaledE<-rep(min((CDRscaleE*(1-cdr[1+CDR_yr-1990,])+cdr[1+CDR_yr-1990,]),1),eldyrs)}
 
     # print(CDRscaled)
     # print(CDRscaledO)
@@ -289,7 +294,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 
 
       lambda[i-1,1:Mnage] <- t(neta * (1-exp(colSums(-(myneta[1:4,1:Mnage]) * z * ((Imatrix[i-1,1:4])/(psizematrix[i-1,1:4]))))))
-                      
+#       print(psizematrix[i-1,1:4]) 
+#       print((Imatrix[i-1,1:4])/(psizematrix[i-1,1:4]))
 #       print("post-start lambda")
       ####•••••••••••••••••• TB model ••••••••••••••••••
       # Age 1, first time step of the year, all births occur
