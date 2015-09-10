@@ -6,7 +6,7 @@
 #### Baseline model fitting #####
 
 #setting home working drive - C=0 if on laptop, 1 if on cluster
-C=1
+C=0
 if (C == 0){home<-"/Users/Rebecca/Vaccine_china"}
 if (C == 1){home<-"/home/lsh355020/China/"}
 setwd(home)
@@ -21,7 +21,7 @@ nm<-c(pararange[,1],"p0") # The parameter ranges
 ### Generate Parameter Sets ###
 
 ##number of parameter sets - will increase later
-n_p<-5
+n_p<-1000
 
 #cluster job/task number
 if (C==0){job<-0}
@@ -29,18 +29,20 @@ if (C==1){job<-as.numeric(Sys.getenv("SGE_TASK_ID"))}
 
 ##generate matrix for storing parameter sets (later will want to store these as the file that you call for the model)
 
-randparam<-mat.or.vec(n_p,(length(nm)+1))
-colnames(randparam)<-c('set',nm)
+randparam<-mat.or.vec(n_p,(length(nm)+2))
+colnames(randparam)<-c('job','fit',nm)
 #number the param sets
-randparam[1:n_p,1]<-seq(1,n_p,1)
+randparam[1:n_p,1]<-rep(job,n_p)
+randparam[1:n_p,2]<-seq(1,n_p,1)
+
 
 #generate random numbers within param ranges - will need to change if decide some not going to be uniform prior
 for (dd in 1:(length(nm)-1)){
-  randparam[1:n_p,dd+1]<-runif(n_p,as.numeric(pararange[dd,2]),as.numeric(pararange[dd,3]))
+  randparam[1:n_p,dd+2]<-runif(n_p,as.numeric(pararange[dd,2]),as.numeric(pararange[dd,3]))
 }
 
 #enter value for P0
-randparam[1:n_p,(length(nm)+1)]<-rep(1267142,n_p) ##insert p0 value here (1267142 from manual model fit???)##
+randparam[1:n_p,(length(nm)+2)]<-rep(1267142,n_p) ##insert p0 value here (1267142 from manual model fit???)##
 
 #randparam needs to be saved as paraout_China.csv in data file
 setwd(home);setwd("Data")
@@ -84,8 +86,8 @@ for (kkk in 1:n_p)
 
 #Adding cluster job number to xout
 JOB<-rep(job,n_p)
-as.data.frame(JOB)
-as.data.frame(xout)
+JOB<-as.data.frame(JOB)
+xout<-as.data.frame(xout)
 xout<-cbind(xout,JOB)
 colnames(xout)<-c(colnames(Xn),"timestep","year","type","vxint","fit","job") #timestep is for params where given by timestep, year is for where output is summary of annual
          
