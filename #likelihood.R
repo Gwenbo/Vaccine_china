@@ -1,6 +1,13 @@
-#### Calc of likelihoods following on from parasamp.R  ####
+#### Calc of likelihoods following on from parasamp.R or cluster_china.R  ####
+home<-"/Users/Rebecca/Vaccine_china" 
+output<-"/Users/Rebecca/Vaccine_china/Outputs/Cluster_outputs" 
+
+###insert date of cluster run
+clusteroutput<-"/Users/Rebecca/Vaccine_china/Outputs/Cluster_outputs/150903"
+setwd(home)
 
 library(ggplot2)
+library(data.table)
 
 #what is the likelihood of that parameter given the data (i.e. the prev etc that we're trying to fit to)
 
@@ -59,12 +66,62 @@ sdi<-(FitDataI-cii[1])/1.96
 
 var<-c((sdp^2),(sdp2^2),(sdn^2),(sdm^2),(sdi^2))
 #colnames(var)<-c("TBPb15+2000","TBPb15-29_2000","TBPb30-44_2000","TBPb45-59_2000","TBPb60+_2000","TBPb15+","TBPb15-29","TBPb30-44","TBPb45-59","TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")
-
-
 #neww<-read.csv("neww.csv")
 
+### bind together cluster parameter sets and outputs
+
+#insert number of cluster jobs below
+numjobs<-3
+xout<-c()
+para<-()
+for (uu in 1:numjobs){
+    print(uu)
+    nxt<-fread(paste("xout_",uu,".csv",sep=''))
+    xout<-rbind(xout,nxt)
+    print(uu)
+    
+    paranxt<-fread(paste("paraout_China_",uu,".csv",sep=''))
+    para<-rbind(para,paranxt)
+    print(uu)
+    }
+
+write.table(xout,"xout_clustermerge.csv",sep=",",row.names=FALSE)
+write.table(para,"para_clustermerge.csv",sep=",",row.names=FALSE)
+
+
+
+
+
+
+print(uu)
+
+library(plyr)
+setwd(clusteroutput)
+file_list <- list.files(path=clusteroutput, pattern="^[x]")
+file_list<-mixedsort(file_list)
+xout <- lapply(file_list, read.csv, header = TRUE)
+data_combined <- do.call("rbind.fill", xout)
+
+list.files(R.home())
+## Only files starting with a-l or r
+## Note that a-l is locale-dependent, but using case-insensitive
+## matching makes it unambiguous in English locales
+dir("../..", pattern = "^[a-lr]", full.names = TRUE, ignore.case = TRUE)
+
+
+setwd(home)
+
+##for use when testing model on cluster
+# setwd(output)
+# xout<-read.csv("xoutmanufit_1.csv", header=TRUE, check.names=FALSE)
+# xout<-as.data.frame(xout)
+# 
+# #graphs to check what run by cluster looks ok when chekcing against original fit
+# setwd(home)
+# source('#graphs_cluster_check.R')
 
 # have model outcomes to be fitted to in easily readible format 
+##need to add "job"
 new00<-xout[which(xout[,"year"]%in%2000),c("type","vxint","fit","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+")]
 colnames(new00)<-c("type","vxint","fit","TBPb15+2000", "TBPb15-29_2000", "TBPb30-44_2000", "TBPb45-59_2000", "TBPb60+_2000")
 new10<-xout[which(xout[,"year"]%in%2010),c("TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
@@ -74,7 +131,9 @@ View(neww)
 #colnames(neww)<-NULL
 
 neww<-neww[,4:23]
+setwd(output)
 write.table(neww,"neww.csv",sep=",",row.names=FALSE)
+setwd(home)
 
 
 ## then calc likelihood of that parameter given the data (i.e. the prev etc that we're trying to fit to)
@@ -94,12 +153,43 @@ write.table(neww,"neww.csv",sep=",",row.names=FALSE)
 #   L[i] <- sum((-0.5*log(2*pi))-(0.5*log(var))-((((neww[i,])-FitData)^2)/(2*var)))
 # }
 
-
 L<-rep(0,n_p)
 for (i in 1:n_p){
   L[i] <- sum((-0.5*log(2*pi*var))-((((neww[i,])-FitData)^2)/(2*var)))
 }
 L
+
+## for checking whether a particular likelihood is dominating 
+LP<-rep(0,n_p)
+for (i in 1:n_p){
+  LP[i] <- sum((-0.5*log(2*pi*var[1:10]))-((((neww[i,1:10])-FitData[1:10])^2)/(2*var[1:10])))
+}
+
+LN<-rep(0,n_p)
+for (i in 1:n_p){
+  LN[i] <- sum((-0.5*log(2*pi*var[11:15]))-((((neww[i,11:15])-FitData[11:15])^2)/(2*var[11:15])))
+}
+
+LM<-rep(0,n_p)
+for (i in 1:n_p){
+  LM[i] <- sum((-0.5*log(2*pi*var[16:19]))-((((neww[i,16:19])-FitData[16:19])^2)/(2*var[16:19])))
+}
+
+LI<-rep(0,n_p)
+for (i in 1:n_p){
+  LI[i] <- sum((-0.5*log(2*pi*var[20]))-((((neww[i,20])-FitData[20])^2)/(2*var[20])))
+}
+
+# ## for checking likelihood of manufit run vs the best run of that batch
+# LP[1]
+# LP[max]
+# LN[1]
+# LN[max]
+# LM[1]
+# LM[max]
+# LI[1]
+# LI[max]
+
 
 #need to do this so that the most liekly ones are the biggest number, as log likelihood is best when is the clostest to zero, so times b -1 to make it a positive value, then 1/L to make the best ones the biggest numbers so that works for weighted sampling
 L<-(-1/L)
@@ -108,8 +198,6 @@ L<-(-1/L)
 missing<-as.vector(complete.cases(L))
 table(missing)
 ## make those that didnt work zeros so they wont be selected
-
-##L[is.na(L)] <- 0
 
 for(i in 1:n_p)
 {
@@ -210,6 +298,7 @@ FitDataP<-as.data.frame(FitDataP)
 cip<-as.data.frame(cip)
 
 
+
 pl<-ggplot(data=xout,aes(x=year,y=TBPbtot,group=fit))+geom_line(colour="black",aes(y=TBPbtot))+
       xlim(1995,2015)+
       xlab("Years")+
@@ -220,14 +309,6 @@ pl<-ggplot(data=xout,aes(x=year,y=TBPbtot,group=fit))+geom_line(colour="black",a
       geom_line(xout$TBPbtot[which.max(L),],col="red")
 pl<-pl+geom_errorbar(aes(x=2000,ymin=cip$Overall[1], ymax=cip$Overall[2]),width=0.5,colour="red")
 pl<-pl+geom_errorbar(aes(x=2010,ymin=cip$Overall[3], ymax=cip$Overall[4]),width=0.5,colour="red")
-
-
-  
-
-# pp<- pp + geom_errorbar(aes(x=2009, ymin=AnaLim[1,1], ymax=AnaLim[1,2]),width=1,col='red')+ geom_point(x=2009,y=Ana[1],pch=4,col='red',size=2.5) 
-
-
-      lines(xout$TBPbtot[,which.max(L)],col="red")
 
 pl
 ##need to use neww???? no coz neww is 2000 and 2010 for each run only. 
@@ -249,6 +330,11 @@ pl2<-ggplot(data=xout[xout$fit%in%unique_t,],aes(x=year,y=TBPbtot,group=fit))+ge
       geom_line(data=xout[xout$fit==which.max(L),],col="red")
 
 pl2
+
+par(mfrow=c(1,3))
+pl
+pl2
+pl3
 
 matplot(model[,unique_t], type="l",col="grey",ylim=c(0,30))     # plot resampled runs as grey lines
 points(dat,col="red")                  # plot the data as red dots
