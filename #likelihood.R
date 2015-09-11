@@ -8,6 +8,13 @@ setwd(home)
 
 library(ggplot2)
 library(data.table)
+suppressWarnings(library('gdata')) ## For drop.levels function
+
+
+#make sure have read in the para range
+setwd(home);setwd("Data")
+pararange <- as.matrix(drop.levels(read.csv('pararanges.csv',header=TRUE,check.names=F)))       # Number of parameters same for all countries - CHECK with new model
+setwd(home)
 
 #what is the likelihood of that parameter given the data (i.e. the prev etc that we're trying to fit to)
 
@@ -71,47 +78,34 @@ var<-c((sdp^2),(sdp2^2),(sdn^2),(sdm^2),(sdi^2))
 ### bind together cluster parameter sets and outputs
 
 #insert number of cluster jobs below
-numjobs<-3
+setwd(clusteroutput)
+numjobs<-100
 xout<-c()
-para<-()
+para<-c()
 for (uu in 1:numjobs){
     print(uu)
     nxt<-fread(paste("xout_",uu,".csv",sep=''))
     xout<-rbind(xout,nxt)
     print(uu)
     
-    paranxt<-fread(paste("paraout_China_",uu,".csv",sep=''))
-    para<-rbind(para,paranxt)
-    print(uu)
     }
 
 write.table(xout,"xout_clustermerge.csv",sep=",",row.names=FALSE)
+
+
+for (uu in 1:numjobs){
+  print(uu)
+  paranxt<-fread(paste("paraout_China_",uu,".csv",sep=''))
+  para<-rbind(para,paranxt)
+  print(uu)  
+  }
+
 write.table(para,"para_clustermerge.csv",sep=",",row.names=FALSE)
-
-
-
-
-
-
-print(uu)
-
-library(plyr)
-setwd(clusteroutput)
-file_list <- list.files(path=clusteroutput, pattern="^[x]")
-file_list<-mixedsort(file_list)
-xout <- lapply(file_list, read.csv, header = TRUE)
-data_combined <- do.call("rbind.fill", xout)
-
-list.files(R.home())
-## Only files starting with a-l or r
-## Note that a-l is locale-dependent, but using case-insensitive
-## matching makes it unambiguous in English locales
-dir("../..", pattern = "^[a-lr]", full.names = TRUE, ignore.case = TRUE)
 
 
 setwd(home)
 
-##for use when testing model on cluster
+### For use when testing model on cluster
 # setwd(output)
 # xout<-read.csv("xoutmanufit_1.csv", header=TRUE, check.names=FALSE)
 # xout<-as.data.frame(xout)
@@ -121,16 +115,15 @@ setwd(home)
 # source('#graphs_cluster_check.R')
 
 # have model outcomes to be fitted to in easily readible format 
-##need to add "job"
-new00<-xout[which(xout[,"year"]%in%2000),c("type","vxint","fit","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+")]
-colnames(new00)<-c("type","vxint","fit","TBPb15+2000", "TBPb15-29_2000", "TBPb30-44_2000", "TBPb45-59_2000", "TBPb60+_2000")
+new00<-xout[which(xout[,"year"]%in%2000),c("job","fit","type","vxint","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+")]
+colnames(new00)<-c("job","fit","type","vxint","TBPb15+2000", "TBPb15-29_2000", "TBPb30-44_2000", "TBPb45-59_2000", "TBPb60+_2000")
 new10<-xout[which(xout[,"year"]%in%2010),c("TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
 neww<-cbind(new00,new10)
 View(neww)
 #neww<-xout[which(xout[,"year"]%in%c(2000,2010)),c("type","vxint","fit","year","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
 #colnames(neww)<-NULL
 
-neww<-neww[,4:23]
+neww<-neww[,5:24]
 setwd(output)
 write.table(neww,"neww.csv",sep=",",row.names=FALSE)
 setwd(home)
@@ -234,7 +227,7 @@ L
 
 library(gdata)
 
-N_resamp<-1000 # number of samples to take
+N_resamp<-1000000 # number of samples to take
 
 #### kick out everything with negative model outputs??  if so drop those where negative, and in sample need to have seq length N_p minus those deleted###
 
