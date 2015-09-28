@@ -19,7 +19,7 @@ setwd(home)
 #number of runs in each job
 n_p<-1000
 #number of jobs
-numjobs<-10
+numjobs<-100
 
 #what is the likelihood of that parameter given the data (i.e. the prev etc that we're trying to fit to)
 
@@ -53,7 +53,7 @@ rownames(cin)<-c("lower2010","upper2010")
 
 mortality2010<- c(4.69,0.29,1.91,15.69)
 mortality2010u<- c(4.84,0.32,2.10,17.26)
-#mortality2010u<- mortality2010 + ((mortality2010u-mortality2010)*10)
+mortality2010u<- mortality2010 + ((mortality2010u-mortality2010)*10)
 cim<-matrix(c(4.54,0.27,1.72,14.12,mortality2010u),nrow=2, ncol=4, byrow=TRUE)
 #cim<-matrix(c(4.54,0.27,1.72,14.12,4.84,0.32,2.10,17.26),nrow=2, ncol=4, byrow=TRUE)
 colnames(cim)<-c("Overall","0-14 years","15-59 years","≥60 years")
@@ -85,6 +85,7 @@ var<-c((sdp^2),(sdp2^2),(sdn^2),(sdm^2),(sdi^2))
 
 ### bind together cluster parameter sets 
 setwd(clusteroutput)
+xout<-c()
 para<-c()
 
 for (uu in 1:numjobs){
@@ -93,6 +94,13 @@ for (uu in 1:numjobs){
   para<-rbind(para,paranxt)
   print(uu)  
 }
+
+# for (uu in 1:numjobs){
+#   print(uu)
+#   xoutnxt<-fread(paste("xout_",uu,".csv",sep=''))
+#   xout<-rbind(xout,xoutnxt)
+#   print(dim(xout)) 
+# }
 
 write.table(para,"para_clustermerge.csv",sep=",",row.names=FALSE)
 
@@ -105,6 +113,20 @@ setwd(home)
 ## Calc L without making xout one big data frame
 
 setwd(clusteroutput)
+
+# ## TEMPORARY - to replace first line of random parameters with results of manual fit
+# manufit<-c()
+# clusterdoc<-c()
+# manufit<-read.csv("xoutmanufit_1.csv",check.names=FALSE)
+# manufit<-as.data.frame(manufit)
+# clusterdoc<-read.csv("xout_1.csv",check.names=FALSE)
+# clusterdoc<-as.data.frame(clusterdoc)
+# clusterdoc[1:302,]<-manufit[1:302,]
+# write.csv(clusterdoc,"xout_1.csv",row.names=FALSE)
+# 
+
+
+smallxout<-c()
 L<-matrix(0,(n_p*numjobs),3)
 colnames(L)<-c("job","fit","L")
 LP<-rep(0,(n_p*numjobs))
@@ -115,10 +137,10 @@ LI<-rep(0,(n_p*numjobs))
 
 for (jj in 1:numjobs){
   
-  xout<-as.data.frame(fread(paste("xout_",jj,".csv",sep='') ))
-  new00<-xout[which(xout[,"year"]%in%2000),c("job","fit","type","vxint","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+")]
+  smallxout<-as.data.frame(fread(paste("xout_",jj,".csv",sep='')),check.names=TRUE)
+  new00<-smallxout[which(smallxout[,"year"]%in%2000),c("job","fit","type","vxint","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+")]
   colnames(new00)<-c("job","fit","type","vxint","TBPb15+2000", "TBPb15-29_2000", "TBPb30-44_2000", "TBPb45-59_2000", "TBPb60+_2000")
-  new10<-xout[which(xout[,"year"]%in%2010),c("TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
+  new10<-smallxout[which(smallxout[,"year"]%in%2010),c("TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
   neww<-cbind(new00,new10)
   neww<-neww[,5:24]
   
@@ -163,7 +185,7 @@ N_resamp<-100000 # number of samples to take
 
 #resample with weights based upon likelihodds
 # t will be a vector of the indices of the resampled parameter sets
-t<-sample(seq(1:n_p),N_resamp,replace=TRUE,prob=L)
+t<-sample(seq(1:(n_p*numjobs)),N_resamp,replace=TRUE,prob=L[,3])
 # This just pulls out the unique values of t
 unique_t<-unique(t)
 table(t)
@@ -229,7 +251,7 @@ pl<-ggplot(data=xout,aes(x=year,y=TBPbtot,group=fit))+geom_line(colour="black",a
   ylab("Prevalence Rate of Bacteriologically Confirmed TB (/100,000pop)")+
   geom_point(data=FitDataP,aes(x=2000,y=FitDataP$Overall2000,group=1),colour="red",size=3)+
   geom_point(data=FitDataP,aes(x=2010,y=FitDataP$Overall2010,group=2),colour="red",size=3)+
-  geom_line(xout$TBPbtot[which.max(L),],col="red")
+  geom_line(xout$TBPbtot[which.max(L[,3]),],col="red")
 pl<-pl+geom_errorbar(aes(x=2000,ymin=cip$Overall[1], ymax=cip$Overall[2]),width=0.5,colour="red")
 pl<-pl+geom_errorbar(aes(x=2010,ymin=cip$Overall[3], ymax=cip$Overall[4]),width=0.5,colour="red")
 
@@ -250,7 +272,7 @@ pl2<-ggplot(data=xout[xout$fit%in%unique_t,],aes(x=year,y=TBPbtot,group=fit))+ge
   ylab("Prevalence Rate of Bacteriologically Confirmed TB (/100,000pop)")+
   geom_point(data=FitDataP,aes(x=2000,y=FitDataP$Overall2000,group=1),colour="red",size=5)+
   geom_point(data=FitDataP,aes(x=2010,y=FitDataP$Overall2010,group=2),colour="red",size=5)+
-  geom_line(data=xout[xout$fit==which.max(L),],col="red")
+  geom_line(data=xout[xout$fit==which.max(L[,3]),],col="red")
 
 pl2
 
