@@ -19,7 +19,7 @@ setwd(home)
 #number of runs in each job
 n_p<-1000
 #number of jobs
-numjobs<-2
+numjobs<-10
 
 #what is the likelihood of that parameter given the data (i.e. the prev etc that we're trying to fit to)
 
@@ -53,7 +53,7 @@ rownames(cin)<-c("lower2010","upper2010")
 
 mortality2010<- c(4.69,0.29,1.91,15.69)
 mortality2010u<- c(4.84,0.32,2.10,17.26)
-mortality2010u<- mortality2010 + ((mortality2010u-mortality2010)*10)
+#mortality2010u<- mortality2010 + ((mortality2010u-mortality2010)*10)
 cim<-matrix(c(4.54,0.27,1.72,14.12,mortality2010u),nrow=2, ncol=4, byrow=TRUE)
 #cim<-matrix(c(4.54,0.27,1.72,14.12,4.84,0.32,2.10,17.26),nrow=2, ncol=4, byrow=TRUE)
 colnames(cim)<-c("Overall","0-14 years","15-59 years","≥60 years")
@@ -137,15 +137,15 @@ for (jj in 1:numjobs){
     #identify negs and NAs and change Likelihood to zero so they are not selected 
     test<-matrix(1,1,20)
     #if data are NA, missing will be FALSE
-    missing<-complete.cases(L[i,3])
+    missing<-complete.cases(L[(i+((jj-1)*1000)),3])
     #if NA, will be left as 1s, if is not NA (i.e. missing==TRUE, then check whether negatives and if not negatives replace with zeros)
-    if(missing==TRUE) {test[i,]<-suppressWarnings(ifelse(neww[i,]<0,test[i,]==1,test[i,]==0))}
+    if(missing==TRUE) {test[1,]<-ifelse(neww[i,]<0,test[1,]==1,test[1,]==0)}
     #add up the negs test across the output variables
     negs<-rowSums(test)
     #negs true if outputs are negative or NA, false if outputs are all positive
     negs<-ifelse(negs > 0,"TRUE","FALSE")
     negs<-as.logical(negs)
-    if (negs==TRUE) {L[i,3]<-0} 
+    if (negs==TRUE) {L[(i+((jj-1)*1000)),3]<-0} 
   }
   print(jj)
 }
