@@ -29,7 +29,7 @@ new_actv_react<-matrix(0,steps,Mnage)
 new_actv_inf<-matrix(0,steps,Mnage)
 new_actv_chk<-matrix(0,steps,Mnage)
 num_vac<-matrix(0,steps,Mnage)
-
+CFR<-matrix(0,steps,1)
 
 # Prevelance of HIV for checking
 #prevHIV<-matrix(0,steps,1);prevHIV1549<-matrix(0,steps,1);
