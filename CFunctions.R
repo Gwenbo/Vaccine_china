@@ -330,6 +330,10 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       I[i,2:Mnage] = I[i-1,1:(Mnage-1)] + (1 - CDR[1:(Mnage-1)]*CoT)*(new_I[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + ui[1:(Mnage-1)])*I[i-1,1:(Mnage-1)]*dt
       NI[i,2:Mnage] = NI[i-1,1:(Mnage-1)] + ((1 - CDR[1:(Mnage-1)]*CoT*e)*new_NI[i,2:Mnage]) - (n[1:(Mnage-1)] + u[1:(Mnage-1)] + uni[1:(Mnage-1)] + w)*NI[i-1,1:(Mnage-1)]*dt                    
       
+    #crude estmate of CFR - #deaths/#prevalent cases
+     CFR[i,] = ((sum(uni[1:(Mnage-1)]*dt*NI[i-1,1:(Mnage-1)])) + (sum(ui[1:(Mnage-1)]*dt*I[i-1,1:(Mnage-1)])))/(sum(NI[i-1,1:(Mnage-1)]+I[i-1,1:(Mnage-1)]))       
+
+
 
       #if(I[i,2] < I[i-1,1]){print(c(i,I[i,2],I[i-1,1],"stop",(n + u[1:13] + ui),"cdr",CDR,CoT))}
       #if (k==2010) {print(CDR)}
@@ -546,6 +550,11 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
         I[i,1:Mnage] = I[i-1,1:Mnage] + (1 - CDR[1:Mnage]*CoT)*(new_I[i,1:Mnage]) - (n[1:Mnage] + u[1:(Mnage)] + ui[1:Mnage])*I[i-1,1:Mnage]*dt
         #print("1")
         NI[i,1:Mnage] = NI[i-1,1:Mnage] + ((1 - CDR[1:Mnage]*CoT*e)*new_NI[i,1:Mnage]) - (n[1:Mnage] + u[1:Mnage] + uni[1:Mnage] + w)*NI[i-1,1:(Mnage)]*dt                    
+        
+        CFR[i,] = ((sum(uni[1:(Mnage)]*dt*NI[i-1,1:(Mnage)])) + (sum(ui[1:(Mnage)]*dt*I[i-1,1:(Mnage)])))/(sum(NI[i-1,1:(Mnage)]+I[i-1,1:(Mnage)]))       
+        
+        
+        
         
         #print("done nonvacc")                        
         
@@ -1150,6 +1159,8 @@ TBPI[(k-year1+1),1]<-100*(((sum(L[i1,])/psize[i1])+(sum(L[i2,])/psize[i2]))/2)
   assign('totmort',totmort,envir=.GlobalEnv) 
   assign('totcase',totcase,envir=.GlobalEnv) 
   assign('cumuloutyr',cumuloutyr,envir=.GlobalEnv) 
+  assign('CFR',CFR,envir=.GlobalEnv) 
+
 
 
 
