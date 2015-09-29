@@ -127,6 +127,10 @@ setwd(clusteroutput)
 
 
 smallxout<-c()
+fityrs<-seq(2000,2010,1)
+xoutplot<-matrix(0,(n_p*numjobs*(length(fityrs))),20)
+colnames(xoutplot)<-c("job","fit","type","vxint","year","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")
+xoutplot<-as.data.frame(xoutplot)
 L<-matrix(0,(n_p*numjobs),3)
 colnames(L)<-c("job","fit","L")
 LP<-rep(0,(n_p*numjobs))
@@ -138,6 +142,14 @@ LI<-rep(0,(n_p*numjobs))
 for (jj in 1:numjobs){
   
   smallxout<-as.data.frame(fread(paste("xout_",jj,".csv",sep='')),check.names=TRUE)
+  
+  ##matrix of run outputs for plotting (starts at 2000-10 for now, but will need from 1990-2050 later)
+  xoutplot[((1+((jj-1)*n_p*(length(fityrs)))):(jj*n_p*(length(fityrs)))),]<-smallxout[which(smallxout[,"year"]%in%fityrs),c("job","fit","type","vxint","year","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
+  
+  
+  #xoutplot<-subset(smallxout, year>=2000 & year<=2010)
+  
+  ##matrix of run outputs for calc of Likelihood
   new00<-smallxout[which(smallxout[,"year"]%in%2000),c("job","fit","type","vxint","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+")]
   colnames(new00)<-c("job","fit","type","vxint","TBPb15+2000", "TBPb15-29_2000", "TBPb30-44_2000", "TBPb45-59_2000", "TBPb60+_2000")
   new10<-smallxout[which(smallxout[,"year"]%in%2010),c("TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
@@ -172,6 +184,14 @@ for (jj in 1:numjobs){
   print(jj)
 }
 
+#at the moment the first xout file has job 0 as inlcudes manual fit, so need to replace 0 with 1
+xoutplot[1:(n_p*(length(fityrs))),1]<-rep(1,(n_p*(length(fityrs))))
+
+#need to add column to be able to identify which links to which value of L
+run_count<-rep(seq(1,(n_p*numjobs),1),each=length(fityrs))
+xoutplot<-cbind(run_count, xoutplot)
+
+write.table(xoutplot,"xout_clustermerge0010.csv",sep=",",row.names=FALSE)
 
 
 
@@ -243,15 +263,15 @@ FitDataP<-as.data.frame(FitDataP)
 cip<-as.data.frame(cip)
 
 
-
-pl<-ggplot(data=xout,aes(x=year,y=TBPbtot,group=fit))+geom_line(colour="black",aes(y=TBPbtot))+
-  xlim(1995,2015)+
+#group cant just be fint once appended, which.max L doesnt work with this
+pl<-ggplot(data=xoutplot,aes(x=year,y=TBPbtot,group=fit))+geom_line(colour="black",aes(y=TBPbtot))+
+  xlim(2000,2010)+
   xlab("Years")+
   ylim(0,500)+
   ylab("Prevalence Rate of Bacteriologically Confirmed TB (/100,000pop)")+
   geom_point(data=FitDataP,aes(x=2000,y=FitDataP$Overall2000,group=1),colour="red",size=3)+
   geom_point(data=FitDataP,aes(x=2010,y=FitDataP$Overall2010,group=2),colour="red",size=3)+
-  geom_line(xout$TBPbtot[which.max(L[,3]),],col="red")
+  geom_line(xoutplot$TBPbtot[which.max(L[,3]),],col="red")
 pl<-pl+geom_errorbar(aes(x=2000,ymin=cip$Overall[1], ymax=cip$Overall[2]),width=0.5,colour="red")
 pl<-pl+geom_errorbar(aes(x=2010,ymin=cip$Overall[3], ymax=cip$Overall[4]),width=0.5,colour="red")
 
