@@ -210,6 +210,12 @@ t<-sample(seq(1:(n_p*numjobs)),N_resamp,replace=TRUE,prob=L[,3])
 unique_t<-unique(t)
 table(t)
 
+
+#keep only the xoutplot for the unique resampled runs
+unique_xout<-xoutplot[which(xoutplot[,"run_count"]%in%unique_t),]
+
+
+
 ## For a model output which is a time-course you can use the following to calculate a median or CI etc (just set prob to what you want)
 model_m=apply(neww[t,],1,function(x) quantile(x,probs=c(0.5))) 
 model_u=apply(neww[t,],1,function(x) quantile(x,probs=c(0.975))) 
