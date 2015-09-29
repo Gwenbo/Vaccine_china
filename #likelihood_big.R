@@ -194,12 +194,16 @@ xoutplot<-cbind(run_count, xoutplot)
 write.table(xoutplot,"xout_clustermerge0010.csv",sep=",",row.names=FALSE)
 
 
+## Output which runs are the highest likelihood runs
+top_L<-order(L[,3],decreasing=TRUE)
+top_L<-top_L[1:10]
+top_L
 
 ### Sample the runs with a weight based upon the calculated likelihood of that run's parameters
 
 library(gdata)
 
-N_resamp<-100000 # number of samples to take
+N_resamp<-200000 # number of samples to take
 
 #### kick out everything with negative model outputs??  if so drop those where negative, and in sample need to have seq length N_p minus those deleted###
 
@@ -214,15 +218,44 @@ table(t)
 #keep only the xoutplot for the unique resampled runs
 unique_xout<-xoutplot[which(xoutplot[,"run_count"]%in%unique_t),]
 
+#select just one outcome, and format it to be the correct dimension (each column is a run and each row is a year)
+mall_xout<-xoutplot[,"TBMtot"]
+dim(mall_xout)<-c((length(fityrs)),100000)
+
+pall_xout<-xoutplot[,"TBPb15+"]
+dim(pall_xout)<-c((length(fityrs)),100000)
+
+## For a model output which is a time-course use the following to calculate a median or CI etc (just set prob to what you want)
+model_m=apply(mall_xout[,t],1,function(x) quantile(x,probs=c(0.5))) 
+model_u=apply(mall_xout[,t],1,function(x) quantile(x,probs=c(0.975))) 
+model_l=apply(mall_xout[,t],1,function(x) quantile(x,probs=c(0.025))) 
+
+model_mp=apply(pall_xout[,t],1,function(x) quantile(x,probs=c(0.5))) 
+model_up=apply(pall_xout[,t],1,function(x) quantile(x,probs=c(0.975))) 
+model_lp=apply(pall_xout[,t],1,function(x) quantile(x,probs=c(0.025))) 
+
+model_m
+model_u
+model_l
 
 
-## For a model output which is a time-course you can use the following to calculate a median or CI etc (just set prob to what you want)
-model_m=apply(neww[t,],1,function(x) quantile(x,probs=c(0.5))) 
-model_u=apply(neww[t,],1,function(x) quantile(x,probs=c(0.975))) 
-model_l=apply(neww[t,],1,function(x) quantile(x,probs=c(0.025))) 
 
 
-#plotting
+
+# 
+# # Then a crude plot would be 
+# 
+# plot(temp[,1],ylim=c(0,0.5),col="blue")
+# points(temp[,2],col="red")
+# points(temp[,3],col="green")
+# 
+# lines(P_m,lty=2)
+# lines(P_l)
+# lines(P_u)
+
+
+
+##Plotting
 
 #prior vs posterior plots
 
