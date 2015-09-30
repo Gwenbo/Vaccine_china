@@ -6,7 +6,7 @@
 #### Baseline model fitting #####
 
 #setting home working drive - C=0 if on laptop, 1 if on cluster
-C=0
+C=1
 if (C == 0){home<-"/Users/Rebecca/Vaccine_china"}
 if (C == 1){home<-"/home/lsh355020/China/"}
 setwd(home)
