@@ -19,7 +19,7 @@ setwd(home)
 #number of runs in each job
 n_p<-1000
 #number of jobs
-numjobs<-100
+numjobs<-200
 
 #what is the likelihood of that parameter given the data (i.e. the prev etc that we're trying to fit to)
 
@@ -163,10 +163,10 @@ for (jj in 1:numjobs){
     L[(i+((jj-1)*1000)),2]<-i
     L[(i+((jj-1)*1000)),3] <- -1/(sum((-0.5*log(2*pi*var))-((((neww[i,])-FitData)^2)/(2*var))))
     #breakdown of likelihood
-    LP[(i+((jj-1)*1000))] <- sum((-0.5*log(2*pi*var[1:10]))-((((neww[i,1:10])-FitData[1:10])^2)/(2*var[1:10])))
-    LN[(i+((jj-1)*1000))] <- sum((-0.5*log(2*pi*var[11:15]))-((((neww[i,11:15])-FitData[11:15])^2)/(2*var[11:15])))
-    LM[(i+((jj-1)*1000))] <- sum((-0.5*log(2*pi*var[16:19]))-((((neww[i,16:19])-FitData[16:19])^2)/(2*var[16:19])))
-    LI[(i+((jj-1)*1000))] <- sum((-0.5*log(2*pi*var[20]))-((((neww[i,20])-FitData[20])^2)/(2*var[20])))
+    LP[(i+((jj-1)*1000))] <- -1/(sum((-0.5*log(2*pi*var[1:10]))-((((neww[i,1:10])-FitData[1:10])^2)/(2*var[1:10]))))
+    LN[(i+((jj-1)*1000))] <- -1/(sum((-0.5*log(2*pi*var[11:15]))-((((neww[i,11:15])-FitData[11:15])^2)/(2*var[11:15]))))
+    LM[(i+((jj-1)*1000))] <- -1/(sum((-0.5*log(2*pi*var[16:19]))-((((neww[i,16:19])-FitData[16:19])^2)/(2*var[16:19]))))
+    LI[(i+((jj-1)*1000))] <- -1/(sum((-0.5*log(2*pi*var[20]))-((((neww[i,20])-FitData[20])^2)/(2*var[20]))))
     
     #identify negs and NAs and change Likelihood to zero so they are not selected 
     test<-matrix(1,1,20)
@@ -199,6 +199,22 @@ top_L<-order(L[,3],decreasing=TRUE)
 top_L<-top_L[1:10]
 top_L
 
+top_LM<-order(LM,decreasing=TRUE)
+top_LM<-top_LM[1:10]
+top_LM
+
+top_LP<-order(LP,decreasing=TRUE)
+top_LP<-top_LP[1:10]
+top_LP
+
+top_LN<-order(LN,decreasing=TRUE)
+top_LN<-top_LN[1:10]
+top_LN
+
+top_LI<-order(LI,decreasing=TRUE)
+top_LI<-top_LI[1:10]
+top_LI
+
 ### Sample the runs with a weight based upon the calculated likelihood of that run's parameters
 
 library(gdata)
@@ -210,6 +226,7 @@ N_resamp<-200000 # number of samples to take
 #resample with weights based upon likelihodds
 # t will be a vector of the indices of the resampled parameter sets
 t<-sample(seq(1:(n_p*numjobs)),N_resamp,replace=TRUE,prob=L[,3])
+tM<-sample(seq(1:(n_p*numjobs)),N_resamp,replace=TRUE,prob=LM)
 # This just pulls out the unique values of t
 unique_t<-unique(t)
 table(t)
