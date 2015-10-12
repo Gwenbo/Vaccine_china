@@ -37,13 +37,14 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   voldadu<-(vadult+velderly)/2
   noldadu<-(n+nelderly)/2
   roldadu<-(radult+relderly)/2
-  
+  CDRscaleO<-(CDRscale+CDRscaleE)/2
   
   
   p=c((rep(pchild, l=chiyrs)),(rep(padult, l=aduyrs)),(rep(pelderly, l=eldyrs)))
   f=c((rep(fchild, l=chiyrs)),(rep(fadult, l=aduyrs)),(rep(felderly, l=eldyrs)))
   h=c((rep(hchild, l=chiyrs)),(rep(hadult, l=aduyrs)),(rep(helderly, l=eldyrs)))
-  v=c((rep(vchild, l=chiyrs)),(rep(vadult, l=yaduyrs)),(rep(voldadu, l=(aduyrs-yaduyrs))), (rep(velderly, l=eldyrs)))
+  v=c((rep(vadult, l=(yaduyrs+chiyrs))),(rep(voldadu, l=(aduyrs-yaduyrs))), (rep(velderly, l=eldyrs)))
+  print(v)
   r=c((rep(rchild, l=chiyrs)),(rep(radult, l=yaduyrs)),(rep(roldadu, l=(aduyrs-yaduyrs))), (rep(relderly, l=eldyrs)))
   n=c((rep(n, l=chiyrs)),(rep(n, l=yaduyrs)),(rep(noldadu, l=(aduyrs-yaduyrs))), (rep(nelderly, l=eldyrs)))
   #print("doneeldyears")
@@ -133,7 +134,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   
   # # # # # # RUN 
   for (k in year1:(yearend)){
-    print(k)
+    #print(k)
     
     #### •••••••••••••••••• Yearly parameters #••••••••••••••••••
     # Only start marking years after 2009 
@@ -1186,7 +1187,7 @@ TBPI[(k-year1+1),1]<-100*(((sum(L[i1,])/psize[i1])+(sum(L[i2,])/psize[i2]))/2)
            TBPb[,1],TBPb[,2],TBPb[,3], TBPb[,4], TBPb[,5], TBPb[,6],TBPb[,7],
            TBPI[,1],TBPI[,2],TBPI[,3], TBPI[,4], TBPI[,5],  TBPI[,6], TBPI[,7],TBPI[,8],TBPI[,9], TBPI[,10], TBPI[,11],  TBPI[,12], TBPI[,13], TBPI[,14],
            PSIZEy[,1],PSIZEy[,2], PSIZEy[,3], PSIZEy[,4], PSIZEy[,5], PSIZEy[,6], PSIZEy[,7], PSIZEy[,8], PSIZEy[,9], PSIZEy[,10], PSIZEy[,11], PSIZEy[,12], PSIZEy[,13], PSIZEy[,14], PSIZEy[,15], PSIZEy[,16], PSIZEy[,17], PSIZEy[,18], PSIZEy[,19],PSIZEy[,20], PSIZEy[,21], PSIZEy[,22], PSIZEy[,23],
-           TBI[,8], TBI[,9],TBM[,10],TBM[,11],TBPb[,8],PSIZEy[,24])
+           TBI[,8], TBI[,9],TBM[,10],TBM[,11],TBPb[,8],PSIZEy[,24],TBRa[,1],TBRa[,2],TBRa[,3],TBRa[,4],TBRa[,5],TBRi[,1],TBRi[,2],TBRi[,3],TBRi[,4],TBRi[,5])
   colnames(X)<-c("PSIZE","S","Births","I","NI","L","R","new_I","new_NI","new_I_react","new_NI_react", "Sv","Lv","Rv",
                  "TBItot","TBI0-14","TBI15-54","TBI55-64","TBI65+","TBI55+","TBI<55",
                  "TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBN55+","TBN<55",
@@ -1195,7 +1196,7 @@ TBPI[(k-year1+1),1]<-100*(((sum(L[i1,])/psize[i1])+(sum(L[i2,])/psize[i2]))/2)
                  "TBPbtot","TBPb0-14", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBPb55+", 
                  "TBPItot","TBPI0-14", "TBPI15-54", "TBPI55-64", "TBPI65+", "TBPI55+", "TBPI5-9", "TBPI10-19", "TBPI20-29", "TBPI30-39", "TBPI40-49", "TBPI50-59", "TBPI60-69", "TBPI70+",
                  "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+", "YearPsize55+", "YearPsize5-9", "YearPsize10-19", "YearPsize20-29", "YearPsize30-39", "YearPsize40-49", "YearPsize50-59", "YearPsize60-69", "YearPsize70+","YearPsize55-74", "YearPsize75+", "YearPsize15-24","YearPsize25-54",
-                 "TBI15-24","TBI25-54","TBM15-24","TBM25-54","TBPb15+","YearPsize15plus")
+                 "TBI15-24","TBI25-54","TBM15-24","TBM25-54","TBPb15+","YearPsize15plus","TBRatot","TBRa0-14","TBRa15-54","TBRa55-64","TBRa65+","TBRitot","TBRi0-14","TBRi15-54","TBRi55-64","TBRi65+")
   #print("X")
 #X<-data.frame(X)
   # To show
