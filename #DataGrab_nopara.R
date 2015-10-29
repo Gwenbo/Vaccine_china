@@ -33,7 +33,7 @@ pstruc50 <- suppressWarnings(drop.levels(read.csv('AgeStruc50.csv',header=TRUE,c
 # Case detection, treatment success, natural history parameters, ranges for previous
 cdrv <- suppressWarnings(read.csv('CDR.csv',header=TRUE,check.names=F))[1:24,]        # Number of years, cols = countries)
 suctv <- suppressWarnings(read.csv('SucT.csv',header=TRUE,check.names=F))[1:19,]        # Number of years, cols = countries)
-para <- as.matrix(drop.levels(read.csv('para.csv',header=TRUE,check.names=F)))       # Number of parameters same for all countries - CHECK with new model
+#para <- as.matrix(drop.levels(read.csv('para.csv',header=TRUE,check.names=F)))       # Number of parameters same for all countries - CHECK with new model
 pararange <- as.matrix(drop.levels(read.csv('pararanges.csv',header=TRUE,check.names=F)))       # Number of parameters same for all countries - CHECK with new model
 # TB incidence, TB mortality, in HIV+s, in HIV-s, data on HIV (incidence in 15-49yos, ART 2009, ART 2025)
 TBIm<-suppressWarnings(read.csv('TBI.csv',header=TRUE,check.names=F))
@@ -161,7 +161,7 @@ Mnage <- ceiling(mm/widthage) # Number of age classes for matrix
 
 ## ********* PARAMETERS
 # Assign out parameters - same for all countries
-for (i in 1:length(para[,1])){assign(para[i,1],as.numeric(para[i,2]))}
+#for (i in 1:length(para[,1])){assign(para[i,1],as.numeric(para[i,2]))}
 
 # Reset input 
 setwd(input)
