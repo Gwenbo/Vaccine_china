@@ -51,6 +51,14 @@ mortality2010l<- c(4.84,0.27,1.72,14.12)
 
 ## PLOTS TEMP REPLACE GWENS
 
+Xn<-as.data.frame(Xn)
+plot(seq(1,((yearend-year1+1)*(1/dt))),Xn$PSIZE, ylab="Size",xlab="Timestep", main=kkk, ylim=c(0,1800000),xlim=c(0,((yearend-year1+1)*(1/dt))),type='l',col='purple')
+lines(seq(1,(yearend-year1+1)*(1/dt)),Xn$S,type='l',col='red')
+lines(seq(1,(yearend-year1+1)*(1/dt)),Xn$L,type='l',col='orange')
+lines(seq(1,(yearend-year1+1)*(1/dt)),Xn$NI,type='l',col='yellow')
+lines(seq(1,(yearend-year1+1)*(1/dt)),Xn$I,type='l',col='green')
+lines(seq(1,(yearend-year1+1)*(1/dt)),Xn$R,type='l',col='blue')
+lines(seq(1,(yearend-year1+1)*(1/dt)),Xn$Births,type='l',col='pink')  
 
 
 ##incidence plot
@@ -160,6 +168,21 @@ legend("center",c("Overall(15+) years","15-29 years","30-44 years","45-59 years"
 # points(yrplot2010b,prevalence2010)
 
 # Mortality plot
+
+mortality2010<- c(4.69,0.29,1.91,15.69)
+mortality2010u<- c(4.84,0.32,2.10,17.26)
+mortality2010l<- c(4.54,0.27,1.72,14.12)
+
+
+mortality2010<- c(4.69,0.29,1.91,15.69)
+mortality2010u<- c(4.84,0.32,2.10,17.26)
+mortality2010u<- mortality2010 + ((mortality2010u-mortality2010)*20)
+mortality2010u
+TBM[111,]
+mortality2010l<- c(4.54,0.27,1.72,14.12)
+
+
+
 par(mfrow=c(2,3))
 plot(seq(1990,2050),TBM[91:151,1], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,50),type='l',col='orange')
 points(2010,mortality2010[1])
@@ -340,10 +363,10 @@ setwd(home)
 
 
 
-par(mfrow=c(1,1))
-plot(seq(1,1812),Xn$I, ylab="Cases",xlab="Year", ylim=c(0,2700),type='l',col='orange')
-lines(seq(1,1812),Xn$NI,lty=5,col='green')
-lines(seq(1,1812),Xn$I,lty=5,col='blue')
+# par(mfrow=c(1,1))
+# plot(seq(1,1812),Xn$I, ylab="Cases",xlab="Year", ylim=c(0,2700),type='l',col='orange')
+# lines(seq(1,1812),Xn$NI,lty=5,col='green')
+# lines(seq(1,1812),Xn$I,lty=5,col='blue')
 
 
 
