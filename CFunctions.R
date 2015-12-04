@@ -44,7 +44,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   f=c((rep(fchild, l=chiyrs)),(rep(fadult, l=aduyrs)),(rep(felderly, l=eldyrs)))
   h=c((rep(hchild, l=chiyrs)),(rep(hadult, l=aduyrs)),(rep(helderly, l=eldyrs)))
   v=c((rep(vadult, l=(yaduyrs+chiyrs))),(rep(voldadu, l=(aduyrs-yaduyrs))), (rep(velderly, l=eldyrs)))
-  print(v)
+  #print(v)
   r=c((rep(rchild, l=chiyrs)),(rep(radult, l=yaduyrs)),(rep(roldadu, l=(aduyrs-yaduyrs))), (rep(relderly, l=eldyrs)))
   n=c((rep(n, l=chiyrs)),(rep(n, l=yaduyrs)),(rep(noldadu, l=(aduyrs-yaduyrs))), (rep(nelderly, l=eldyrs)))
   #print("doneeldyears")
