@@ -36,10 +36,10 @@ mortality2010u<- mortality2010 + ((mortality2010u-mortality2010)*10)
 mortality2010l<- c(4.54,0.27,1.72,14.12)
 
 max<-which.max(L_1m[,3])
-max<-89
+# max<-89
 #insert number of max L run here
-xoutmax<-as.data.frame(fread(paste("xout_","1379",".csv",sep='')),check.names=TRUE)
-xoutmax<-xoutmax[xoutmax$fit==max,]
+# xoutmax<-as.data.frame(fread(paste("xout_","1379",".csv",sep='')),check.names=TRUE)
+# xoutmax<-xoutmax[xoutmax$fit==max,]
 xoutmax<-xoutplot[xoutplot$run_count==max,]
 
 ## notifications plot
@@ -105,7 +105,7 @@ plot(seq(2000,2010),xoutmax$"TBM0-14"[1:11], ylab="Mortality/100,000pop/yr",xlab
 points(2010,mortality2010[2])
 segments(2010,mortality2010l[2],2010,mortality2010u[2])
 plot.new()
-plot(seq(2000,2010),xoutmax$"TBM15-54"[1:11], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,50),type='l',col='blue')
+plot(seq(2000,2010),xoutmax$"TBM15-59"[1:11], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,50),type='l',col='blue')
 points(2010,mortality2010[3])
 segments(2010,mortality2010l[3],2010,mortality2010u[3])
 plot(seq(2000,2010),xoutmax$"TBM60+"[1:11], ylab="Mortality/100,000pop/yr",xlab="Year", ylim=c(0,50),type='l',col='green')

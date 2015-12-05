@@ -20,7 +20,7 @@ setwd(home)
 #number of runs in each job
 n_p<-1000
 #number of jobs
-numjobs<-500
+numjobs<-1000
 
 ### only  once when storing orig xoutplot so could append to new
 #xoutplotA<-xoutplot
@@ -56,7 +56,10 @@ colnames(cip)<-c("Overall","1529years","3044years","4559years","60plusyears")
 rownames(cip)<-c("lower2000","upper2000","lower2010","upper2010") 
 
 ##lower limit is the data, so assume mormally distrib with lower limit as 95% CI
-cin<-matrix(c(63.91,2.72,64.62,104.36,143.07,79.89,3.40,80.78,130.45,178.84),nrow=2, ncol=5, byrow=TRUE)
+### NO - have changed so that lower limit is 80% of data, as assume that there are false positives reported 
+notif2010l<-c(63.91,2.72,64.62,104.36,143.07)
+notif2010l<-notif2010l*0.8
+cin<-matrix(c(notif2010l,79.89,3.40,80.78,130.45,178.84),nrow=2, ncol=5, byrow=TRUE)
 colnames(cin)<-c("Overall","0-14 years","15-54 years","55-64 years","≥65 years")
 rownames(cin)<-c("lower2010","upper2010")
 
@@ -99,11 +102,16 @@ xout<-c()
 para<-c()
 
 ## need to replace first para with ones from correct fit!!
-for (uu in 1801:2300){
+for (uu in 1301:2300){
   print(uu)
   paranxt<-fread(paste("paraout_China_",uu,".csv",sep=''))
   para<-rbind(para,paranxt)
 }
+
+run_count_para<-rep(seq(1,(2*n_p*numjobs),1))
+para_1m<-cbind(run_count_para,para)
+
+
 # for (uu in 1:numjobs){
 #   print(uu)
 #   xoutnxt<-fread(paste("xout_",uu,".csv",sep=''))
@@ -111,7 +119,8 @@ for (uu in 1801:2300){
 #   print(dim(xout)) 
 # }
 
-write.table(para,"para_cmerge_1301_1800.csv",sep=",",row.names=FALSE)
+
+write.table(para_1m,"para_cmerge_1301_2300.csv",sep=",",row.names=FALSE)
 
 
 setwd(home)
@@ -137,9 +146,9 @@ setwd(clusteroutput)
 
 smallxout<-c()
 fityrs<-seq(2000,2010,1)
-xoutplot<-matrix(0,(n_p*numjobs*(length(fityrs))),20)
-colnames(xoutplot)<-c("job","fit","type","vxint","year","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")
-xoutplot<-as.data.frame(xoutplot)
+#xoutplot<-matrix(0,(n_p*numjobs*(length(fityrs))),20)
+# colnames(xoutplot)<-c("job","fit","type","vxint","year","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")
+# xoutplot<-as.data.frame(xoutplot)
 L<-matrix(0,(n_p*numjobs),3)
 colnames(L)<-c("job","fit","L")
 LP<-rep(0,(n_p*numjobs))
@@ -153,7 +162,7 @@ for (jj in 1:numjobs){
   smallxout<-as.data.frame(fread(paste("xout_",(jj+1300),".csv",sep='')),check.names=TRUE)
   
 #   ##matrix of run outputs for plotting (starts at 2000-10 for now, but will need from 1990-2050 later)
-    xoutplot[((1+((jj-1)*n_p*(length(fityrs)))):(jj*n_p*(length(fityrs)))),]<-smallxout[which(smallxout[,"year"]%in%fityrs),c("job","fit","type","vxint","year","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
+    #xoutplot[((1+((jj-1)*n_p*(length(fityrs)))):(jj*n_p*(length(fityrs)))),]<-smallxout[which(smallxout[,"year"]%in%fityrs),c("job","fit","type","vxint","year","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
    
     
   ##matrix of run outputs for calc of Likelihood
@@ -168,7 +177,7 @@ for (jj in 1:numjobs){
   for (i in 1:n_p){
     #calc likelihoods
     L[(i+((jj-1)*n_p)),2]<-i
-   L[(i+((jj-1)*n_p)),3] <- -1/(sum((-0.5*log(2*pi*var))-((((neww[i,])-FitData)^2)/(2*var))))
+    L[(i+((jj-1)*n_p)),3] <- -1/(sum((-0.5*log(2*pi*var))-((((neww[i,])-FitData)^2)/(2*var))))
    
     # multiply incidence likelihood by 4 to increase weight
     #L[(i+((jj-1)*n_p)),3] <- -1/((sum((-0.5*log(2*pi*var))-((((neww[i,])-FitData)^2)/(2*var))))+(3*((-0.5*log(2*pi*var[20]))-((((neww[i,20])-FitData[20])^2)/(2*var[20])))))
@@ -198,12 +207,18 @@ for (jj in 1:numjobs){
 #xoutplot[1:(n_p*(length(fityrs))),1]<-rep(1,(n_p*(length(fityrs))))
 
 #need to add column to be able to identify which links to which value of L
-run_count<-rep(seq(1,(n_p*numjobs),1),each=length(fityrs))
-#run_count<-rep(seq(((n_p*numjobs)+1),(2*n_p*numjobs),1),each=length(fityrs))
-xoutplot<-cbind(run_count, xoutplot)
+#run_count<-rep(seq(1,(n_p*numjobs),1),each=length(fityrs))
+# run_count<-rep(seq(((n_p*numjobs)+1),(2*n_p*numjobs),1),each=length(fityrs))
+#run_count<-rep(seq(1,(2*n_p*numjobs),1),each=length(fityrs))
 
-write.table(xoutplot,"xout_cmerge1301_1800_0010.csv",sep=",",row.names=FALSE)
-write.table(L,"L_cmerge_1301_1800.csv",sep=",",row.names=FALSE)
+#xoutplot<-cbind(run_count, xoutplot)
+
+#write.table(xoutplot,"xout_cmerge1301_1800_0010.csv",sep=",",row.names=FALSE)
+write.table(L,"L_cmerge_1301_2300_nlower.csv",sep=",",row.names=FALSE)
+L_1mN<-L
+
+run_number<-seq(1,1000000,1)
+L_1mN<-cbind(L_1mN,run_number)
 
 #xoutplotB<-xoutplot
 #xoutplot_1m<-rbind(xoutplotA,xoutplotB)
@@ -230,8 +245,8 @@ setwd(clusteroutput)
 
 
 ## Output which runs are the highest likelihood runs
-top_L<-order(L_1m[,3],decreasing=TRUE)
-top_L<-top_L[1:10]
+top_L<-order(L_1mN[,3],decreasing=TRUE)
+top_L<-top_L[1:60]
 top_L
 
 top_LM<-order(LM,decreasing=TRUE)

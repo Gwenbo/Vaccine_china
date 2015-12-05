@@ -16,6 +16,9 @@ setwd(home);setwd("Data")
 pararange <- as.matrix(drop.levels(read.csv('pararanges.csv',header=TRUE,check.names=F)))       # Number of parameters same for all countries - CHECK with new model
 setwd(home)
 
+#number of runs in each job
+n_p<-1000
+
 #what is the likelihood of that parameter given the data (i.e. the prev etc that we're trying to fit to)
 
 #first need to call in data to fit to
@@ -44,8 +47,12 @@ rownames(cip)<-c("lower2000","upper2000","lower2010","upper2010")
 cin<-matrix(c(63.91,2.72,64.62,104.36,143.07,79.89,3.40,80.78,130.45,178.84),nrow=2, ncol=5, byrow=TRUE)
 colnames(cin)<-c("Overall","0-14 years","15-54 years","55-64 years","≥65 years")
 rownames(cin)<-c("lower2010","upper2010")
-                 
-cim<-matrix(c(4.54,0.27,1.72,14.12,4.84,0.32,2.10,17.26),nrow=2, ncol=4, byrow=TRUE)
+
+mortality2010<- c(4.69,0.29,1.91,15.69)
+mortality2010u<- c(4.84,0.32,2.10,17.26)
+mortality2010u<- mortality2010 + ((mortality2010u-mortality2010)*10)
+
+cim<-matrix(c(4.54,0.27,1.72,14.12,mortality2010u),nrow=2, ncol=4, byrow=TRUE)
 colnames(cim)<-c("Overall","0-14 years","15-59 years","≥60 years")
 rownames(cim)<-c("lower2010","upper2010") 
 
@@ -80,18 +87,15 @@ var<-c((sdp^2),(sdp2^2),(sdn^2),(sdm^2),(sdi^2))
 #insert number of cluster jobs below
 setwd(clusteroutput)
 numjobs<-100
-xout<-c()
+xout<-matrix(0,(numjobs*302000),100)
+colnames(xout)<-c(colnames(Xn),"timestep","year","type","vxint","fit","job") #timestep is for params where given by timestep, year is for where output is summary of annual
 para<-c()
 for (uu in 1:numjobs){
+    xout[((((uu-1)*302000)+1):(uu*302000)),]<-fread(paste("xout_",uu,".csv",sep=''))
     print(uu)
-    nxt<-fread(paste("xout_",uu,".csv",sep=''))
-    xout<-rbind(xout,nxt)
-    print(uu)
-    
     }
 
 write.table(xout,"xout_clustermerge.csv",sep=",",row.names=FALSE)
-
 
 for (uu in 1:numjobs){
   print(uu)
@@ -119,6 +123,15 @@ new00<-xout[which(xout[,"year"]%in%2000),c("job","fit","type","vxint","TBPb15+",
 colnames(new00)<-c("job","fit","type","vxint","TBPb15+2000", "TBPb15-29_2000", "TBPb30-44_2000", "TBPb45-59_2000", "TBPb60+_2000")
 new10<-xout[which(xout[,"year"]%in%2010),c("TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
 neww<-cbind(new00,new10)
+
+#for testing one run
+year<-c(seq(year1,yearend,1),rep(0,((1/dt)*(yearend-year1+1)-(yearend-year1+1))))
+xout<-cbind(Xn,year)
+new00<-xout[which(xout[,"year"]%in%2000),c("TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+")]
+colnames(new00)<-c("TBPb15+2000", "TBPb15-29_2000", "TBPb30-44_2000", "TBPb45-59_2000", "TBPb60+_2000")
+new10<-xout[which(xout[,"year"]%in%2010),c("TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
+neww<-cbind(new00,new10)
+
 View(neww)
 #neww<-xout[which(xout[,"year"]%in%c(2000,2010)),c("type","vxint","fit","year","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
 #colnames(neww)<-NULL
@@ -146,11 +159,34 @@ setwd(home)
 #   L[i] <- sum((-0.5*log(2*pi))-(0.5*log(var))-((((neww[i,])-FitData)^2)/(2*var)))
 # }
 
+#the below works for if just one data frame, but not when many from cluster
 L<-rep(0,n_p)
 for (i in 1:n_p){
   L[i] <- sum((-0.5*log(2*pi*var))-((((neww[i,])-FitData)^2)/(2*var)))
 }
 L
+
+## trying to calc L without making xout one big data frame
+L<-rep(0,(n_p*numjobs))
+       
+for (jj in 1:numjobs){
+       
+##have to calc neww for each !!  and in i loop need neww to be the neww for that loop (need ot save of just write over each loop?)
+      xout<-as.data.frame(fread(paste("xout_",jj,".csv",sep='') ))
+      new00<-xout[which(xout[,"year"]%in%2000),c("job","fit","type","vxint","TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+")]
+      colnames(new00)<-c("job","fit","type","vxint","TBPb15+2000", "TBPb15-29_2000", "TBPb30-44_2000", "TBPb45-59_2000", "TBPb60+_2000")
+      new10<-xout[which(xout[,"year"]%in%2010),c("TBPb15+", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBMtot","TBM0-14","TBM15-59","TBM60+","TBItot")]
+      neww<-cbind(new00,new10)
+      neww<-neww[,5:24]
+
+        for (i in 1:n_p){
+          check[i]<-(i+((jj-1)*1000))
+          L[(i+((jj-1)*1000))] <- sum((-0.5*log(2*pi*var))-((((neww[i,])-FitData)^2)/(2*var)))
+          LLL[i]<- sum((-0.5*log(2*pi*var))-((((neww[i,])-FitData)^2)/(2*var)))
+        }
+      print(jj)
+    }
+
 
 ## for checking whether a particular likelihood is dominating 
 LP<-rep(0,n_p)
@@ -192,7 +228,7 @@ missing<-as.vector(complete.cases(L))
 table(missing)
 ## make those that didnt work zeros so they wont be selected
 
-for(i in 1:n_p)
+for(i in 1:length(L))
 {
 if (missing[i]==FALSE) {L[i]<-0}
 }
@@ -200,10 +236,10 @@ L
 
 ## matirx to indicate  THE NEGATIVEs - if the value of negs is >0 then that parameter set has given at least one negative output
 #set up matrix
-test<-matrix(1,n_p,20)
+test<-matrix(1,length(L),20)
 
 #change those without negatives into zeros and turn NAs into zeros so that doesnt stop the if else negs code working
-for(kkk in 1:n_p){
+for(kkk in 1:length(L)){
   test[kkk,]<-ifelse(neww[kkk,]<0,test[kkk,]==1,test[kkk,]==0)
   if (missing[kkk]==FALSE) {test[kkk,]<-0}
 }
@@ -227,7 +263,7 @@ L
 
 library(gdata)
 
-N_resamp<-1000000 # number of samples to take
+N_resamp<-100000 # number of samples to take
 
 #### kick out everything with negative model outputs??  if so drop those where negative, and in sample need to have seq length N_p minus those deleted###
 

@@ -23,6 +23,26 @@ ci[,1]<-type
 ci[,2]<-vxint
 ci[,3]<-fityrs
 
+#calculate cis and median
+
+dfvx_0<-dfvx_sm[which(dfvx_sm[,"type"]%in%0),]                                        
+                                        
+for(i in 2:typen){                                        
+dfvx_S<-dfvx_sm[which(dfvx_sm[,"type"]%in%i),]
+
+for(j in 1:combn){
+dfvx_m<-dfvx_S[which(dfvx_S[,"vxint"]%in%j),]
+
+dfvx_inc<-dfvx_m$TBItot
+
+dim(dfvx_inc)<-c((length(fityrs)),20)
+
+model_mm=apply(dfvx_inc,1,function(x) quantile(x,probs=c(0.5))) 
+model_um=apply(mall_xout[,top_L],1,function(x) quantile(x,probs=c(0.975))) 
+model_lm=apply(mall_xout[,top_L],1,function(x) quantile(x,probs=c(0.025))) 
+}
+}
+
 
 
 ###dfvx's are missing row names after 419478 - is this a problem?

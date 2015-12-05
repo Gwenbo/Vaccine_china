@@ -16,7 +16,7 @@ n_p<-1000
 ##generate matrix for storing parameter sets (later will want to store these as the file that you call for the model)
 
 randparam<-mat.or.vec(n_p,(length(nm)+1))
-colnames(randparam)<-c('set',nm)
+colnames(randparam)<-c('job',nm)
 #number the param sets
 randparam[1:n_p,1]<-seq(1,n_p,1)
 
@@ -67,13 +67,21 @@ for (kkk in 1:n_p)
     
     popcheck<-xout[((((yearend-year1+1)*(1/dt)*kkk*nmbr)-((1/dt)*(yearend-year1+1)-1)):((1/dt)*(yearend-year1+1)*kkk*nmbr)),(1:7)]
     popcheck<-as.data.frame(popcheck)
+    xout<-as.data.frame(xout)
+    
+    
     plot(seq(1,((yearend-year1+1)*(1/dt))),popcheck$PSIZE, ylab="Size",xlab="Timestep", main=kkk, ylim=c(0,1800000),xlim=c(0,((yearend-year1+1)*(1/dt))),type='l',col='purple')
     lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$S,type='l',col='red')
     lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$L,type='l',col='orange')
     lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$NI,type='l',col='yellow')
     lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$I,type='l',col='green')
     lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$R,type='l',col='blue')
-    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$Births,type='l',col='pink')
+    lines(seq(1,(yearend-year1+1)*(1/dt)),popcheck$Births,type='l',col='pink')    
+    
+    
+    
+    
+    
 #     plot.new()
 #     legend("center",c("Psize","S","L","NI","I","R","Births"), lty=1,col=c("purple","red","orange","yellow","green","blue","pink"))
 #  
