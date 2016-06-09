@@ -4,8 +4,9 @@
 library(plyr)
 
 #reformat data
+fithit<-c()
 
-mydf2 <- cbind(xout[xout[,"year"]%in%2000,"TBPb15+"],xout[xout[,"year"]%in%2010,"TBPb15+"],
+mydf2 <- cbind(xout[xout[,"year"]%in%2000,"TBPbtot"],xout[xout[,"year"]%in%2010,"TBPbtot"],
                xout[xout[,"year"]%in%2000,"TBPb15-29"],xout[xout[,"year"]%in%2010,"TBPb15-29"],
                xout[xout[,"year"]%in%2000,"TBPb30-44"],xout[xout[,"year"]%in%2010,"TBPb30-44"],
                xout[xout[,"year"]%in%2000,"TBPb45-59"],xout[xout[,"year"]%in%2010,"TBPb45-59"],
@@ -16,6 +17,8 @@ mydf2 <- cbind(xout[xout[,"year"]%in%2000,"TBPb15+"],xout[xout[,"year"]%in%2010,
                xout[xout[,"year"]%in%2010,"TBN15-54"],xout[xout[,"year"]%in%2010,"TBN55-64"],
                xout[xout[,"year"]%in%2010,"TBN65+"],xout[xout[,"year"]%in%2010,"TBItot"])
 
+mydf2<-as.vector(mydf2)
+print(mydf2)
 
 ## factor increase in range
 multi<-c(1,1)
@@ -43,7 +46,9 @@ colnames(cip)<-c("Overall","1529years","3044years","4559years","60plusyears")
 rownames(cip)<-c("lower2000","upper2000","lower2010","upper2010") 
 
 ##lower limit is the data, so assume mormally distrib with lower limit as 95% CI
-cin<-matrix(c(63.91,2.72,64.62,104.36,143.07,79.89,3.40,80.78,130.45,178.84),nrow=2, ncol=5, byrow=TRUE)
+notif2010l<-c(63.91,2.72,64.62,104.36,143.07)
+notif2010l<-notif2010l*0.8
+cin<-matrix(c(notif2010l,79.89,3.40,80.78,130.45,178.84),nrow=2, ncol=5, byrow=TRUE)
 colnames(cin)<-c("Overall","0-14 years","15-54 years","55-64 years","≥65 years")
 rownames(cin)<-c("lower2010","upper2010")
 
@@ -68,34 +73,67 @@ FitDataI<-as.data.frame(FitDataI)
 cii<-as.data.frame(cii)
 
 #output each to a vector
-inbound<-matrix(0,2,21)
-colnames(inbound)<-c("Overall2000","Overall2010","1529years2000","1529years10","3044years2000","3044years10",
-                     "4559years2000","4559years10","60plusyears2000","60plusyears10","OverallM","0-14 yearsM",
-                     "15-59 years","≥60 years","OverallN","0-14 yearsN","15-54 years","55-64 years","≥65 years","I","total")
 
-inbound[,1]<- mydf2[,1]>(FitData[,"Overall2000"]-(multi[1]*(FitData[,"Overall2000"]-cip$Overall[1]))) & mydf2[,1]<(FitData[,"Overall2000"]+(multi[2]*(cip$Overall[2]-FitData[,"Overall2000"])))
-inbound[,2]<- mydf2[,2]>(FitData[,"Overall2010"]-(multi[1]*(FitData[,"Overall2010"]-cip$Overall[3]))) & mydf2[,2]<(FitData[,"Overall2010"]+(multi[2]*(cip$Overall[4]-FitData[,"Overall2010"])))
-inbound[,3]<- mydf2[,3]>(FitData[,"1529years2000"]-(multi[1]*(FitData[,"1529years2000"]-cip$"1529years"[1]))) & mydf2[,3]<(FitData[,"1529years2000"]+(multi[2]*(cip$"1529years"[2]-FitData[,"1529years2000"])))
-inbound[,4]<- mydf2[,4]>(FitData[,"1529years10"]-(multi[1]*(FitData[,"1529years10"]-cip$"1529years"[3]))) & mydf2[,4]<(FitData[,"1529years10"]+(multi[2]*(cip$"1529years"[4]-FitData[,"1529years10"])))
-inbound[,5]<- mydf2[,5]>(FitData[,"3044years2000"]-(multi[1]*(FitData[,"3044years2000"]-cip$"3044years"[1]))) & mydf2[,5]<(FitData[,"3044years2000"]+(multi[2]*(cip$"3044years"[2]-FitData[,"3044years2000"])))
-inbound[,6]<- mydf2[,6]>(FitData[,"3044years10"]-(multi[1]*(FitData[,"3044years10"]-cip$"3044years"[3]))) & mydf2[,6]<(FitData[,"3044years10"]+(multi[2]*(cip$"3044years"[4]-FitData[,"3044years10"])))
-inbound[,7]<- mydf2[,7]>(FitData[,"4559years2000"]-(multi[1]*(FitData[,"4559years2000"]-cip$"4559years"[1]))) & mydf2[,7]<(FitData[,"4559years2000"]+(multi[2]*(cip$"4559years"[2]-FitData[,"4559years2000"])))
-inbound[,8]<- mydf2[,8]>(FitData[,"4559years10"]-(multi[1]*(FitData[,"4559years10"]-cip$"4559years"[3]))) & mydf2[,8]<(FitData[,"4559years10"]+(multi[2]*(cip$"4559years"[4]-FitData[,"4559years10"])))
-inbound[,9]<- mydf2[,9]>(FitData[,"60plusyears2000"]-(multi[1]*(FitData[,"60plusyears2000"]-cip$"60plusyears"[1]))) & mydf2[,9]<(FitData[,"60plusyears2000"]+(multi[2]*(cip$"60plusyears"[2]-FitData[,"60plusyears2000"])))
-inbound[,10]<- mydf2[,10]>(FitData[,"60plusyears10"]-(multi[1]*(FitData[,"60plusyears10"]-cip$"60plusyears"[3]))) & mydf2[,10]<(FitData[,"60plusyears10"]+(multi[2]*(cip$"60plusyears"[4]-FitData[,"60plusyears10"])))
-inbound[,11]<- mydf2[,11]>(FitData[,"OverallM"]-(multi[1]*(FitData[,"OverallM"]-cim$Overall[1]))) & mydf2[,11]<(FitData[,"OverallM"]+(multi[2]*(cim$Overall[2]-FitData[,"OverallM"])))       
-inbound[,12]<- mydf2[,12]>(FitData[,"0-14 yearsM"]-(multi[1]*(FitData[,"0-14 yearsM"]-cim$"0-14 years"[1]))) & mydf2[,12]<(FitData[,"0-14 yearsM"]+(multi[2]*(cim$"0-14 years"[2]-FitData[,"0-14 yearsM"])))      
-inbound[,13]<- mydf2[,13]>(FitData[,"15-59 years"]-(multi[1]*(FitData[,"15-59 years"]-cim$"15-59 years"[1]))) & mydf2[,13]<(FitData[,"15-59 years"]+(multi[2]*(cim$"15-59 years"[2]-FitData[,"15-59 years"])))
-inbound[,14]<- mydf2[,14]>(FitData[,"≥60 years"]-(multi[1]*(FitData[,"≥60 years"]-cim$"≥60 years"[1]))) & mydf2[,14]<(FitData[,"≥60 years"]+(multi[2]*(cim$"≥60 years"[2]-FitData[,"≥60 years"])))
-inbound[,15]<- mydf2[,15]>(FitData[,"OverallN"]-(multi[1]*(FitData[,"OverallN"]-cin$Overall[1]))) & mydf2[,15]<(FitData[,"OverallN"]+(multi[2]*(cin$Overall[2]-FitData[,"OverallN"])))    
-inbound[,16]<- mydf2[,16]>(FitData[,"0-14 yearsN"]-(multi[1]*(FitData[,"0-14 yearsN"]-cin$"0-14 years"[1]))) & mydf2[,16]<(FitData[,"0-14 yearsN"]+(multi[2]*(cin$"0-14 years"[2]-FitData[,"0-14 yearsN"])))        
-inbound[,17]<- mydf2[,17]>(FitData[,"15-54 years"]-(multi[1]*(FitData[,"15-54 years"]-cin$"15-54 years"[1]))) & mydf2[,17]<(FitData[,"15-54 years"]+(multi[2]*(cin$"15-54 years"[2]-FitData[,"15-54 years"])))
-inbound[,18]<- mydf2[,18]>(FitData[,"55-64 years"]-(multi[1]*(FitData[,"55-64 years"]-cin$"55-64 years"[1]))) & mydf2[,18]<(FitData[,"55-64 years"]+(multi[2]*(cin$"55-64 years"[2]-FitData[,"55-64 years"])))
-inbound[,19]<- mydf2[,19]>(FitData[,"≥65 years"]-(multi[1]*(FitData[,"≥65 years"]-cin$"≥65 years"[1]))) & mydf2[,19]<(FitData[,"≥65 years"]-(multi[1]*(FitData[,"≥65 years"]-cin$"≥65 years"[2])))      
-inbound[,20]<- mydf2[,20]>(FitData[,"I"]-(multi[1]*(FitData[,"I"]-cii[1,]))) & mydf2[,20]<(FitData[,"I"]+(multi[2]*(cii[2,]-FitData[,"I"])))     
+inbound<-rep(0,20)
+inbound[1]<- mydf2[1]>(FitData[,"Overall2000"]-(multi[1]*(FitData[,"Overall2000"]-cip$Overall[1]))) & mydf2[1]<(FitData[,"Overall2000"]+(multi[2]*(cip$Overall[2]-FitData[,"Overall2000"])))
+inbound[2]<- mydf2[2]>(FitData[,"Overall2010"]-(multi[1]*(FitData[,"Overall2010"]-cip$Overall[3]))) & mydf2[2]<(FitData[,"Overall2010"]+(multi[2]*(cip$Overall[4]-FitData[,"Overall2010"])))
+inbound[3]<- mydf2[3]>(FitData[,"1529years2000"]-(multi[1]*(FitData[,"1529years2000"]-cip$"1529years"[1]))) & mydf2[3]<(FitData[,"1529years2000"]+(multi[2]*(cip$"1529years"[2]-FitData[,"1529years2000"])))
+inbound[4]<- mydf2[4]>(FitData[,"1529years10"]-(multi[1]*(FitData[,"1529years10"]-cip$"1529years"[3]))) & mydf2[4]<(FitData[,"1529years10"]+(multi[2]*(cip$"1529years"[4]-FitData[,"1529years10"])))
+inbound[5]<- mydf2[5]>(FitData[,"3044years2000"]-(multi[1]*(FitData[,"3044years2000"]-cip$"3044years"[1]))) & mydf2[5]<(FitData[,"3044years2000"]+(multi[2]*(cip$"3044years"[2]-FitData[,"3044years2000"])))
+inbound[6]<- mydf2[6]>(FitData[,"3044years10"]-(multi[1]*(FitData[,"3044years10"]-cip$"3044years"[3]))) & mydf2[6]<(FitData[,"3044years10"]+(multi[2]*(cip$"3044years"[4]-FitData[,"3044years10"])))
+inbound[7]<- mydf2[7]>(FitData[,"4559years2000"]-(multi[1]*(FitData[,"4559years2000"]-cip$"4559years"[1]))) & mydf2[7]<(FitData[,"4559years2000"]+(multi[2]*(cip$"4559years"[2]-FitData[,"4559years2000"])))
+inbound[8]<- mydf2[8]>(FitData[,"4559years10"]-(multi[1]*(FitData[,"4559years10"]-cip$"4559years"[3]))) & mydf2[8]<(FitData[,"4559years10"]+(multi[2]*(cip$"4559years"[4]-FitData[,"4559years10"])))
+inbound[9]<- mydf2[9]>(FitData[,"60plusyears2000"]-(multi[1]*(FitData[,"60plusyears2000"]-cip$"60plusyears"[1]))) & mydf2[9]<(FitData[,"60plusyears2000"]+(multi[2]*(cip$"60plusyears"[2]-FitData[,"60plusyears2000"])))
+inbound[10]<- mydf2[10]>(FitData[,"60plusyears10"]-(multi[1]*(FitData[,"60plusyears10"]-cip$"60plusyears"[3]))) & mydf2[10]<(FitData[,"60plusyears10"]+(multi[2]*(cip$"60plusyears"[4]-FitData[,"60plusyears10"])))
+inbound[11]<- mydf2[11]>(FitData[,"OverallM"]-(multi[1]*(FitData[,"OverallM"]-cim$Overall[1]))) & mydf2[11]<(FitData[,"OverallM"]+(multi[2]*(cim$Overall[2]-FitData[,"OverallM"])))       
+inbound[12]<- mydf2[12]>(FitData[,"0-14 yearsM"]-(multi[1]*(FitData[,"0-14 yearsM"]-cim$"0-14 years"[1]))) & mydf2[12]<(FitData[,"0-14 yearsM"]+(multi[2]*(cim$"0-14 years"[2]-FitData[,"0-14 yearsM"])))      
+inbound[13]<- mydf2[13]>(FitData[,"15-59 years"]-(multi[1]*(FitData[,"15-59 years"]-cim$"15-59 years"[1]))) & mydf2[13]<(FitData[,"15-59 years"]+(multi[2]*(cim$"15-59 years"[2]-FitData[,"15-59 years"])))
+inbound[14]<- mydf2[14]>(FitData[,"≥60 years"]-(multi[1]*(FitData[,"≥60 years"]-cim$"≥60 years"[1]))) & mydf2[14]<(FitData[,"≥60 years"]+(multi[2]*(cim$"≥60 years"[2]-FitData[,"≥60 years"])))
+inbound[15]<- mydf2[15]>(FitData[,"OverallN"]-(multi[1]*(FitData[,"OverallN"]-cin$Overall[1]))) & mydf2[15]<(FitData[,"OverallN"]+(multi[2]*(cin$Overall[2]-FitData[,"OverallN"])))    
+inbound[16]<- mydf2[16]>(FitData[,"0-14 yearsN"]-(multi[1]*(FitData[,"0-14 yearsN"]-cin$"0-14 years"[1]))) & mydf2[16]<(FitData[,"0-14 yearsN"]+(multi[2]*(cin$"0-14 years"[2]-FitData[,"0-14 yearsN"])))        
+inbound[17]<- mydf2[17]>(FitData[,"15-54 years"]-(multi[1]*(FitData[,"15-54 years"]-cin$"15-54 years"[1]))) & mydf2[17]<(FitData[,"15-54 years"]+(multi[2]*(cin$"15-54 years"[2]-FitData[,"15-54 years"])))
+inbound[18]<- mydf2[18]>(FitData[,"55-64 years"]-(multi[1]*(FitData[,"55-64 years"]-cin$"55-64 years"[1]))) & mydf2[18]<(FitData[,"55-64 years"]+(multi[2]*(cin$"55-64 years"[2]-FitData[,"55-64 years"])))
+inbound[19]<- mydf2[19]>(FitData[,"≥65 years"]-(multi[1]*(FitData[,"≥65 years"]-cin$"≥65 years"[1]))) & mydf2[19]<(FitData[,"≥65 years"]-(multi[1]*(FitData[,"≥65 years"]-cin$"≥65 years"[2])))      
+inbound[20]<- mydf2[20]>(FitData[,"I"]-(multi[1]*(FitData[,"I"]-cii[1,]))) & mydf2[20]<(FitData[,"I"]+(multi[2]*(cii[2,]-FitData[,"I"])))     
 #calc number of data points the run fitting to
-inbound[,21]<- rowSums(inbound[,1:20])        
+fithit<-sum(inbound)
 
-#only want first number (second one is emmpty to keep as a data frame instead of vector)
-fithit<-inbound[1,21]
+#inbound
+assign('fithit',fithit,envir=.GlobalEnv)
+assign('inbound',inbound, envir=.GlobalEnv)
+
+fithit 
+
+
+### old code ###
+
+# inbound<-matrix(0,2,21)
+# colnames(inbound)<-c("Overall2000","Overall2010","1529years2000","1529years10","3044years2000","3044years10",
+#                      "4559years2000","4559years10","60plusyears2000","60plusyears10","OverallM","0-14 yearsM",
+#                      "15-59 years","≥60 years","OverallN","0-14 yearsN","15-54 years","55-64 years","≥65 years","I","total")
+# 
+# inbound[1,1]<- mydf2[,1]>(FitData[,"Overall2000"]-(multi[1]*(FitData[,"Overall2000"]-cip$Overall[1]))) & mydf2[,1]<(FitData[,"Overall2000"]+(multi[2]*(cip$Overall[2]-FitData[,"Overall2000"])))
+# inbound[1,2]<- mydf2[,2]>(FitData[,"Overall2010"]-(multi[1]*(FitData[,"Overall2010"]-cip$Overall[3]))) & mydf2[,2]<(FitData[,"Overall2010"]+(multi[2]*(cip$Overall[4]-FitData[,"Overall2010"])))
+# inbound[1,3]<- mydf2[,3]>(FitData[,"1529years2000"]-(multi[1]*(FitData[,"1529years2000"]-cip$"1529years"[1]))) & mydf2[,3]<(FitData[,"1529years2000"]+(multi[2]*(cip$"1529years"[2]-FitData[,"1529years2000"])))
+# inbound[1,4]<- mydf2[,4]>(FitData[,"1529years10"]-(multi[1]*(FitData[,"1529years10"]-cip$"1529years"[3]))) & mydf2[,4]<(FitData[,"1529years10"]+(multi[2]*(cip$"1529years"[4]-FitData[,"1529years10"])))
+# inbound[1,5]<- mydf2[,5]>(FitData[,"3044years2000"]-(multi[1]*(FitData[,"3044years2000"]-cip$"3044years"[1]))) & mydf2[,5]<(FitData[,"3044years2000"]+(multi[2]*(cip$"3044years"[2]-FitData[,"3044years2000"])))
+# inbound[1,6]<- mydf2[,6]>(FitData[,"3044years10"]-(multi[1]*(FitData[,"3044years10"]-cip$"3044years"[3]))) & mydf2[,6]<(FitData[,"3044years10"]+(multi[2]*(cip$"3044years"[4]-FitData[,"3044years10"])))
+# inbound[1,7]<- mydf2[,7]>(FitData[,"4559years2000"]-(multi[1]*(FitData[,"4559years2000"]-cip$"4559years"[1]))) & mydf2[,7]<(FitData[,"4559years2000"]+(multi[2]*(cip$"4559years"[2]-FitData[,"4559years2000"])))
+# inbound[1,8]<- mydf2[,8]>(FitData[,"4559years10"]-(multi[1]*(FitData[,"4559years10"]-cip$"4559years"[3]))) & mydf2[,8]<(FitData[,"4559years10"]+(multi[2]*(cip$"4559years"[4]-FitData[,"4559years10"])))
+# inbound[1,9]<- mydf2[,9]>(FitData[,"60plusyears2000"]-(multi[1]*(FitData[,"60plusyears2000"]-cip$"60plusyears"[1]))) & mydf2[,9]<(FitData[,"60plusyears2000"]+(multi[2]*(cip$"60plusyears"[2]-FitData[,"60plusyears2000"])))
+# inbound[1,10]<- mydf2[,10]>(FitData[,"60plusyears10"]-(multi[1]*(FitData[,"60plusyears10"]-cip$"60plusyears"[3]))) & mydf2[,10]<(FitData[,"60plusyears10"]+(multi[2]*(cip$"60plusyears"[4]-FitData[,"60plusyears10"])))
+# inbound[1,11]<- mydf2[,11]>(FitData[,"OverallM"]-(multi[1]*(FitData[,"OverallM"]-cim$Overall[1]))) & mydf2[,11]<(FitData[,"OverallM"]+(multi[2]*(cim$Overall[2]-FitData[,"OverallM"])))       
+# inbound[1,12]<- mydf2[,12]>(FitData[,"0-14 yearsM"]-(multi[1]*(FitData[,"0-14 yearsM"]-cim$"0-14 years"[1]))) & mydf2[,12]<(FitData[,"0-14 yearsM"]+(multi[2]*(cim$"0-14 years"[2]-FitData[,"0-14 yearsM"])))      
+# inbound[1,13]<- mydf2[,13]>(FitData[,"15-59 years"]-(multi[1]*(FitData[,"15-59 years"]-cim$"15-59 years"[1]))) & mydf2[,13]<(FitData[,"15-59 years"]+(multi[2]*(cim$"15-59 years"[2]-FitData[,"15-59 years"])))
+# inbound[1,14]<- mydf2[,14]>(FitData[,"≥60 years"]-(multi[1]*(FitData[,"≥60 years"]-cim$"≥60 years"[1]))) & mydf2[,14]<(FitData[,"≥60 years"]+(multi[2]*(cim$"≥60 years"[2]-FitData[,"≥60 years"])))
+# inbound[1,15]<- mydf2[,15]>(FitData[,"OverallN"]-(multi[1]*(FitData[,"OverallN"]-cin$Overall[1]))) & mydf2[,15]<(FitData[,"OverallN"]+(multi[2]*(cin$Overall[2]-FitData[,"OverallN"])))    
+# inbound[1,16]<- mydf2[,16]>(FitData[,"0-14 yearsN"]-(multi[1]*(FitData[,"0-14 yearsN"]-cin$"0-14 years"[1]))) & mydf2[,16]<(FitData[,"0-14 yearsN"]+(multi[2]*(cin$"0-14 years"[2]-FitData[,"0-14 yearsN"])))        
+# inbound[1,17]<- mydf2[,17]>(FitData[,"15-54 years"]-(multi[1]*(FitData[,"15-54 years"]-cin$"15-54 years"[1]))) & mydf2[,17]<(FitData[,"15-54 years"]+(multi[2]*(cin$"15-54 years"[2]-FitData[,"15-54 years"])))
+# inbound[1,18]<- mydf2[,18]>(FitData[,"55-64 years"]-(multi[1]*(FitData[,"55-64 years"]-cin$"55-64 years"[1]))) & mydf2[,18]<(FitData[,"55-64 years"]+(multi[2]*(cin$"55-64 years"[2]-FitData[,"55-64 years"])))
+# inbound[1,19]<- mydf2[,19]>(FitData[,"≥65 years"]-(multi[1]*(FitData[,"≥65 years"]-cin$"≥65 years"[1]))) & mydf2[,19]<(FitData[,"≥65 years"]-(multi[1]*(FitData[,"≥65 years"]-cin$"≥65 years"[2])))      
+# inbound[1,20]<- mydf2[,20]>(FitData[,"I"]-(multi[1]*(FitData[,"I"]-cii[1,]))) & mydf2[,20]<(FitData[,"I"]+(multi[2]*(cii[2,]-FitData[,"I"])))     
+# #calc number of data points the run fitting to
+# inbound[,21]<- rowSums(inbound[,1:20])        
+
+
 
