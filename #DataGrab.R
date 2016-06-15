@@ -53,6 +53,10 @@ oldwane<-as.matrix(read.csv('vaccwaneold.csv',header=TRUE, check.names=F))
 yngwane<-as.matrix(read.csv('vaccwaneyng.csv',header=TRUE, check.names=F))
 oldwane10<-as.matrix(read.csv('vaccwaneold10.csv',header=TRUE, check.names=F))
 yngwane10<-as.matrix(read.csv('vaccwaneyng10.csv',header=TRUE, check.names=F))
+oldwaneto0<-as.matrix(read.csv('vaccwaneold_to0.csv',header=TRUE, check.names=F))
+oldwaneto1<-as.matrix(read.csv('vaccwaneold_to1.csv',header=TRUE, check.names=F))
+oldwaneto5<-as.matrix(read.csv('vaccwaneold_to5.csv',header=TRUE, check.names=F))
+
 
 
 # Get HIVnegative incidence for those countries of interest

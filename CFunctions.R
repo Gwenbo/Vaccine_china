@@ -287,7 +287,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       #1-exp turns rate->probability
 #       
       #PAF_year=2050
-      #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
+      #if (k>=PAF_year) {Imatrix[i-1,3]<-0}
       #if (k>=PAF_year) {Imatrix[i-1,3]<-Imatno6080A[i-1]}
       #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
       #if (k>=PAF_year) {Imatrix[i-1,4]<-Imatno75up[i-1]}
@@ -505,7 +505,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
       
         
         #PAF_year=2050
-        #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
+        #if (k>=PAF_year) {Imatrix[i-1,3]<-0}
         #if (k>=PAF_year) {Imatrix[i-1,3]<-Imatno6080A[i-1]}
         #if (k>=PAF_year) {Imatrix[i-1,4]<-0}
         #if (k>=PAF_year) {Imatrix[i-1,4]<-Imatno75up[i-1]}
@@ -795,7 +795,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
           TBPb[(k-year1+1),6]<-100000*((sum(I[i1:i2,61:Mnage]))/(1/dt))/mean(psize60plus[i1:i2])
           TBPb[(k-year1+1),7]<-100000*((sum(I[i1:i2,56:Mnage]))/(1/dt))/mean(psize55plus[i1:i2])
           TBPb[(k-year1+1),8]<-100000*((sum(I[i1:i2,16:Mnage]))/(1/dt))/mean(psize15plus[i1:i2])
-#           
+#         TBPb[(k-year1+1),9]<-100000*((sum(I[i1:i2,31:60]))/(1/dt))/((mean(psize3044[i1:i2]))+(mean(psize4559[i1:i2])))
+#         
 #           print(sum(I[i1:i2,16:30]))
 #           print(sum(I[i1:i2,1:15]))
 #           print(sum(I[i1:i2,]))
@@ -966,7 +967,7 @@ TBPI[(k-year1+1),1]<-100*(((sum(L[i1,])/psize[i1])+(sum(L[i2,])/psize[i2]))/2)
           #I1990[1,]<-sum(new_infect[((1990-year1)*(1/dt)+1):((1990+1-year1)*(1/dt)),])
           #I2025[1,]<-sum(new_infect[((2025-year1)*(1/dt)+1):((2025+1-year1)*(1/dt)),])
           #I2050[1,]<-sum(new_infect[((2050-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),])
-          I2050[1,]<-sum(new_infect[((2050-year1)*(1/dt)+1):((2050+1-year1)*(1/dt)),])
+          I2050[1,]<-sum(new_infect[((2000-year1)*(1/dt)+1):((2000+1-year1)*(1/dt)),])
 
 
           ###(12) New active cases and TB deaths per year
@@ -1171,7 +1172,7 @@ TBPI[(k-year1+1),1]<-100*(((sum(L[i1,])/psize[i1])+(sum(L[i2,])/psize[i2]))/2)
   colnames(TBN)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+","<55")
   colnames(TBM)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "60+", "55+", "<55","15-24","25-54")
   colnames(TBP)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+")
-  colnames(TBPb)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+","15+")
+  colnames(TBPb)<-c("All ages","0-14", "15-29", "30-44", "45-59", "60+", "55+","15+","30-59")
   colnames(TBPI)<-c("All ages","0-14", "15-54", "55-64", "65+", "55+", "5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+","6574", "75+","1524")
   colnames(PSIZEy)<-c("All ages", "0-14", "15-54", "55-64", "65+", "15-59", "15-29", "30-44", "45-59", "60+", "55+","5-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+", "55-74", "75+","15-24", "25-54","15+")
   
@@ -1187,7 +1188,7 @@ TBPI[(k-year1+1),1]<-100*(((sum(L[i1,])/psize[i1])+(sum(L[i2,])/psize[i2]))/2)
            TBPb[,1],TBPb[,2],TBPb[,3], TBPb[,4], TBPb[,5], TBPb[,6],TBPb[,7],
            TBPI[,1],TBPI[,2],TBPI[,3], TBPI[,4], TBPI[,5],  TBPI[,6], TBPI[,7],TBPI[,8],TBPI[,9], TBPI[,10], TBPI[,11],  TBPI[,12], TBPI[,13], TBPI[,14],
            PSIZEy[,1],PSIZEy[,2], PSIZEy[,3], PSIZEy[,4], PSIZEy[,5], PSIZEy[,6], PSIZEy[,7], PSIZEy[,8], PSIZEy[,9], PSIZEy[,10], PSIZEy[,11], PSIZEy[,12], PSIZEy[,13], PSIZEy[,14], PSIZEy[,15], PSIZEy[,16], PSIZEy[,17], PSIZEy[,18], PSIZEy[,19],PSIZEy[,20], PSIZEy[,21], PSIZEy[,22], PSIZEy[,23],
-           TBI[,8], TBI[,9],TBM[,10],TBM[,11],TBPb[,8],PSIZEy[,24],TBRa[,1],TBRa[,2],TBRa[,3],TBRa[,4],TBRa[,5],TBRi[,1],TBRi[,2],TBRi[,3],TBRi[,4],TBRi[,5])
+           TBI[,8], TBI[,9],TBM[,10],TBM[,11],TBPb[,8],PSIZEy[,24],TBRa[,1],TBRa[,2],TBRa[,3],TBRa[,4],TBRa[,5],TBRi[,1],TBRi[,2],TBRi[,3],TBRi[,4],TBRi[,5], TBPb[,9])
   colnames(X)<-c("PSIZE","S","Births","I","NI","L","R","new_I","new_NI","new_I_react","new_NI_react", "Sv","Lv","Rv",
                  "TBItot","TBI0-14","TBI15-54","TBI55-64","TBI65+","TBI55+","TBI<55",
                  "TBNtot","TBN0-14","TBN15-54","TBN55-64","TBN65+","TBN55+","TBN<55",
@@ -1196,7 +1197,7 @@ TBPI[(k-year1+1),1]<-100*(((sum(L[i1,])/psize[i1])+(sum(L[i2,])/psize[i2]))/2)
                  "TBPbtot","TBPb0-14", "TBPb15-29", "TBPb30-44", "TBPb45-59", "TBPb60+","TBPb55+", 
                  "TBPItot","TBPI0-14", "TBPI15-54", "TBPI55-64", "TBPI65+", "TBPI55+", "TBPI5-9", "TBPI10-19", "TBPI20-29", "TBPI30-39", "TBPI40-49", "TBPI50-59", "TBPI60-69", "TBPI70+",
                  "YearPsizetot", "YearPsize0-14", "YearPsize15-54", "YearPsize55-64", "YearPsize65+", "YearPsize15-59", "YearPsize15-29", "YearPsize30-44", "YearPsize45-59", "YearPsize60+", "YearPsize55+", "YearPsize5-9", "YearPsize10-19", "YearPsize20-29", "YearPsize30-39", "YearPsize40-49", "YearPsize50-59", "YearPsize60-69", "YearPsize70+","YearPsize55-74", "YearPsize75+", "YearPsize15-24","YearPsize25-54",
-                 "TBI15-24","TBI25-54","TBM15-24","TBM25-54","TBPb15+","YearPsize15plus","TBRatot","TBRa0-14","TBRa15-54","TBRa55-64","TBRa65+","TBRitot","TBRi0-14","TBRi15-54","TBRi55-64","TBRi65+")
+                 "TBI15-24","TBI25-54","TBM15-24","TBM25-54","TBPb15+","YearPsize15plus","TBRatot","TBRa0-14","TBRa15-54","TBRa55-64","TBRa65+","TBRitot","TBRi0-14","TBRi15-54","TBRi55-64","TBRi65+", "TBPb30-59")
   #print("X")
 #X<-data.frame(X)
   # To show

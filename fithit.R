@@ -8,8 +8,7 @@ fithit<-c()
 
 mydf2 <- cbind(xout[xout[,"year"]%in%2000,"TBPbtot"],xout[xout[,"year"]%in%2010,"TBPbtot"],
                xout[xout[,"year"]%in%2000,"TBPb15-29"],xout[xout[,"year"]%in%2010,"TBPb15-29"],
-               xout[xout[,"year"]%in%2000,"TBPb30-44"],xout[xout[,"year"]%in%2010,"TBPb30-44"],
-               xout[xout[,"year"]%in%2000,"TBPb45-59"],xout[xout[,"year"]%in%2010,"TBPb45-59"],
+               xout[xout[,"year"]%in%2000,"TBPb30-59"],xout[xout[,"year"]%in%2010,"TBPb30-59"],
                xout[xout[,"year"]%in%2000,"TBPb60+"],xout[xout[,"year"]%in%2010,"TBPb60+"],
                xout[xout[,"year"]%in%2010,"TBMtot"],xout[xout[,"year"]%in%2010,"TBM0-14"],
                xout[xout[,"year"]%in%2010,"TBM15-59"],xout[xout[,"year"]%in%2010,"TBM60+"],
@@ -25,8 +24,8 @@ multi<-c(1,1)
 
 #write fit data matrices
 
-FitDataP<-matrix(c(178,92,119,213,596,116,59,73,133,346),nrow=1, ncol=10, byrow=TRUE)
-colnames(FitDataP)<-c("Overall2000","1529years2000","3044years2000","4559years2000","60plusyears2000","Overall2010","1529years10","3044years10","4559years10","60plusyears10")
+FitDataP<-matrix(c(178,92,155,596,116,59,99,346),nrow=1, ncol=8, byrow=TRUE)
+colnames(FitDataP)<-c("Overall2000","1529years2000","3059years2000","60plusyears2000","Overall2010","1529years10","3059years10","60plusyears10")
 
 FitDataN<-matrix(c(63.91,2.72,64.62,104.36,143.07),nrow=1, ncol=5, byrow=TRUE)
 colnames(FitDataN)<-c("OverallN","0-14 yearsN","15-54 years","55-64 years","≥65 years")
@@ -41,8 +40,8 @@ FitData<-cbind(FitDataP, FitDataN, FitDataM, FitDataI)
 
 #95% CIs
 
-cip<-matrix(c(163,72,96,174,510,195,116,146,260,698,101,40,54,106,294,132,86,99,168,407),nrow=4, ncol=5, byrow=TRUE)
-colnames(cip)<-c("Overall","1529years","3044years","4559years","60plusyears")
+cip<-matrix(c(163,72,126,510,195,116,189,698,101,40,77,294,132,86,129,407),nrow=4, ncol=4, byrow=TRUE)
+colnames(cip)<-c("Overall","1529years","3059years","60plusyears")
 rownames(cip)<-c("lower2000","upper2000","lower2010","upper2010") 
 
 ##lower limit is the data, so assume mormally distrib with lower limit as 95% CI
@@ -103,7 +102,7 @@ assign('fithit',fithit,envir=.GlobalEnv)
 assign('inbound',inbound, envir=.GlobalEnv)
 
 fithit 
-
+print(inbound)
 
 ### old code ###
 
