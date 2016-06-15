@@ -98,7 +98,7 @@ if (yrintro < yearend){
         for (nnn in 1:26){
         if (i==startyr[nnn]) {k<-nnn
         print(k)
-        dV2[i,]<-oldwane[k,]
+        dV2[i,]<-oldwane[k,] 
         dV4[i,]<-yngwane[k,]
         }
             }
@@ -157,6 +157,8 @@ if (D==10){
 #vacc5=ado/adult pre-infection
 #vacc6=ado/adult latent only
 #vacc7=ado/adult mixed effects (pre or post infection, not active)
+#vacc8=elderly latent excluding recoverds
+#vacc9=ado/adult latent excluding recoverds
 
 
 
@@ -203,6 +205,18 @@ if (vaccine == 1){
   thetaS<-theta
   thetaL<-theta
   thetaR<-theta
+  d<-dV4
+} else if (vaccine == 8){
+  theta<-thetaV2*eff
+  thetaS<-thetablank
+  thetaL<-theta
+  thetaR<-thetablank
+  d<-dV29
+} else if (vaccine == 9){
+  theta<-thetaV4*eff
+  thetaS<-thetablank
+  thetaL<-theta
+  thetaR<-thetablank
   d<-dV4
 }
 
