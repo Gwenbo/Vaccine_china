@@ -18,7 +18,10 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
   # Paranames in Fit and InitV
   FitV<-c('psz1900','rmort','neta','rmortTB','CDRscale','CDRscaleE','alpha')
   InitialV<-c('run','dt','prop') 
-  
+  print(x)
+  print(felderly)
+  print(w)
+  print(CDRscale)
   #### Run model with these input parameters
   # Assign parameters to values inputted
   if(length(InitV)==3){for(i in 1:length(InitV)){assign(InitialV[i],InitV[i],envir = .GlobalEnv)}
@@ -108,8 +111,8 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
 # ui<-c(rep(ui,l=Mnage))
 # uni<-c(rep(uni,l=Mnage))
 #   
-  # If don't assign CDRscale set it to 1 (i.e. use data)
-  if(length(Fit)<5){CDRscale <- 1}
+  # If don't assign CDRscale set it to 1 (i.e use data)
+  if(length(Fit)<5){CDRscale <- 0}
   ## Generate Vaccine specific data using above eff and D if specified in input
   if(length(Vx)>1){
     assign('vaccine',Vx[1],envir = .GlobalEnv); assign('coverage',Vx[2],envir = .GlobalEnv); assign('eff',Vx[3],envir = .GlobalEnv); assign('D',Vx[4],envir = .GlobalEnv)
@@ -795,7 +798,7 @@ FitGo <- function(cntry,Vx,Fit,InitV,TimeScale,Plot,C){
           TBPb[(k-year1+1),6]<-100000*((sum(I[i1:i2,61:Mnage]))/(1/dt))/mean(psize60plus[i1:i2])
           TBPb[(k-year1+1),7]<-100000*((sum(I[i1:i2,56:Mnage]))/(1/dt))/mean(psize55plus[i1:i2])
           TBPb[(k-year1+1),8]<-100000*((sum(I[i1:i2,16:Mnage]))/(1/dt))/mean(psize15plus[i1:i2])
-#         TBPb[(k-year1+1),9]<-100000*((sum(I[i1:i2,31:60]))/(1/dt))/((mean(psize3044[i1:i2]))+(mean(psize4559[i1:i2])))
+          TBPb[(k-year1+1),9]<-100000*((sum(I[i1:i2,31:60]))/(1/dt))/((mean(psize3044[i1:i2]))+(mean(psize4559[i1:i2])))
 #         
 #           print(sum(I[i1:i2,16:30]))
 #           print(sum(I[i1:i2,1:15]))
